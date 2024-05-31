@@ -21,6 +21,8 @@ public partial class Employee
 
     public DateTime? Dob { get; set; }
 
+    public string? AvatarImg { get; set; }
+
     public Guid? RoleId { get; set; }
 
     public virtual ICollection<CounterEmployee> CounterEmployees { get; set; } = new List<CounterEmployee>();

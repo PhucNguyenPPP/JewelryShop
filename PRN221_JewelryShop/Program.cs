@@ -8,9 +8,9 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddRazorPages();
-builder.Services.AddScoped<IProductService, ProductService>();
-builder.Services.AddScoped< IGenericRepository<Product>, GenericRepository<Product>>();
 builder.Services.AddDbContext<JewelryShopDbContext>();
+builder.Services.AddScoped<IProductService, ProductService>();
+builder.Services.AddScoped<IGenericRepository<Product>, GenericRepository<Product>>();
 
 var app = builder.Build();
 

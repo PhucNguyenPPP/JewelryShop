@@ -19,6 +19,8 @@ public partial class Customer
 
     public DateTime? RegistrationDate { get; set; }
 
+    public string? AvatarImg { get; set; }
+
     public Guid? EmployeeId { get; set; }
 
     public virtual ICollection<BuyBackOrder> BuyBackOrders { get; set; } = new List<BuyBackOrder>();

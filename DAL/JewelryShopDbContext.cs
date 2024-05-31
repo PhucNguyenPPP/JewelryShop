@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using Microsoft.EntityFrameworkCore;
 using BOL.Entities;
+using Microsoft.EntityFrameworkCore;
 
 namespace DAL;
 
@@ -58,7 +58,7 @@ public partial class JewelryShopDbContext : DbContext
     {
         modelBuilder.Entity<BuyBackOrder>(entity =>
         {
-            entity.HasKey(e => e.Bboid).HasName("PK__BuyBackO__7EBCD8365E61F0C2");
+            entity.HasKey(e => e.Bboid).HasName("PK__BuyBackO__7EBCD8367B94B056");
 
             entity.ToTable("BuyBackOrder");
 
@@ -79,7 +79,7 @@ public partial class JewelryShopDbContext : DbContext
 
         modelBuilder.Entity<BuyBackOrderDetail>(entity =>
         {
-            entity.HasKey(e => e.BbodetailId).HasName("PK__BuyBackO__9EF99DA8AA5943FE");
+            entity.HasKey(e => e.BbodetailId).HasName("PK__BuyBackO__9EF99DA8E50C0246");
 
             entity.ToTable("BuyBackOrderDetail");
 
@@ -104,7 +104,7 @@ public partial class JewelryShopDbContext : DbContext
 
         modelBuilder.Entity<BuyBackPolicy>(entity =>
         {
-            entity.HasKey(e => e.PolicyId).HasName("PK__BuyBackP__2E1339A42A658E13");
+            entity.HasKey(e => e.PolicyId).HasName("PK__BuyBackP__2E1339A4B6FD2419");
 
             entity.ToTable("BuyBackPolicy");
 
@@ -115,7 +115,7 @@ public partial class JewelryShopDbContext : DbContext
 
         modelBuilder.Entity<Counter>(entity =>
         {
-            entity.HasKey(e => e.CounterId).HasName("PK__Counter__F12879C4DA3C493D");
+            entity.HasKey(e => e.CounterId).HasName("PK__Counter__F12879C484BE1CBE");
 
             entity.ToTable("Counter");
 
@@ -125,7 +125,7 @@ public partial class JewelryShopDbContext : DbContext
 
         modelBuilder.Entity<CounterEmployee>(entity =>
         {
-            entity.HasKey(e => e.CounterEmployeeId).HasName("PK__CounterE__5320D1F32106719C");
+            entity.HasKey(e => e.CounterEmployeeId).HasName("PK__CounterE__5320D1F3E80144B7");
 
             entity.ToTable("CounterEmployee");
 
@@ -143,12 +143,13 @@ public partial class JewelryShopDbContext : DbContext
 
         modelBuilder.Entity<Customer>(entity =>
         {
-            entity.HasKey(e => e.CustomerId).HasName("PK__Customer__A4AE64D8BA979DDD");
+            entity.HasKey(e => e.CustomerId).HasName("PK__Customer__A4AE64D8936A53DD");
 
             entity.ToTable("Customer");
 
             entity.Property(e => e.CustomerId).ValueGeneratedNever();
             entity.Property(e => e.Address).HasMaxLength(200);
+            entity.Property(e => e.AvatarImg).IsUnicode(false);
             entity.Property(e => e.CustomerName).HasMaxLength(100);
             entity.Property(e => e.Dob).HasColumnType("datetime");
             entity.Property(e => e.Email).HasMaxLength(50);
@@ -162,12 +163,13 @@ public partial class JewelryShopDbContext : DbContext
 
         modelBuilder.Entity<Employee>(entity =>
         {
-            entity.HasKey(e => e.EmployeeId).HasName("PK__Employee__7AD04F11B346D691");
+            entity.HasKey(e => e.EmployeeId).HasName("PK__Employee__7AD04F1104BC391C");
 
             entity.ToTable("Employee");
 
             entity.Property(e => e.EmployeeId).ValueGeneratedNever();
             entity.Property(e => e.Address).HasMaxLength(200);
+            entity.Property(e => e.AvatarImg).IsUnicode(false);
             entity.Property(e => e.Dob).HasColumnType("datetime");
             entity.Property(e => e.Email).HasMaxLength(50);
             entity.Property(e => e.EmployeeName).HasMaxLength(100);
@@ -181,7 +183,7 @@ public partial class JewelryShopDbContext : DbContext
 
         modelBuilder.Entity<Material>(entity =>
         {
-            entity.HasKey(e => e.MaterialId).HasName("PK__Material__C50610F7AAAF3C22");
+            entity.HasKey(e => e.MaterialId).HasName("PK__Material__C50610F79BC977A4");
 
             entity.ToTable("Material");
 
@@ -191,7 +193,7 @@ public partial class JewelryShopDbContext : DbContext
 
         modelBuilder.Entity<MaterialProduct>(entity =>
         {
-            entity.HasKey(e => e.MaterialProductId).HasName("PK__Material__219352D4342BBC5D");
+            entity.HasKey(e => e.MaterialProductId).HasName("PK__Material__219352D457D93336");
 
             entity.ToTable("MaterialProduct");
 
@@ -208,17 +210,18 @@ public partial class JewelryShopDbContext : DbContext
 
         modelBuilder.Entity<Product>(entity =>
         {
-            entity.HasKey(e => e.ProductId).HasName("PK__Product__B40CC6CD8D8E1595");
+            entity.HasKey(e => e.ProductId).HasName("PK__Product__B40CC6CDE5984757");
 
             entity.ToTable("Product");
 
             entity.Property(e => e.ProductId).ValueGeneratedNever();
+            entity.Property(e => e.AvatarImg).IsUnicode(false);
             entity.Property(e => e.ProductName).HasMaxLength(100);
         });
 
         modelBuilder.Entity<ProductCounter>(entity =>
         {
-            entity.HasKey(e => e.ProductCounterId).HasName("PK__ProductC__AD9704B2A37551AB");
+            entity.HasKey(e => e.ProductCounterId).HasName("PK__ProductC__AD9704B2BB6D9252");
 
             entity.ToTable("ProductCounter");
 
@@ -235,7 +238,7 @@ public partial class JewelryShopDbContext : DbContext
 
         modelBuilder.Entity<PromotionProgram>(entity =>
         {
-            entity.HasKey(e => e.PromotionProgramId).HasName("PK__Promotio__7869220AC6D462E1");
+            entity.HasKey(e => e.PromotionProgramId).HasName("PK__Promotio__7869220AC68CFC18");
 
             entity.ToTable("PromotionProgram");
 
@@ -247,7 +250,7 @@ public partial class JewelryShopDbContext : DbContext
 
         modelBuilder.Entity<PromotionProgramCode>(entity =>
         {
-            entity.HasKey(e => e.PromotionCodeId).HasName("PK__Promotio__B537DD05F540DE74");
+            entity.HasKey(e => e.PromotionCodeId).HasName("PK__Promotio__B537DD05CAC6A0BB");
 
             entity.ToTable("PromotionProgramCode");
 
@@ -261,7 +264,7 @@ public partial class JewelryShopDbContext : DbContext
 
         modelBuilder.Entity<ReturnPolicy>(entity =>
         {
-            entity.HasKey(e => e.PolicyId).HasName("PK__ReturnPo__2E1339A4EACD9402");
+            entity.HasKey(e => e.PolicyId).HasName("PK__ReturnPo__2E1339A4264D997F");
 
             entity.ToTable("ReturnPolicy");
 
@@ -272,7 +275,7 @@ public partial class JewelryShopDbContext : DbContext
 
         modelBuilder.Entity<Role>(entity =>
         {
-            entity.HasKey(e => e.RoleId).HasName("PK__Role__8AFACE1A68E783BD");
+            entity.HasKey(e => e.RoleId).HasName("PK__Role__8AFACE1A629FC063");
 
             entity.ToTable("Role");
 
@@ -282,7 +285,7 @@ public partial class JewelryShopDbContext : DbContext
 
         modelBuilder.Entity<SaleOrder>(entity =>
         {
-            entity.HasKey(e => e.SaleOrderId).HasName("PK__SaleOrde__DB86E342A28066DC");
+            entity.HasKey(e => e.SaleOrderId).HasName("PK__SaleOrde__DB86E3428E4F9735");
 
             entity.ToTable("SaleOrder");
 
@@ -308,7 +311,7 @@ public partial class JewelryShopDbContext : DbContext
 
         modelBuilder.Entity<SaleOrderDetail>(entity =>
         {
-            entity.HasKey(e => e.SaleOrderDetailId).HasName("PK__SaleOrde__F6EA425AD7304DE4");
+            entity.HasKey(e => e.SaleOrderDetailId).HasName("PK__SaleOrde__F6EA425A59B300B3");
 
             entity.ToTable("SaleOrderDetail");
 
