@@ -13,6 +13,8 @@ public partial class Product
 
     public int? AmountInStock { get; set; }
 
+    public string? AvatarImg { get; set; }
+
     public virtual ICollection<BuyBackOrderDetail> BuyBackOrderDetails { get; set; } = new List<BuyBackOrderDetail>();
 
     public virtual ICollection<MaterialProduct> MaterialProducts { get; set; } = new List<MaterialProduct>();
