@@ -11,7 +11,7 @@ namespace DAL.Repositories
         bool Add(T entity);
         bool Update(T entity);
         ICollection<T> GetAll();
-        T GetById(string id);
+        T GetById(Guid id);
         bool Delete(T entity);
     }
 }
