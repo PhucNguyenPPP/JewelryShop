@@ -30,7 +30,7 @@ namespace DAL.Repositories
             return _dbSet.ToList();
         }
 
-        public T GetById(string id)
+        public T GetById(Guid id)
         {
             return _dbSet.Find(id);
         }

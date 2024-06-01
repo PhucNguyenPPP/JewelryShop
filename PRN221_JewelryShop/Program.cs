@@ -11,7 +11,13 @@ builder.Services.AddRazorPages();
 builder.Services.AddDbContext<JewelryShopDbContext>();
 builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<IGenericRepository<Product>, GenericRepository<Product>>();
-
+builder.Services.AddScoped<ICustomerService, CustomerService>();
+builder.Services.AddScoped<IGenericRepository<Customer>, GenericRepository<Customer>>();
+builder.Services.AddHttpClient<IGoldPriceService, GoldPriceService>()
+     .ConfigurePrimaryHttpMessageHandler(() => new HttpClientHandler
+     {
+         ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) => true
+     });
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -26,9 +32,8 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.UseRouting();
-
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapRazorPages();
-
 app.Run();
