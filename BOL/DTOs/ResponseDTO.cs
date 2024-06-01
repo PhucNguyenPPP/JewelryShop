@@ -8,5 +8,12 @@ namespace BOL.DTOs
 {
     public class ResponseDTO
     {
+        public string Message { get; set; }
+        public bool IsSuccess { get; set; }
+        public ResponseDTO(string message, bool isSuccess)
+        { 
+            Message = message;
+            IsSuccess = isSuccess;
+        }
     }
 }

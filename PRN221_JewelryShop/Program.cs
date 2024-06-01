@@ -11,6 +11,8 @@ builder.Services.AddRazorPages();
 builder.Services.AddDbContext<JewelryShopDbContext>();
 builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<IGenericRepository<Product>, GenericRepository<Product>>();
+builder.Services.AddScoped<ICustomerService, CustomerService>();
+builder.Services.AddScoped<IGenericRepository<Customer>, GenericRepository<Customer>>();
 
 var app = builder.Build();
 
