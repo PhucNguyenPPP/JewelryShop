@@ -21,6 +21,8 @@ public partial class Customer
 
     public string? AvatarImg { get; set; }
 
+    public bool? Status { get; set; }
+
     public Guid? EmployeeId { get; set; }
 
     public virtual ICollection<BuyBackOrder> BuyBackOrders { get; set; } = new List<BuyBackOrder>();

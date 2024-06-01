@@ -9,6 +9,8 @@ public partial class Counter
 
     public string? CounterName { get; set; }
 
+    public bool? Status { get; set; }
+
     public virtual ICollection<CounterEmployee> CounterEmployees { get; set; } = new List<CounterEmployee>();
 
     public virtual ICollection<ProductCounter> ProductCounters { get; set; } = new List<ProductCounter>();

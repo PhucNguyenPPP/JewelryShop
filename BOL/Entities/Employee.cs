@@ -23,6 +23,8 @@ public partial class Employee
 
     public string? AvatarImg { get; set; }
 
+    public bool? Status { get; set; }
+
     public Guid? RoleId { get; set; }
 
     public virtual ICollection<CounterEmployee> CounterEmployees { get; set; } = new List<CounterEmployee>();

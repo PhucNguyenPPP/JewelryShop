@@ -13,6 +13,8 @@ public partial class CounterEmployee
 
     public DateTime? WorkingDate { get; set; }
 
+    public bool? Status { get; set; }
+
     public virtual Counter? Counter { get; set; }
 
     public virtual Employee? Employee { get; set; }

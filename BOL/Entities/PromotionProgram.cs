@@ -13,5 +13,7 @@ public partial class PromotionProgram
 
     public DateTime? ExpiredDate { get; set; }
 
+    public bool? Status { get; set; }
+
     public virtual ICollection<PromotionProgramCode> PromotionProgramCodes { get; set; } = new List<PromotionProgramCode>();
 }

@@ -11,5 +11,7 @@ public partial class ReturnPolicy
 
     public string? PolicyDescription { get; set; }
 
+    public bool? Status { get; set; }
+
     public virtual ICollection<SaleOrder> SaleOrders { get; set; } = new List<SaleOrder>();
 }

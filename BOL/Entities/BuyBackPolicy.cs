@@ -11,6 +11,8 @@ public partial class BuyBackPolicy
 
     public string? PolicyDescription { get; set; }
 
+    public bool? Status { get; set; }
+
     public virtual ICollection<BuyBackOrderDetail> BuyBackOrderDetails { get; set; } = new List<BuyBackOrderDetail>();
 
     public virtual ICollection<BuyBackOrder> BuyBackOrders { get; set; } = new List<BuyBackOrder>();

@@ -11,6 +11,8 @@ public partial class ProductCounter
 
     public Guid? CounterId { get; set; }
 
+    public bool? Status { get; set; }
+
     public virtual Counter? Counter { get; set; }
 
     public virtual Product? Product { get; set; }

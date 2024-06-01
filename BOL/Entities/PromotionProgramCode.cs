@@ -11,6 +11,8 @@ public partial class PromotionProgramCode
 
     public double? DiscountPercentage { get; set; }
 
+    public bool? Status { get; set; }
+
     public Guid? PromotionProgramId { get; set; }
 
     public virtual PromotionProgram? PromotionProgram { get; set; }
