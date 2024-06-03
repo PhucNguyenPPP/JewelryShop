@@ -8,7 +8,17 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddRazorPages();
+builder.Services.AddSession();
 builder.Services.AddDbContext<JewelryShopDbContext>();
+
+builder.Services.AddDistributedMemoryCache();
+builder.Services.AddSession(options =>
+{
+	options.IdleTimeout = TimeSpan.FromMinutes(30);
+	options.Cookie.HttpOnly = true;
+	options.Cookie.IsEssential = true;
+});
+
 builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<IGenericRepository<Product>, GenericRepository<Product>>();
 builder.Services.AddScoped<ICustomerService, CustomerService>();
@@ -18,6 +28,9 @@ builder.Services.AddHttpClient<IGoldPriceService, GoldPriceService>()
      {
          ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) => true
      });
+builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<IGenericRepository<Employee>, GenericRepository<Employee>>();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -36,4 +49,9 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapRazorPages();
+app.MapGet("/", async (HttpContext context) =>
+{
+	context.Response.Redirect("/Login");
+});
+app.UseSession();
 app.Run();

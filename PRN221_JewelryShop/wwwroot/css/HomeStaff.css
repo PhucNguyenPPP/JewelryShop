@@ -1,0 +1,18 @@
+﻿body {
+}
+
+.header {
+    color: white;
+    background-color: #afc76e;
+    padding: 6px 0;
+    margin-bottom: 30px;
+}
+
+.header h1 {
+    margin-left: 5%;
+    color: white;
+}
+
+.content {
+    text-align: center;
+}

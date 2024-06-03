@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -39,12 +40,12 @@ namespace DAL.Repositories
             _dbSet.RemoveRange(entities);
         }
 
-        public ICollection<T> GetAll()
-        {
-            return _dbSet.ToList();
-        }
+		public IQueryable<T> GetAll(Expression<Func<T, bool>> expression)
+		{
+			return _dbSet.Where(expression).AsQueryable();
+		}
 
-        public T GetById(Guid id)
+		public T GetById(Guid id)
         {
             return _dbSet.Find(id);
         }

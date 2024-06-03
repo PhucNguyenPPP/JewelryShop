@@ -20,7 +20,7 @@ namespace BLL.Services
 
         public List<Product> GetProductList()
         {
-            return _productRepo.GetAll().ToList();
+            return _productRepo.GetAll(p => true).ToList();
         }
     }
 }

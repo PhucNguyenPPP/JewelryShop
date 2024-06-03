@@ -1,0 +1,22 @@
+﻿@page
+@model PRN221_JewelryShop.Pages.Staff.CustomerManagementModel
+@{
+    Layout = "_LayoutStaff";
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<link rel="stylesheet" href="~/css/HomeStaff.css">
+</head>
+<body>
+    <p>@Model.msg</p>
+    <form method="post">
+        <input type="text" asp-for="customer.CustomerName" />
+        <input type="text" asp-for="customer.Address" />
+        <input type="email" asp-for="customer.Email" />
+        <button type="submit"> Submit</button>
+    </form>
+</body>
+</html>
