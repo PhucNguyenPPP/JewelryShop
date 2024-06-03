@@ -193,15 +193,14 @@ namespace BLL.Services
 
         public List<Customer> GetAllCustomers()
         {
-            return _customerRepo.GetAll().Where(c => c.Status == true).ToList();
+            return _customerRepo.GetAll(c => c.Status == true).ToList();
         }
 
         public List<Customer> SearchCustomers(string searchValue)
         {
-            return _customerRepo.GetAll()
-                .Where(c => (c.CustomerName.ToLower().Contains(searchValue.ToLower())
-                || c.Email.ToLower().Contains(searchValue.ToLower())
-                || c.PhoneNumber.Contains(searchValue)))
+            return _customerRepo.GetAll(c => (c.CustomerName.ToLower().Contains(searchValue.ToLower())
+				|| c.Email.ToLower().Contains(searchValue.ToLower())
+				|| c.PhoneNumber.Contains(searchValue)))
                 .ToList();
         }
 
