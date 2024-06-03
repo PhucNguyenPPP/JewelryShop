@@ -18,11 +18,25 @@ namespace DAL.Repositories
             _context = context;
             _dbSet = context.Set<T>();
         }
-        public bool Add(T entity)
+
+        public void Add(T entity)
         {
             _dbSet.Add(entity);
-            var result = _context.SaveChanges();
-            return result > 0;
+        }
+
+        public void AddRange(List<T> entities)
+        {
+            _dbSet.AddRange(entities);
+        }
+
+        public void Delete(T entity)
+        {
+            _dbSet.Remove(entity);
+        }
+
+        public void DeleteRange(List<T> entities)
+        {
+            _dbSet.RemoveRange(entities);
         }
 
         public ICollection<T> GetAll()
@@ -35,17 +49,19 @@ namespace DAL.Repositories
             return _dbSet.Find(id);
         }
 
-        public bool Update(T entity)
+        public bool SaveChange()
+        {
+            return _context.SaveChanges() > 0;
+        }
+
+        public void Update(T entity)
         {
             _dbSet.Update(entity);
-            var result = _context.SaveChanges();
-            return result > 0;
         }
-        public bool Delete(T entity)
+
+        public void UpdateRange(List<T> entities)
         {
-            _dbSet.Remove(entity);
-            var result = _context.SaveChanges();
-            return result > 0;
+            _dbSet.UpdateRange(entities);
         }
     }
 }
