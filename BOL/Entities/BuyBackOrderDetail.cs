@@ -13,7 +13,7 @@ public partial class BuyBackOrderDetail
 
     public Guid? ProductId { get; set; }
 
-    public double? Bbprice { get; set; }
+    public decimal? Bbprice { get; set; }
 
     public virtual BuyBackOrder? Bbo { get; set; }
 

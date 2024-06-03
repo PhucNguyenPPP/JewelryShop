@@ -38,7 +38,8 @@ namespace BLL.Services
                 Status = true,
                 EmployeeId = Guid.Parse(employeeId)
             };
-            var result = _customerRepo.Add(newCustomer);
+            _customerRepo.Add(newCustomer);
+            var result = _customerRepo.SaveChange();
             return result;
         }
 
@@ -184,8 +185,9 @@ namespace BLL.Services
                 return false;
             }
             customer.Status = false;
-            var result = _customerRepo.Update(customer);
 
+            _customerRepo.Delete(customer);
+            var result = _customerRepo.SaveChange();
             return result;
         }
 
@@ -218,7 +220,9 @@ namespace BLL.Services
             customer.Email = email;
             customer.Dob = DateTime.Parse(Dob);
             customer.AvatarImg = avatarImg;
-            var result = _customerRepo.Update(customer);
+
+            _customerRepo.Update(customer);
+            var result = _customerRepo.SaveChange();
             return result;
         }
     }

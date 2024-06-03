@@ -8,10 +8,15 @@ namespace DAL.Repositories
 {
     public interface IGenericRepository<T> where T : class
     {
-        bool Add(T entity);
-        bool Update(T entity);
+        void Add(T entity);
+        void Update(T entity);
         ICollection<T> GetAll();
         T GetById(Guid id);
-        bool Delete(T entity);
+        void Delete(T entity);
+        void AddRange (List<T> entities);
+        void UpdateRange (List<T> entities);
+        void DeleteRange(List<T> entities);
+        bool SaveChange();
+
     }
 }
