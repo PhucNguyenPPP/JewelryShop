@@ -15,7 +15,7 @@ public partial class SaleOrderDetail
 
     public DateTime? ReturnDate { get; set; }
 
-    public double? ReturnPrice { get; set; }
+    public decimal? ReturnPrice { get; set; }
 
     public virtual Product? Product { get; set; }
 

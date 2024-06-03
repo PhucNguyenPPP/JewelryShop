@@ -9,19 +9,21 @@ public partial class Product
 
     public string? ProductName { get; set; }
 
-    public double? Price { get; set; }
+    public decimal? Price { get; set; }
 
     public int? AmountInStock { get; set; }
 
     public string? AvatarImg { get; set; }
 
+    public Guid? CounterId { get; set; }
+
     public bool? Status { get; set; }
 
     public virtual ICollection<BuyBackOrderDetail> BuyBackOrderDetails { get; set; } = new List<BuyBackOrderDetail>();
 
-    public virtual ICollection<MaterialProduct> MaterialProducts { get; set; } = new List<MaterialProduct>();
+    public virtual Counter? Counter { get; set; }
 
-    public virtual ICollection<ProductCounter> ProductCounters { get; set; } = new List<ProductCounter>();
+    public virtual ICollection<MaterialProduct> MaterialProducts { get; set; } = new List<MaterialProduct>();
 
     public virtual ICollection<SaleOrderDetail> SaleOrderDetails { get; set; } = new List<SaleOrderDetail>();
 }

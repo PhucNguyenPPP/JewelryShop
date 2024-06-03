@@ -7,7 +7,7 @@ public partial class BuyBackOrder
 {
     public Guid Bboid { get; set; }
 
-    public double? TotalPrice { get; set; }
+    public decimal? TotalPrice { get; set; }
 
     public DateTime? CreatedDate { get; set; }
 

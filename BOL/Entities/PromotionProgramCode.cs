@@ -9,7 +9,7 @@ public partial class PromotionProgramCode
 
     public string? PromotionCodeName { get; set; }
 
-    public double? DiscountPercentage { get; set; }
+    public decimal? DiscountPercentage { get; set; }
 
     public bool? Status { get; set; }
 

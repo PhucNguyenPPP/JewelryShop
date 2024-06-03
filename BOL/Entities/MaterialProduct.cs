@@ -7,7 +7,7 @@ public partial class MaterialProduct
 {
     public Guid MaterialProductId { get; set; }
 
-    public double? MaterialSize { get; set; }
+    public decimal? MaterialSize { get; set; }
 
     public Guid? MaterialId { get; set; }
 

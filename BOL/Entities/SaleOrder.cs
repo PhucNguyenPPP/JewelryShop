@@ -7,9 +7,9 @@ public partial class SaleOrder
 {
     public Guid SaleOrderId { get; set; }
 
-    public double? TotalPrice { get; set; }
+    public decimal? TotalPrice { get; set; }
 
-    public double? FinalPrice { get; set; }
+    public decimal? FinalPrice { get; set; }
 
     public DateTime? CreatedDate { get; set; }
 

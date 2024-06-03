@@ -13,5 +13,5 @@ public partial class Counter
 
     public virtual ICollection<CounterEmployee> CounterEmployees { get; set; } = new List<CounterEmployee>();
 
-    public virtual ICollection<ProductCounter> ProductCounters { get; set; } = new List<ProductCounter>();
+    public virtual ICollection<Product> Products { get; set; } = new List<Product>();
 }
