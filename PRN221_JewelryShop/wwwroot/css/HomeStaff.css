@@ -1,17 +1,19 @@
 ﻿body {
+    color: black;
 }
 
 .header {
     color: white;
-    background-color: #afc76e;
+    background-color: #2D3748;
     padding: 6px 0;
     margin-bottom: 30px;
 }
 
-.header h1 {
-    margin-left: 5%;
-    color: white;
-}
+    .header h1 {
+        margin-left: 5%;
+        color: white;
+    }
+/*end header*/
 
 .content {
     text-align: center;

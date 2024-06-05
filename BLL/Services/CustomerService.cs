@@ -2,6 +2,7 @@
 using BOL.DTOs;
 using BOL.Entities;
 using DAL.Repositories;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.Generic;
@@ -53,7 +54,7 @@ namespace BLL.Services
             }
 
             Regex nameRegex = new Regex("^[A-Za-z]+$");
-            if (!nameRegex.IsMatch(customerName) || customerName.Length < 5)
+            if (nameRegex.IsMatch(customerName) || customerName.Length < 5)
             {
                 return new ResponseDTO("Customer Name is not valid", false);
             }
@@ -193,7 +194,17 @@ namespace BLL.Services
 
         public List<Customer> GetAllCustomers()
         {
-            return _customerRepo.GetAll(c => c.Status == true).ToList();
+            return _customerRepo.GetAll(c => c.Status == true).Include(c => c.Employee).ToList();
+        }
+
+        public Customer GetCustomer(Guid customerID)
+        {
+            var customer = _customerRepo.GetAll(c => c.Status == true && c.CustomerId == customerID).Include(c => c.Employee).FirstOrDefault();
+            if (customer != null)
+            {
+                return customer;
+            }
+            return new Customer();
         }
 
         public List<Customer> SearchCustomers(string searchValue)
@@ -201,6 +212,7 @@ namespace BLL.Services
             return _customerRepo.GetAll(c => (c.CustomerName.ToLower().Contains(searchValue.ToLower())
 				|| c.Email.ToLower().Contains(searchValue.ToLower())
 				|| c.PhoneNumber.Contains(searchValue)))
+                .Include(c => c.Employee)
                 .ToList();
         }
 
