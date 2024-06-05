@@ -1,0 +1,59 @@
+﻿@page
+@model PRN221_JewelryShop.Pages.Staff.UpdateCustomerModel
+@{
+    Layout = "_LayoutStaff";
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="~/css/UpdateCustomer.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+</head>
+<body>
+    <div class="header">
+        <h1>Update Customer</h1>
+    </div>
+
+    <div class="content">
+            <form>
+            <div class="update-form">
+                <div class="avatar">
+                    <img src="data:image/png;base64,@(@Model.Customer.AvatarImg)" />
+                    <div class="input-field">
+                        <p><i class="fa-solid fa-image"></i>Update Avatar:</p>
+                        <input type="file" id="avatar" asp-for="CustomerAvatar" required>
+                    </div>
+                </div>
+                <div class="column1">
+                    <div class="input-field">
+                        <label for="customerName"><i class="fa-solid fa-user"></i>Customer Name:</label>
+                        <input type="text" id="customerName" asp-for="CreateCustomerResquestDTO.CustomerName" value="@Model.Customer.CustomerName" required>
+                    </div>
+
+                    <div class="input-field">
+                        <label for="phone"><i class="fa-solid fa-phone"></i>Phone:</label>
+                        <input type="tel" id="phone" asp-for="CreateCustomerResquestDTO.Phone" value="@Model.Customer.PhoneNumber" required>
+                    </div>
+                    <div class="input-field">
+                        <label for="email"><i class="fa-solid fa-envelope"></i>Email:</label>
+                        <input type="email" id="email" asp-for="CreateCustomerResquestDTO.Email" value="@Model.Customer.Email" required>
+                    </div>
+                </div>
+                <div class="column2">
+                    <div class="input-field">
+                        <label for="address"><i class="fa-solid fa-location-pin"></i>Address:</label>
+                        <input type="text" id="address" asp-for="CreateCustomerResquestDTO.Address" value="@Model.Customer.Address" required>
+                    </div>
+                    <div class="input-field">
+                        <label for="birthdate"><i class="fa-solid fa-cake-candles"></i>Birthdate:</label>
+                        <input type="date" id="birthdate" asp-for="CreateCustomerResquestDTO.Birthdate" value="@Model.Customer.Dob" required>
+                    </div>
+                </div>
+            </div>
+            </form>
+
+    </div>
+</body>
+</html>

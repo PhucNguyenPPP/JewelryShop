@@ -7,16 +7,141 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-	<meta charset="UTF-8">
-	<link rel="stylesheet" href="~/css/HomeStaff.css">
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="~/css/CustomerManagement.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 </head>
 <body>
-    <p>@Model.msg</p>
-    <form method="post">
-        <input type="text" asp-for="customer.CustomerName" />
-        <input type="text" asp-for="customer.Address" />
-        <input type="email" asp-for="customer.Email" />
-        <button type="submit"> Submit</button>
-    </form>
+    <div class="header">
+        <h1>Customer Management</h1>
+    </div>
+    <div class="content">
+        <div>
+            <button class="btn-add" onclick="openPopUpCreate()"><i class="fa-solid fa-circle-plus"></i>Add Customer</button>
+        </div>
+        <p class="notification-msg">@Model.NotificationMessage</p>
+        <table>
+            <thead>
+                <tr>
+                    <th class="th-ava">Avatar</th>
+                    <th class="th-cusName">Customer Name</th>
+                    <th class="th-phone">Phone</th>
+                    <th class="th-address">Address</th>
+                    <th class="th-email">Email</th>
+                    <th class="th-birthday">Birthday</th>
+                    <th class="th-registeredDate">Registerd Date</th>
+                    <th class="th-CreatedBy">Created By</th>
+                    <th class="th-option"></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var customer in Model.CustomerList)
+                {
+                    <tr>
+                        <th><img src="data:image/png;base64,@(customer.AvatarImg)" /></th>
+                        <th>@customer.CustomerName</th>
+                        <th>@customer.PhoneNumber</th>
+                        <th>@customer.Address</th>
+                        <th>@customer.Email</th>
+                        <th>@customer.Dob?.ToString("yyyy/MM/dd")</th>
+                        <th>@customer.RegistrationDate?.ToString("yyyy/MM/dd")</th>
+                        <th>@customer.Employee.EmployeeName</th>
+                        <th>
+                            <div class="dropdown">
+                                <i class="fa-solid fa-ellipsis" onclick="toggleDropdown(this)"></i>
+                                <div class="dropdown-content">
+                                    <a class="option-update" asp-page="/Staff/UpdateCustomer" asp-route-id="@customer.CustomerId"><i class="fa-solid fa-pen"></i>Edit</a>
+                                    <a class="option-delete"><i class="fa-solid fa-trash"></i>Delete</a>
+                                </div>
+                            </div>
+                        </th>
+                    </tr>
+                }
+            </tbody>
+        </table>
+        <div id="popup-create" class="modal-create">
+            <div class="modal-content">
+                <div class="header-popup">
+                    <h2>Add New Customer</h2>
+                    <i class="fa-solid fa-xmark close" onclick="closePopUpCreate()"></i>
+                </div>
+                <!-- Add form content here -->
+                <form method="post" id="createCustomerForm" enctype="multipart/form-data" asp-page-handler="CreateCustomer">
+                    <div class="form-create">
+                        <div class="input-field">
+                            <label for="customerName"><i class="fa-solid fa-user"></i>Customer Name:</label>
+                            <input type="text" id="customerName" asp-for="CreateCustomerResquestDTO.CustomerName" required>
+                        </div>
+
+                        <div class="input-field">
+                            <label for="phone"><i class="fa-solid fa-phone"></i>Phone:</label>
+                            <input type="tel" id="phone" asp-for="CreateCustomerResquestDTO.Phone" required>
+                        </div>
+                        <div class="input-field">
+                            <label for="email"><i class="fa-solid fa-envelope"></i>Email:</label>
+                            <input type="email" id="email" asp-for="CreateCustomerResquestDTO.Email" required>
+                        </div>
+                        <div class="input-field">
+                            <label for="address"><i class="fa-solid fa-location-pin"></i>Address:</label>
+                            <input type="text" id="address" asp-for="CreateCustomerResquestDTO.Address" required>
+                        </div>
+                        <div class="input-field">
+                            <label for="birthdate"><i class="fa-solid fa-cake-candles"></i>Birthdate:</label>
+                            <input type="date" id="birthdate" asp-for="CreateCustomerResquestDTO.Birthdate" required>
+                        </div>
+                        <div class="input-field">
+                            <label for="avatar"><i class="fa-solid fa-image"></i>Avatar:</label>
+                            <input type="file" id="avatar" asp-for="CustomerAvatar" required>
+                        </div>
+                        <div class="input-field">
+                            <p class="error-msg">@Model.ErrorMsgCreateCustomer</p>
+                        </div>
+                    </div>
+
+                    <button class="btn-create-popup" type="submit">Add</button>
+                </form>
+            </div>
+        </div>
+
+        
+    </div>
+
+
+    <script>
+        function toggleDropdown(element) {
+            var dropdown = element.nextElementSibling;
+            dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
+        }
+
+        window.onclick = function (event) {
+            if (!event.target.matches('.fa-ellipsis')) {
+                var dropdowns = document.getElementsByClassName("dropdown-content");
+                for (var i = 0; i < dropdowns.length; i++) {
+                    var openDropdown = dropdowns[i];
+                    if (openDropdown.style.display === 'block') {
+                        openDropdown.style.display = 'none';
+                    }
+                }
+            }
+            if (event.target == document.getElementById("popup-create")) {
+                closePopUpCreate()
+            }
+        }
+
+        function openPopUpCreate() {
+            document.getElementById("popup-create").style.display = "block";
+        }
+
+        function closePopUpCreate() {
+            document.getElementById("popup-create").style.display = "none";
+        }
+
+        document.addEventListener('DOMContentLoaded', (event) => {
+        @if (Model.ErrorMsgCreateCustomer != null)
+        {
+            @:document.getElementById("popup-create").style.display = "block";
+        }
+                                });
+    </script>
 </body>
 </html>

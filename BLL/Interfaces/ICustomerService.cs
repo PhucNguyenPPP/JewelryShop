@@ -16,5 +16,6 @@ namespace BLL.Interfaces
         bool UpdateCustomer(string customerId, string customerName, string phoneNumber, string address,
             string email, string Dob, string avatarImg);
         bool DeleteCustomer(string customerId);
+        Customer GetCustomer(Guid customerID);
     }
 }

@@ -30,6 +30,7 @@ builder.Services.AddHttpClient<IGoldPriceService, GoldPriceService>()
      });
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IGenericRepository<Employee>, GenericRepository<Employee>>();
+builder.Services.AddScoped<IImageService, ImageService>();
 
 var app = builder.Build();
 
