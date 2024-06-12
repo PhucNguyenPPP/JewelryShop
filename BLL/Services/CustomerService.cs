@@ -1,9 +1,10 @@
-﻿using BLL.Interfaces;
-using BOL.DTOs;
-using BOL.Entities;
-using DAL.Repositories;
+﻿using AutoMapper;
+using BLL.Interfaces;
+using BOL;
+using DTO;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Repositories.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,191 +16,82 @@ namespace BLL.Services
 {
     public class CustomerService : ICustomerService
     {
-        private readonly IGenericRepository<Customer> _customerRepo;
+        private readonly ICustomerRepository _customerRepo;
+        private readonly IMapper _mapper;
 
-        public CustomerService(IGenericRepository<Customer> customerRepo)
+        public CustomerService(ICustomerRepository customerRepo, IMapper mapper)
         {
             _customerRepo = customerRepo;
+            _mapper = mapper;
         }
 
-        public bool AddCustomer(string customerName, string phoneNumber, string address, string email,
-            string Dob, string avatarImg, string employeeId)
+        public bool AddCustomer(CustomerResquestDTO dto)
         {
-            DateTime.TryParse(Dob, out DateTime parseDob);
+            DateTime.TryParse(dto.Dob, out DateTime parseDob);
             Customer newCustomer = new Customer()
             {
                 CustomerId = Guid.NewGuid(),
-                CustomerName = customerName,
-                PhoneNumber = phoneNumber,
-                Address = address,
-                Email = email,
+                CustomerName = dto.CustomerName,
+                PhoneNumber = dto.PhoneNumber,
+                Address = dto.Address,
+                Email = dto.Email,
                 Dob = parseDob,
                 RegistrationDate = DateTime.Now,
-                AvatarImg = avatarImg,
+                AvatarImg = dto.AvatarImg,
                 Status = true,
-                EmployeeId = Guid.Parse(employeeId)
+                EmployeeId = Guid.Parse(dto.EmployeeId)
             };
-            _customerRepo.Add(newCustomer);
+            _customerRepo.AddCustomer(newCustomer);
             var result = _customerRepo.SaveChange();
             return result;
         }
 
-        public ResponseDTO CheckValidationCustomer(string customerName, string phoneNumber,
-            string address, string email, string Dob)
+        public bool CheckEmailAlreadyExists(string email)
         {
-            var customerList = GetAllCustomers();
-            if (customerName.IsNullOrEmpty())
+            var customerList = _customerRepo.GetAllCustomers().ToList();
+            var result = customerList.Any(x => x.Email == email);
+            if(result)
             {
-                return new ResponseDTO("Please input Customer Name", false);
+                return true;
             }
-
-            Regex nameRegex = new Regex("^[A-Za-z]+$");
-            if (nameRegex.IsMatch(customerName) || customerName.Length < 5)
-            {
-                return new ResponseDTO("Customer Name is not valid", false);
-            }
-
-            if (phoneNumber.IsNullOrEmpty())
-            {
-                return new ResponseDTO("Please input Phone Number", false);
-            }
-
-            Regex phoneRegex = new Regex(@"^0");
-            if (!phoneRegex.IsMatch(phoneNumber) || phoneNumber.Length != 10)
-            {
-                return new ResponseDTO("Phone Number is not valid", false);
-            }
-
-            if (customerList.Any(c => c.PhoneNumber == phoneNumber))
-            {
-                return new ResponseDTO("Phone Number already exists", false);
-            }
-
-            if (address.IsNullOrEmpty())
-            {
-                return new ResponseDTO("Please input address", false);
-            }
-
-            if (address.Length < 10)
-            {
-                return new ResponseDTO("Address must have at least 10 characters", false);
-            }
-
-            if (email.IsNullOrEmpty())
-            {
-                return new ResponseDTO("Please input email", false);
-            }
-
-            Regex emailRegex = new Regex(@"^[a-zA-Z0-9_.+-]+@gmail\.com$");
-            if (!emailRegex.IsMatch(email))
-            {
-                return new ResponseDTO("Email is not valid", false);
-            }
-
-            if (customerList.Any(c => c.Email == email))
-            {
-                return new ResponseDTO("Email already exists", false);
-            }
-
-            if (Dob.IsNullOrEmpty())
-            {
-                return new ResponseDTO("Please input date of birth", false);
-            }
-            return new ResponseDTO("Check Validation Successfully", true);
+            return false;
         }
 
-        public ResponseDTO CheckValidationUpdateCustomer(string customerId, string customerName, string phoneNumber, string address, string email, string Dob)
+        public bool CheckPhoneAlreadyExists(string phoneNumber)
         {
-            var customerList = GetAllCustomers();
-            var currentCustomer = _customerRepo.GetById(Guid.Parse(customerId));
-            if (customerName.IsNullOrEmpty())
+            var customerList = _customerRepo.GetAllCustomers().ToList();
+            var result = customerList.Any(x => x.PhoneNumber == phoneNumber);
+            if (result)
             {
-                return new ResponseDTO("Please input Customer Name", false);
+                return true;
             }
-
-            Regex nameRegex = new Regex("^[A-Za-z]+$");
-            if (!nameRegex.IsMatch(customerName) || customerName.Length < 5)
-            {
-                return new ResponseDTO("Customer Name is not valid", false);
-            }
-
-            if (phoneNumber.IsNullOrEmpty())
-            {
-                return new ResponseDTO("Please input Phone Number", false);
-            }
-
-            Regex phoneRegex = new Regex(@"^0");
-            if (!phoneRegex.IsMatch(phoneNumber) || phoneNumber.Length != 10)
-            {
-                return new ResponseDTO("Phone Number is not valid", false);
-            }
-
-            if (customerList.Any(c => c.PhoneNumber == phoneNumber))
-            {
-                if(currentCustomer.PhoneNumber != phoneNumber)
-                {
-                    return new ResponseDTO("Phone Number already exists", false);
-                }
-            }
-
-            if (address.IsNullOrEmpty())
-            {
-                return new ResponseDTO("Please input address", false);
-            }
-
-            if (address.Length < 10)
-            {
-                return new ResponseDTO("Address must have at least 10 characters", false);
-            }
-
-            if (email.IsNullOrEmpty())
-            {
-                return new ResponseDTO("Please input email", false);
-            }
-
-            Regex emailRegex = new Regex(@"^[a-zA-Z0-9_.+-]+@gmail\.com$");
-            if (!emailRegex.IsMatch(email))
-            {
-                return new ResponseDTO("Email is not valid", false);
-            }
-
-            if (customerList.Any(c => c.Email == email))
-            {
-                if(currentCustomer.Email != email)
-                {
-                    return new ResponseDTO("Email already exists", false);
-                }
-            }
-
-            if (Dob.IsNullOrEmpty())
-            {
-                return new ResponseDTO("Please input date of birth", false);
-            }
-            return new ResponseDTO("Check Validation Successfully", true);
+            return false;
         }
 
         public bool DeleteCustomer(string customerId)
         {
-            var customer = _customerRepo.GetById(Guid.Parse(customerId));
+            var customerList = _customerRepo.GetAllCustomers().ToList();
+            var customer = customerList.FirstOrDefault(c => c.CustomerId == Guid.Parse(customerId));
             if (customer == null)
             {
                 return false;
             }
             customer.Status = false;
 
-            _customerRepo.Delete(customer);
+            _customerRepo.UpdateCustomer(customer);
             var result = _customerRepo.SaveChange();
             return result;
         }
 
         public List<Customer> GetAllCustomers()
         {
-            return _customerRepo.GetAll(c => c.Status == true).Include(c => c.Employee).ToList();
+            return _customerRepo.GetAllCustomers().OrderByDescending(c => c.RegistrationDate).ToList();
         }
 
-        public Customer GetCustomer(Guid customerID)
+        public Customer GetCustomer(string customerID)
         {
-            var customer = _customerRepo.GetAll(c => c.Status == true && c.CustomerId == customerID).Include(c => c.Employee).FirstOrDefault();
+            Guid.TryParse(customerID, out Guid parseCustomerId);
+            var customer = _customerRepo.GetById(parseCustomerId);
             if (customer != null)
             {
                 return customer;
@@ -207,32 +99,35 @@ namespace BLL.Services
             return new Customer();
         }
 
+
         public List<Customer> SearchCustomers(string searchValue)
         {
-            return _customerRepo.GetAll(c => (c.CustomerName.ToLower().Contains(searchValue.ToLower())
-				|| c.Email.ToLower().Contains(searchValue.ToLower())
-				|| c.PhoneNumber.Contains(searchValue)))
-                .Include(c => c.Employee)
-                .ToList();
+            var customerList = _customerRepo.GetAllCustomers().ToList();
+
+            return customerList.Where(c => (c.CustomerName.ToLower().Contains(searchValue.ToLower())
+                || c.Email.ToLower().Contains(searchValue.ToLower())
+                || c.PhoneNumber.Contains(searchValue))).ToList();
         }
 
-        public bool UpdateCustomer(string customerId, string customerName, string phoneNumber, string address, 
-            string email, string Dob, string avatarImg)
+        public bool UpdateCustomer(CustomerResquestDTO dto)
         {
-            var customer = _customerRepo.GetById(Guid.Parse(customerId));
-            if(customer == null)
+            Guid.TryParse(dto.CustomerId, out Guid parseCustomerId);
+            var customer = _customerRepo.GetById(parseCustomerId);
+            if (customer == null)
             {
                 return false;
             }
-            customer.CustomerName = customerName;
-            customer.Email = email;
-            customer.PhoneNumber = phoneNumber;
-            customer.Address = address;
-            customer.Email = email;
-            customer.Dob = DateTime.Parse(Dob);
-            customer.AvatarImg = avatarImg;
+            if(!dto.AvatarImg.IsNullOrEmpty())
+            {
+                customer.AvatarImg = dto.AvatarImg;
+            }
+            customer.CustomerName = dto.CustomerName;
+            customer.Email = dto.Email;
+            customer.PhoneNumber =dto.PhoneNumber;
+            customer.Address = dto.Address;
+            customer.Dob = DateTime.Parse(dto.Dob);
 
-            _customerRepo.Update(customer);
+            _customerRepo.UpdateCustomer(customer);
             var result = _customerRepo.SaveChange();
             return result;
         }

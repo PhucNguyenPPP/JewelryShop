@@ -1,5 +1,5 @@
-﻿using BOL.DTOs;
-using BOL.Entities;
+﻿using BOL;
+using DTO;
 
 namespace BLL.Interfaces
 {
@@ -7,15 +7,11 @@ namespace BLL.Interfaces
     {
         List<Customer> GetAllCustomers();
         List<Customer> SearchCustomers(string searchValue);
-        ResponseDTO CheckValidationCustomer(string customerName, string phoneNumber, string address,
-            string email, string Dob);
-        ResponseDTO CheckValidationUpdateCustomer(string customerId, string customerName, string phoneNumber, string address,
-           string email, string Dob);
-        bool AddCustomer(string customerName, string phoneNumber, string address,
-            string email, string Dob, string avatarImg, string employeeId);
-        bool UpdateCustomer(string customerId, string customerName, string phoneNumber, string address,
-            string email, string Dob, string avatarImg);
+        bool AddCustomer(CustomerResquestDTO dto);
+        bool UpdateCustomer(CustomerResquestDTO dto);
         bool DeleteCustomer(string customerId);
-        Customer GetCustomer(Guid customerID);
+        Customer GetCustomer(string customerID);
+        bool CheckPhoneAlreadyExists(string phoneNumber);
+        bool CheckEmailAlreadyExists(string email);
     }
 }

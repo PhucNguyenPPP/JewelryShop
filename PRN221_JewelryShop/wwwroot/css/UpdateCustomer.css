@@ -61,3 +61,19 @@
         width: 40%;
         padding: 5px 0;
     }
+        .update-form .input-field p {
+            margin-left: 41%;
+        }
+
+        .update-form .btn-update {
+            background-color: #2D3748;
+            color: white;
+            padding: 5px 20px;
+            margin-left: 60%
+        }
+
+.update-form .update-msg {
+    color: green;
+    margin-left: 35%;
+    margin-top: 10px;
+}

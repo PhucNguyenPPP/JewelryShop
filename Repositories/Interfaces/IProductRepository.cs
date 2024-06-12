@@ -1,13 +1,12 @@
-﻿using BOL;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BLL.Interfaces
+namespace Repositories.Interfaces
 {
-    public interface IProductService
+    public interface IProductRepository
     {
     }
 }

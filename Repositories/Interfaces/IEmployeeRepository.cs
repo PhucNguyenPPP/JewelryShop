@@ -5,9 +5,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BLL.Interfaces
+namespace Repositories.Interfaces
 {
-    public interface IProductService
+    public interface IEmployeeRepository
     {
+        List<Employee> GetAllEmployees();
     }
 }
