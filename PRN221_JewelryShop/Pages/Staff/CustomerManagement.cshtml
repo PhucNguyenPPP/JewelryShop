@@ -1,0 +1,321 @@
+﻿@page "{handler?}"
+@model PRN221_JewelryShop.Pages.Staff.CustomerManagementModel
+@{
+    Layout = "_LayoutStaff";
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Customer Management</title>
+    <link rel="stylesheet" href="~/css/CustomerManagementStyle.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+</head>
+<body>
+    <div class="header">
+        <h1>Customer Management</h1>
+    </div>
+    <div class="content">
+        <div class="action-container">
+            <div class="search-container">
+                <form method="get" class="form-inline mb-3" asp-page-handler="SearchCustomer">
+                    <input type="text" class="form-control mr-2 w-50" asp-for="@Model.SearchValue" placeholder="Search by Account Name" />
+                    <input type="hidden" name="SearchValue" value="@Model.SearchValue" />
+                    <button type="submit" class="btn btn-outline-primary">Search</button>
+                </form>
+            </div>
+            <div class="add-new-container">
+                <button class="add-new-button" type="button" onclick="openCreateModal()"><i class="fa-solid fa-circle-plus"></i> Add New</button>
+            </div>
+        </div>
+        <h5 class="noti-msg">@TempData["CreateMsg"]</h5>
+        <h5 class="noti-msg">@TempData["SearchMsg"]</h5>
+        <h5 class="noti-msg">@TempData["UpdateMsg"]</h5>
+        <h5 class="noti-msg">@TempData["DeleteMsg"]</h5>
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Avatar Image</th>
+                        <th>Customer Name</th>
+                        <th>Phone Number</th>
+                        <th>Address</th>
+                        <th>Email</th>
+                        <th>Date of Birth</th>
+                        <th>Registration Date</th>
+                        <th>Employee ID</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model.CustomerList != null)
+                    {
+                        @foreach (var customer in Model.CustomerList)
+
+                        {
+                            <tr id="customer-@customer.CustomerId"
+                                data-id="@customer.CustomerId"
+                                data-avatar="@customer.AvatarImg"
+                                data-name="@customer.CustomerName"
+                                data-email="@customer.Email"
+                                data-phone="@customer.PhoneNumber"
+                                data-address="@customer.Address"
+                                data-dob="@customer.Dob?.ToString("yyyy-MM-dd")">
+
+                                <td><img src="data:image/png;base64,@(customer.AvatarImg)" /></td>
+                                <td>@customer.CustomerName</td>
+                                <td>@customer.PhoneNumber</td>
+                                <td>@customer.Address</td>
+                                <td>@customer.Email</td>
+                                <td>@customer.Dob?.ToString("yyyy/MM/dd")</td>
+                                <td>@customer.RegistrationDate?.ToString("yyyy/MM/dd")</td>
+                                <td>@customer.Employee?.EmployeeName</td>
+
+                                <td>
+                                    <div class="dropdown">
+                                        <span class="dropdown-icon"><i class="fa-solid fa-ellipsis"></i></span>
+                                        <div class="dropdown-content">
+                                            <button class="edit-button" type="button" onclick="openUpdateModal('@customer.CustomerId')"><i class="fa-solid fa-pen-to-square"></i>Update</button>
+                                            <button class="delete-button" type="button" onclick="openDeleteConfirmation('@customer.CustomerId')"><i class="fa-solid fa-trash"></i>Delete</button>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+        <div class="pagination">
+            <form method="get" asp-page-handler="Paging">
+
+                <input type="hidden" asp-for="@Model.CurrentPage" value="@(Model.CurrentPage -1)" />
+                <input type="hidden" name="SearchValue" value="@Model.SearchValue" />
+                <button type="submit" class="btn btn-outline-primary" @(Model.CurrentPage <= 1 ? "disabled" : "")>Previous</button>
+            </form>
+            <form method="get" asp-page-handler="Paging">
+                <input type="hidden" asp-for="@Model.CurrentPage" value="@(Model.CurrentPage + 1)" />
+                <input type="hidden" name="SearchValue" value="@Model.SearchValue" />
+                <button type="submit" class="btn btn-outline-primary" @(Model.CurrentPage == Model.TotalPages ? "disabled" : "")>Next</button>
+            </form>
+            <span>Page @Model.CurrentPage of @Model.TotalPages</span>
+        </div>
+    </div>
+  
+
+    <!-- Create Modal -->
+    <div class="modal" id="createModal" tabindex="-1" role="dialog" aria-labelledby="createModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2 class="modal-title" id="createModalLabel">Add New Customer</h2>
+                    <button type="button" onclick="closeCreateModal()" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form method="post" id="createForm" asp-page-handler="CreateCustomer" enctype="multipart/form-data" class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="avatar">Avatar</label>
+                                <input type="file" class="form-control" id="avatar" asp-for="@Model.CustomerAvatar" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="customerName">Customer Name</label>
+                                <input type="text" class="form-control" id="customerName" asp-for="CustomerResquestDTO.CustomerName" required>
+                                <p class="text-danger"><span asp-validation-for="CustomerResquestDTO.CustomerName"></span></p>
+                            </div>
+                            <div class="form-group">
+                                <label for="phoneNumber">Phone Number</label>
+                                <input type="text" class="form-control" id="phoneNumber" asp-for="CustomerResquestDTO.PhoneNumber" required>
+                                <p class="text-danger"><span asp-validation-for="CustomerResquestDTO.PhoneNumber"></span></p>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="email">Email</label>
+                                <input type="email" class="form-control" id="email" asp-for="CustomerResquestDTO.Email" required>
+                                <p class="text-danger"><span asp-validation-for="CustomerResquestDTO.Email"></span></p>
+                            </div>
+                            <div class="form-group">
+                                <label for="dob">Date of Birth</label>
+                                <input type="date" class="form-control" id="dob" asp-for="CustomerResquestDTO.Dob" required>
+                                <p class="text-danger"><span asp-validation-for="CustomerResquestDTO.Dob"></span></p>
+                            </div>
+                            <div class="form-group">
+                                <label for="address">Address</label>
+                                <input type="text" class="form-control" id="address" asp-for="CustomerResquestDTO.Address" required>
+                                <p class="text-danger"><span asp-validation-for="CustomerResquestDTO.Address"></span></p>
+                            </div>
+                        </div>
+                    </form>
+                    <h4 class="text-danger">@TempData["CreateError"]</h4>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" onclick="closeCreateModal()" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" onclick="create()">Create</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- update Modal -->
+    <div class="modal" id="updateModal" tabindex="-1" role="dialog" aria-labelledby="updateModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2 class="modal-title" id="updateModalLabel">Update Customer</h2>
+                    <button type="button" onclick="closeUpdateModal()" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form method="post" id="updateForm" asp-page-handler="UpdateCustomer" enctype="multipart/form-data" class="row">
+                        <input type="hidden" class="form-control" id="UpdateCustomerId" asp-for="CustomerResquestDTO.CustomerId" required>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="avatar">Avatar</label>
+                                    <input type="file" class="form-control" asp-for="@Model.CustomerAvatar">
+                                </div>
+                                <div class="form-group">
+                                    <label for="customerName">Customer Name</label>
+                                    <input type="text" class="form-control" id="UpdateCustomerName" asp-for="CustomerResquestDTO.CustomerName" required>
+                                    <p class="text-danger"><span asp-validation-for="CustomerResquestDTO.CustomerName"></span></p>
+                                </div>
+                                <div class="form-group">
+                                    <label for="phoneNumber">Phone Number</label>
+                                    <input type="text" class="form-control" id="UpdatePhoneNumber" asp-for="CustomerResquestDTO.PhoneNumber" required>
+                                    <p class="text-danger"><span asp-validation-for="CustomerResquestDTO.PhoneNumber"></span></p>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="email">Email</label>
+                                    <input type="email" class="form-control" id="UpdateEmail" asp-for="CustomerResquestDTO.Email" required>
+                                    <p class="text-danger"><span asp-validation-for="CustomerResquestDTO.Email"></span></p>
+                                </div>
+                                <div class="form-group">
+                                    <label for="dob">Date of Birth</label>
+                                    <input type="date" class="form-control" id="UpdateDob" asp-for="CustomerResquestDTO.Dob" required>
+                                    <p class="text-danger"><span asp-validation-for="CustomerResquestDTO.Dob"></span></p>
+                                </div>
+                                <div class="form-group">
+                                    <label for="address">Address</label>
+                                    <input type="text" class="form-control" id="UpdateAddress" asp-for="CustomerResquestDTO.Address" required>
+                                    <p class="text-danger"><span asp-validation-for="CustomerResquestDTO.Address"></span></p>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                    <h4 class="error-msg text-danger">@TempData["UpdateError"]</h4>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" onclick="closeUpdateModal()" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" onclick="update()">Save changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Delete Confirmation Modal -->
+    <div class="modal" id="deleteConfirmationModal" tabindex="-1" role="dialog" aria-labelledby="deleteConfirmationModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="deleteConfirmationModalLabel">Confirm Delete</h5>
+                    <button type="button" class="close" data-dismiss="modal" onclick="closeDeleteConfirmation()" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p>Are you sure you want to delete this customer?</p>
+                    <form method="post" id="deleteForm" asp-page-handler="DeleteCustomer">
+                        <input type="hidden" id="deleteId" asp-for="CustomerResquestDTO.CustomerId"/>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal" onclick="closeDeleteConfirmation()">Cancel</button>
+                    <button type="button" class="btn btn-danger" onclick="deleteSubmit()">Delete</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+    <script>
+        let currentEditId;
+        let currentDeleteId;
+
+
+        function openCreateModal() {
+            document.getElementById("createModal").style.display = "block";
+        }
+
+        function closeCreateModal() {
+            document.getElementById("createModal").style.display = "none";
+        }
+
+        function openUpdateModal(customerId) {
+            currentEditId = customerId;
+            var row = document.getElementById('customer-' + customerId);
+            document.getElementById('UpdateCustomerId').value = row.getAttribute('data-id');
+            document.getElementById('UpdateCustomerName').value = row.getAttribute('data-name');
+            document.getElementById('UpdateEmail').value = row.getAttribute('data-email');
+            document.getElementById('UpdatePhoneNumber').value = row.getAttribute('data-phone');
+            document.getElementById('UpdateAddress').value = row.getAttribute('data-address');
+            document.getElementById('UpdateDob').value = row.getAttribute('data-dob');
+            console.log(row.getAttribute('data-dob'));
+            document.getElementById("updateModal").style.display = "block";
+        }
+
+        function closeUpdateModal() {
+            document.getElementById("updateModal").style.display = "none";
+        }
+
+        function openDeleteConfirmation(deleteId) {
+            document.getElementById("deleteId").value = deleteId;
+            document.getElementById("deleteConfirmationModal").style.display = "block";
+        }
+
+        function closeDeleteConfirmation() {
+            document.getElementById("deleteConfirmationModal").style.display = "none";
+        }
+
+        function create() {
+            document.getElementById("createForm").submit();
+            document.getElementById("createModal").style.display = "none";
+        }
+        function update() {
+            document.getElementById("updateForm").submit();
+            document.getElementById("updateModal").style.display = "none";
+        }
+
+        function deleteSubmit() {
+            document.getElementById('deleteForm').submit();
+        }
+
+        document.addEventListener("DOMContentLoaded", function () {
+            const createModelError = '@(TempData["CreateModelError"] ?? "")';
+            const createError = '@(TempData["CreateError"] ?? "")';
+
+            if (createModelError !== '' || createError !== '') {
+                document.getElementById("createModal").style.display = "block";
+            }
+
+            const updateModelError = '@(TempData["UpdateModelError"] ?? "")';
+            const updateError = '@(TempData["UpdateError"] ?? "")';
+
+            if (updateModelError !== '' || updateError !== '') {
+                document.getElementById("updateModal").style.display = "block";
+            }
+        });
+    </script>
+</body>
+</html>

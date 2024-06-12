@@ -14,11 +14,15 @@
     <None Include="appsettings.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Include="wwwroot\css\SideBar\css\.DS_Store" />
+    <None Include="wwwroot\css\SideBar\css\bootstrap\.DS_Store" />
+    <None Include="wwwroot\css\SideBar\css\bootstrap\mixins\.DS_Store" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\BLL\BLL.csproj" />
     <ProjectReference Include="..\BOL\BOL.csproj" />
+    <ProjectReference Include="..\DTO\DTO.csproj" />
   </ItemGroup>
 
 </Project>

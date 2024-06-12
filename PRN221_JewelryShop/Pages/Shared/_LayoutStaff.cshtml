@@ -1,0 +1,61 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - JewelryShop</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/PRN221_JewelryShop.styles.css" asp-append-version="true" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <link rel="stylesheet" href="/css/SideBar/css/style.css">
+</head>
+<body>
+    <div class="wrapper d-flex align-items-stretch">
+        <nav id="sidebar">
+            <div class="custom-menu">
+                <button type="button" id="sidebarCollapse" class="btn btn-primary">
+                    <i class="fa fa-bars"></i>
+                    <span class="sr-only">Toggle Menu</span>
+                </button>
+            </div>
+            <div class="p-4 pt-5">
+                <img />
+                <ul class="list-unstyled components mb-5">
+                    <li>
+                        <a href="/Staff/HomeStaff"><i class="fa fa-home mr-2 w-2" aria-hidden="true"></i>Home</a>
+                    </li>
+                    <li>
+                        <a href="/Staff/CustomerManagement"><i class="fa fa-users mr-2" aria-hidden="true"></i>Customers</a>
+                    </li>
+
+                    <li>
+                        <a href="#"><i class="fa-solid fa-money-bill mr-2"></i>Gold Price</a>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+        <!-- Page Content  -->
+        <div id="content">
+            @RenderBody()
+        </div>
+    </div>
+
+    <footer class="bg-black text-white p-5">
+        <div class="container text-center">
+            <p>&copy; 2024 Jewelry Shop Management</p>
+            <p>Contact: info@jewelryshop.com</p>
+        </div>
+    </footer>
+
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    <script src="~/js/SideBarJs/main.js"></script>
+    <script src="~/js/SideBarJs/bootstrap.min.js"></script>
+    <script src="~/js/SideBarJs/jquery.min.js"></script>
+
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

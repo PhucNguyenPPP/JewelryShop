@@ -1,0 +1,79 @@
+﻿/*header*/
+.header {
+    color: white;
+    background-color: #2D3748;
+    padding: 6px 0;
+    margin-bottom: 30px;
+}
+
+    .header h1 {
+        margin-left: 5%;
+        color: white;
+    }
+.content {
+    color: black;
+}
+.update-form {
+    width: 100%;
+    margin-left: 5%;
+    display: flex;
+}
+
+    .update-form .avatar {
+        width: 20%;
+    }
+        .update-form .avatar p {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .update-form .avatar img {
+            width: 85%;
+            height: 200px;
+            border-radius: 50%;
+            margin-left: 5%;
+            margin-bottom: 20px;
+        }
+
+    .update-form .column1 {
+        width: 35%;
+    }
+
+    .update-form .column2 {
+        width: 35%;
+    }
+
+    .update-form .input-field {
+        margin-bottom: 20px;
+    }
+
+        .update-form .input-field label {
+            margin-left: 22%;
+            width: 18%;
+            text-align: left;
+        }
+
+            .update-form .input-field label i {
+                margin-right: 5px;
+            }
+
+    .update-form .input-field input {
+        width: 40%;
+        padding: 5px 0;
+    }
+        .update-form .input-field p {
+            margin-left: 41%;
+        }
+
+        .update-form .btn-update {
+            background-color: #2D3748;
+            color: white;
+            padding: 5px 20px;
+            margin-left: 60%
+        }
+
+.update-form .update-msg {
+    color: green;
+    margin-left: 35%;
+    margin-top: 10px;
+}

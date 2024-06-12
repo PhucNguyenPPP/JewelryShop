@@ -1,0 +1,70 @@
+﻿@page
+@model PRN221_JewelryShop.Pages.Staff.UpdateCustomerModel
+@{
+    Layout = "_LayoutStaff";
+    var dateNow = DateTime.Now.ToString("yyyy-MM-dd");
+    Console.WriteLine(dateNow);
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="~/css/UpdateCustomer.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+</head>
+<body>
+    <div class="header">
+        <h1>Update Customer</h1>
+    </div>
+
+    <div class="content">
+        <form method="post" enctype="multipart/form-data" asp-page-handler="UpdateCustomer">
+            <input type="hidden" value="@Model.Customer.CustomerId" asp-for="CustomerIdForm"/>
+            <div class="update-form">
+                <div class="avatar">
+                    <img src="data:image/png;base64,@(@Model.Customer.AvatarImg)" />
+                    <input type="file" asp-for="@Model.CustomerAvatar" required>
+                </div>
+                <div class="column1">
+                    <div class="input-field">
+                        <label for="customerName"><i class="fa-solid fa-user"></i>Customer Name:</label>
+                        <input type="text" id="customerName" asp-for="CustomerResquestDTO.CustomerName" value="@Model.Customer.CustomerName" required>
+                        <p class="text-danger"><span asp-validation-for="CustomerResquestDTO.CustomerName"></span></p>
+                    </div>
+
+                    <div class="input-field">
+                        <label for="phone"><i class="fa-solid fa-phone"></i>Phone:</label>
+                        <input type="tel" id="phone" asp-for="CustomerResquestDTO.PhoneNumber" value="@Model.Customer.PhoneNumber" required>
+                        <p class="text-danger"><span asp-validation-for="CustomerResquestDTO.PhoneNumber"></span></p>
+                        <p class="text-danger">@TempData["PhoneExistMsg"]</p>
+                    </div>
+                    <div class="input-field">
+                        <label for="email"><i class="fa-solid fa-envelope"></i>Email:</label>
+                        <input type="email" id="email" asp-for="CustomerResquestDTO.Email" value="@Model.Customer.Email" required>
+                        <p class="text-danger"><span asp-validation-for="CustomerResquestDTO.Email"></span></p
+                        <p class="text-danger">@TempData["EmailExistMsg"]</p>
+                    </div>
+                </div>
+                <div class="column2">
+                    <div class="input-field">
+                        <label for="address"><i class="fa-solid fa-location-pin"></i>Address:</label>
+                        <input type="text" id="address" asp-for="CustomerResquestDTO.Address" value="@Model.Customer.Address" required>
+                        <p class="text-danger"><span asp-validation-for="CustomerResquestDTO.Address"></span></p>
+                    </div>
+                    <div class="input-field">
+                        <label for="birthdate"><i class="fa-solid fa-cake-candles"></i>Birthdate:</label>
+                        <input type="date" id="birthdate" asp-for="CustomerResquestDTO.Dob" max="@dateNow" value="@Model.Customer.Dob?.ToString("yyyy-MM-dd")" required>
+                        <p class="text-danger"><span asp-validation-for="CustomerResquestDTO.Dob"></span></p>
+                    </div>
+                    <div>
+                         <button class="btn-update">Update</button>
+                         <p class="update-msg" >@TempData["UpdateMessage"]</p>
+                    </div>
+                </div>
+            </div>
+        </form>
+
+    </div>
+</body>
+</html>
