@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using BOL.Entities;
+using BOL;
 using Microsoft.EntityFrameworkCore;
 
 namespace DAL;

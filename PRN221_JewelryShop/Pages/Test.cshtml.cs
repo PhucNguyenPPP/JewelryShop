@@ -1,6 +1,6 @@
 using BLL.Interfaces;
 using BLL.Services;
-using BOL.Entities;
+using BOL;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
@@ -19,11 +19,7 @@ namespace PRN221_JewelryShop.Pages
 
         public void OnGet()
         {
-            Products = _productService.GetProductList();
-            foreach (Product product in Products)
-            {
-                Console.WriteLine(product.ProductName);
-            }
+            
         }
     }
 }

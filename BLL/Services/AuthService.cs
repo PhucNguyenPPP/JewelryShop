@@ -1,30 +1,26 @@
 ﻿using BLL.Interfaces;
-using BOL.DTOs;
-using BOL.Entities;
-using DAL.Repositories;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
+using Repositories.Interfaces;
 using System.Security.Cryptography;
 using System.Text;
-using System.Threading.Tasks;
+using DTO;
+using BOL;
 
 namespace BLL.Services
 {
     public class AuthService : IAuthService
     {
-        private readonly IGenericRepository<Employee> _employeeRepo;
-        public AuthService(IGenericRepository<Employee> employeeRepo)
+        private readonly IEmployeeRepository _employeeRepo;
+        public AuthService(IEmployeeRepository employeeRepo)
         {
             _employeeRepo = employeeRepo;
         }
 
         public LoginResponse CheckLogin(string username, string password)
         {
-            var employee = _employeeRepo.GetAll(c => c.UserName == username)
-                .Include(e => e.Role)
-                .FirstOrDefault();
+            var employeeList = _employeeRepo.GetAllEmployees().ToList();
+            var employee = employeeList.FirstOrDefault(c => c.UserName == username
+            && c.Status == true);
             if (employee == null)
             {
                 return new LoginResponse()

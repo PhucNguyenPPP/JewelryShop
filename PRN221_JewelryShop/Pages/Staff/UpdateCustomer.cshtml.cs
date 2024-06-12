@@ -1,6 +1,6 @@
 using BLL.Interfaces;
-using BOL.DTOs;
-using BOL.Entities;
+using BOL;
+using DTO;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using System.Text.Json;
@@ -18,16 +18,21 @@ namespace PRN221_JewelryShop.Pages.Staff
         }
 
         [BindProperty]
-        public CreateCustomerResquestDTO CreateCustomerResquestDTO { get; set; }
+        public CustomerResquestDTO CustomerResquestDTO { get; set; }
         [BindProperty]
         public IFormFile CustomerAvatar { get; set; }
 
         public LoginResponse LoginResponse { get; set; }
+        public string ErrorMsgUpdateCustomer { get; set; }
+        public string NotificationMessage {  get; set; }
 
         public Customer Customer { get; set; }
 
         [FromQuery(Name = "id")]
-        public Guid CustomerId {  get; set; }
+        public string CustomerId {  get; set; }
+
+        [BindProperty]
+        public string CustomerIdForm { get; set; }
         public IActionResult OnGet()
         {
             var loginResponseString = HttpContext.Session.GetString("LoginResponse");
@@ -47,6 +52,37 @@ namespace PRN221_JewelryShop.Pages.Staff
                 Customer = customer;
             }
             return Page();
+        }
+
+        public IActionResult OnPostUpdateCustomer()
+        {
+            var customer = _customerService.GetCustomer(CustomerIdForm);
+            if (customer == null)
+            {
+                return Page();
+            }
+            Customer = customer;
+            CustomerResquestDTO.CustomerId = CustomerIdForm;
+
+
+            if(CustomerAvatar != null)
+            {
+                CustomerResquestDTO.AvatarImg = _imageService.ConvertToBase64(CustomerAvatar);
+            }
+
+
+            var createCustomer = _customerService.UpdateCustomer(CustomerResquestDTO);
+            if (createCustomer)
+            {
+                TempData["UpdateMessage"] = "Update Customer Successfully";
+                return Page();
+            }
+            else
+            {
+                TempData["UpdateMessage"] = "Update Customer Unsuccessfully";
+                return Page();
+            }
+
         }
     }
 }

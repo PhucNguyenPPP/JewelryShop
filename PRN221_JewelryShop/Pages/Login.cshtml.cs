@@ -1,6 +1,6 @@
 using BLL.Interfaces;
 using BLL.Services;
-using BOL.DTOs;
+using DTO;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using System.Text.Json;
