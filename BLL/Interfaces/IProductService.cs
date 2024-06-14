@@ -13,11 +13,12 @@ namespace BLL.Interfaces
         List<Product> GetProductList();
         List<Product> SearchProduct(string searchValue);
 
-        bool AddProduct(ProductDTO productDTO);
+        bool AddProduct(ProductRequestDTO productDTO);
 
-        bool UpdateProduct(ProductDTO productDTO);
+        bool UpdateProduct(ProductRequestDTO productDTO);
 
         bool DeleteProduct(string productId);
 
+        bool CheckNameExisted(string productName);
     }
 }

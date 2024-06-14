@@ -8,9 +8,9 @@ using System.Threading.Tasks;
 
 namespace DTO
 {
-    public class ProductDTO
+    public class ProductRequestDTO
     {
-        public Guid? ProductId { get; set; }
+        public string? ProductId { get; set; }
 
         [Required(ErrorMessage ="Please input product name!")]
         [RegularExpression("^[a-zA-Z0-9]+$", ErrorMessage ="Product name can not include special character!")]
@@ -27,8 +27,9 @@ namespace DTO
 
         public string? AvatarImg { get; set; }
 
+
         [Required(ErrorMessage ="Please choose counter!")]
-        public Guid? CounterId { get; set; }
+        public string? CounterId { get; set; }
 
 
         public List<MaterialDTO>? MaterialDTOs {  get; set; }
