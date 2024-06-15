@@ -107,7 +107,7 @@
   
 
     <!-- Create Modal -->
-    <div class="modal" id="createModal" tabindex="-1" role="dialog" aria-labelledby="createModalLabel" aria-hidden="true">
+    <div class="modal fade" id="createModal" tabindex="-1" role="dialog" aria-labelledby="createModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg" role="document">
             <div class="modal-content">
                 <div class="modal-header">
@@ -163,7 +163,7 @@
     </div>
 
     <!-- update Modal -->
-    <div class="modal" id="updateModal" tabindex="-1" role="dialog" aria-labelledby="updateModalLabel" aria-hidden="true">
+    <div class="modal fade" id="updateModal" tabindex="-1" role="dialog" aria-labelledby="updateModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg" role="document">
             <div class="modal-content">
                 <div class="modal-header">
@@ -222,7 +222,7 @@
     </div>
 
     <!-- Delete Confirmation Modal -->
-    <div class="modal" id="deleteConfirmationModal" tabindex="-1" role="dialog" aria-labelledby="deleteConfirmationModalLabel" aria-hidden="true">
+    <div class="modal fade" id="deleteConfirmationModal" tabindex="-1" role="dialog" aria-labelledby="deleteConfirmationModalLabel" aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
@@ -255,11 +255,11 @@
 
 
         function openCreateModal() {
-            document.getElementById("createModal").style.display = "block";
+            $('#createModal').modal('show');
         }
 
         function closeCreateModal() {
-            document.getElementById("createModal").style.display = "none";
+            $('#createModal').modal('hide');
         }
 
         function openUpdateModal(customerId) {
@@ -272,48 +272,60 @@
             document.getElementById('UpdateAddress').value = row.getAttribute('data-address');
             document.getElementById('UpdateDob').value = row.getAttribute('data-dob');
             console.log(row.getAttribute('data-dob'));
-            document.getElementById("updateModal").style.display = "block";
+            $('#updateModal').modal('show');
         }
 
         function closeUpdateModal() {
-            document.getElementById("updateModal").style.display = "none";
+            $('#updateModal').modal('hide');
         }
 
         function openDeleteConfirmation(deleteId) {
             document.getElementById("deleteId").value = deleteId;
-            document.getElementById("deleteConfirmationModal").style.display = "block";
+            $('#deleteConfirmationModal').modal('show');
         }
 
         function closeDeleteConfirmation() {
-            document.getElementById("deleteConfirmationModal").style.display = "none";
+            $('#deleteConfirmationModal').modal('hide');
         }
 
         function create() {
             document.getElementById("createForm").submit();
-            document.getElementById("createModal").style.display = "none";
+            $('#createModal').modal('hide');
         }
         function update() {
             document.getElementById("updateForm").submit();
-            document.getElementById("updateModal").style.display = "none";
+            $('#updateModal').modal('hide');
         }
 
         function deleteSubmit() {
             document.getElementById('deleteForm').submit();
+            $('#deleteConfirmationModal').modal('hide');
         }
+
+        $(document).ready(function () {
+            $('.modal').modal({ show: false });
+
+            $('.close').on('click', function () {
+                $(this).closest('.modal').modal('hide');
+            });
+            $('.modal-footer button[data-dismiss="modal"]').on('click', function () {
+                $(this).closest('.modal').modal('hide');
+            });
+        });
 
         document.addEventListener("DOMContentLoaded", function () {
             const createModelError = '@(TempData["CreateModelError"] ?? "")';
             const createError = '@(TempData["CreateError"] ?? "")';
 
             if (createModelError !== '' || createError !== '') {
-                document.getElementById("createModal").style.display = "block";
+                $('#createModal').modal('show');
             }
 
             const updateModelError = '@(TempData["UpdateModelError"] ?? "")';
             const updateError = '@(TempData["UpdateError"] ?? "")';
 
             if (updateModelError !== '' || updateError !== '') {
-                document.getElementById("updateModal").style.display = "block";
+                $('#updateModal').modal('show');
             }
         });
     </script>
