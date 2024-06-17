@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace BLL.Services
@@ -15,10 +16,13 @@ namespace BLL.Services
     {
         private readonly IProductRepository _productRepository;
         private readonly IMaterialProductRepository _materialProductRepository;
-        public ProductService(IProductRepository productRepository, IMaterialProductRepository materialProductRepository)
+        private readonly IMaterialService _materialService;
+        public ProductService(IProductRepository productRepository, IMaterialProductRepository materialProductRepository,
+            IMaterialService materialService)
         {
             _productRepository = productRepository;
             _materialProductRepository = materialProductRepository;
+            _materialService = materialService;
         }
 
         public List<Product> GetProductList()
@@ -37,8 +41,8 @@ namespace BLL.Services
         {
             Product? product = _productRepository.GetProductList().
                 Where(c => c.ProductId == Guid.Parse(productId)).FirstOrDefault();
-            
-            if(product == null)
+
+            if (product == null)
             {
                 return false;
             }
@@ -64,16 +68,19 @@ namespace BLL.Services
             };
             _productRepository.AddProduct(product);
             List<MaterialProduct> materialProducts = new List<MaterialProduct>();
-            foreach(var e in productDTO.MaterialDTOs)
+            for (int i = 0; i < productDTO.MaterialDTOs?.Count; i++)
             {
-                MaterialProduct materialProduct = new MaterialProduct()
+                if (productDTO.MaterialDTOs[i].MaterialId != null)
                 {
-                    MaterialProductId = Guid.NewGuid(),
-                    ProductId = productId,
-                    MaterialId = Guid.Parse(e.MaterialId),
-                    MaterialSize = e.MaterialSize
-                };
-                materialProducts.Add(materialProduct);
+                    MaterialProduct materialProduct = new MaterialProduct()
+                    {
+                        MaterialProductId = Guid.NewGuid(),
+                        ProductId = productId,
+                        MaterialId = Guid.Parse(productDTO.MaterialDTOs[i].MaterialId),
+                        MaterialSize = decimal.Parse(productDTO.MaterialDTOs[i].MaterialSize)
+                    };
+                    materialProducts.Add(materialProduct);
+                }
             }
             _materialProductRepository.AddRange(materialProducts);
             bool result = _productRepository.SaveChange();
@@ -86,7 +93,7 @@ namespace BLL.Services
             Guid.TryParse(productDTO.ProductId, out Guid productId);
             Guid.TryParse(productDTO.CounterId, out Guid counterId);
             Product? product = _productRepository.GetById(productId);
-            if(product == null) return false;
+            if (product == null) return false;
             if (!productDTO.AvatarImg.IsNullOrEmpty())
             {
                 product.AvatarImg = productDTO.AvatarImg;
@@ -101,16 +108,19 @@ namespace BLL.Services
             _materialProductRepository.DeleteRange(existingMaterial);
 
             List<MaterialProduct> updatedMaterialProducts = new List<MaterialProduct>();
-            foreach (var e in productDTO.MaterialDTOs)
+            for (int i = 0; i < productDTO.MaterialDTOs?.Count; i++)
             {
-                MaterialProduct materialProduct = new MaterialProduct()
+                if (productDTO.MaterialDTOs[i].MaterialId != null)
                 {
-                    MaterialProductId = Guid.NewGuid(),
-                    ProductId = productId,
-                    MaterialId = Guid.Parse(e.MaterialId),
-                    MaterialSize = e.MaterialSize
-                };
-                updatedMaterialProducts.Add(materialProduct);
+                    MaterialProduct materialProduct = new MaterialProduct()
+                    {
+                        MaterialProductId = Guid.NewGuid(),
+                        ProductId = productId,
+                        MaterialId = Guid.Parse(productDTO.MaterialDTOs[i].MaterialId),
+                        MaterialSize = decimal.Parse(productDTO.MaterialDTOs[i].MaterialSize)
+                    };
+                    updatedMaterialProducts.Add(materialProduct);
+                }
             }
             _materialProductRepository.AddRange(updatedMaterialProducts);
 
@@ -122,23 +132,90 @@ namespace BLL.Services
         public bool CheckNameExisted(string productName)
         {
             bool result = _productRepository.GetProductList().Any(c => c.ProductName == productName);
-            if(result) return true;
+            if (result) return true;
             return false;
         }
-        
+
         public bool CheckDuplicateMaterialId(ProductRequestDTO productDTO)
         {
             HashSet<string> seenMaterialIds = new HashSet<string>();
-            foreach(var material in productDTO.MaterialDTOs)
+            foreach (var material in productDTO.MaterialDTOs)
             {
-                if(material.MaterialId != null)
+                if (material.MaterialId != null)
                 {
-                    if(seenMaterialIds.Equals(material.MaterialId.ToString())) return true;
+                    if (seenMaterialIds.Equals(material.MaterialId.ToString())) return true;
                 }
                 seenMaterialIds.Add(material.MaterialId);
             }
             return false;
         }
 
+        public Product GetProductById(string productId)
+        {
+            Guid.TryParse(productId, out Guid parseProductId);
+            var product = _productRepository.GetById(parseProductId);
+            if (product != null)
+            {
+                return product;
+            }
+            return new Product();
+        }
+
+        public ResponseDTO CheckValidationMaterialDTOList(List<MaterialDTO> list)
+        {
+            int count = 0;
+
+            for (int i = 0; i < list.Count; i++)
+            {
+
+                if (list[i].MaterialId == null)
+                {
+                    count++;
+                }
+
+                if (count == 4)
+                {
+                    return new ResponseDTO("Please choose at least 1 Material", false);
+                }
+                if (list[i].MaterialId != null && list[i].MaterialSize == null)
+                {
+                    return new ResponseDTO("Please input the size for Material " + ++i, false);
+                }
+
+                if (list[i].MaterialId == null && list[i].MaterialSize != null)
+                {
+                    return new ResponseDTO("Please choose the Material Name for Material " + ++i, false);
+                }
+
+                Regex regexSizeGold = new Regex("^[0-9]+(\\.[0-9]+)?$");
+                Regex regexSizeDiamond = new Regex(@"^\d+$");
+                if(list[i].MaterialId != null)
+                {
+                    var materialName = _materialService.GetMaterial(list[i].MaterialId).MaterialName;
+                    if (list[i].MaterialId != null
+                    && !regexSizeDiamond.IsMatch(list[i]?.MaterialSize)
+                    && materialName.ToLower().Contains("diamond"))
+                    {
+                        return new ResponseDTO("The price " + ++i + " is invalid", false);
+                    }
+
+                    if (list[i].MaterialId != null
+                        && !regexSizeGold.IsMatch(list[i]?.MaterialSize)
+                        && !materialName.ToLower().Contains("diamond"))
+                    {
+                        return new ResponseDTO("The price " + ++i + " is invalid", false);
+                    }
+                }
+                
+            }
+            var ids = list.Where(c => c.MaterialId != null).Select(c => c.MaterialId).ToList();
+            var hasDuplicates = ids.Count() != ids.Distinct().Count();
+            if (hasDuplicates)
+            {
+                return new ResponseDTO("Material is duplicated", false);
+            }
+            return new ResponseDTO("Check Validation Successfully", true);
+
+        }
     }
 }

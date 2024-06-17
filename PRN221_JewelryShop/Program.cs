@@ -31,14 +31,25 @@ builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<ICustomerService, CustomerService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IImageService, ImageService>();
+builder.Services.AddScoped<IMaterialProductService, MaterialProductService>();
+builder.Services.AddScoped<ICounterService, CounterService>();
+builder.Services.AddScoped<IMaterialService, MaterialService>();
 
 //Add scope for repositories*
 builder.Services.AddScoped<ICustomerRepository, CustomerRepository>();
 builder.Services.AddScoped<IEmployeeRepository, EmployeeRepository>();
+builder.Services.AddScoped<IProductRepository, ProductRepository>();
+builder.Services.AddScoped<IMaterialProductRepository, MaterialProductRepository>();
+builder.Services.AddScoped<ICounterRepository, CounterRepository>();
+builder.Services.AddScoped<IMaterialRepository, MaterialRepository>();
 
 //Add scope for DAOs
 builder.Services.AddScoped<IGenericDAO<Customer>, GenericDAO<Customer>>();
 builder.Services.AddScoped<IGenericDAO<Employee>, GenericDAO<Employee>>();
+builder.Services.AddScoped<IGenericDAO<Product>, GenericDAO<Product>>();
+builder.Services.AddScoped<IGenericDAO<MaterialProduct>, GenericDAO<MaterialProduct>>();
+builder.Services.AddScoped<IGenericDAO<Counter>, GenericDAO<Counter>>();
+builder.Services.AddScoped<IGenericDAO<Material>, GenericDAO<Material>>();
 
 var app = builder.Build();
 

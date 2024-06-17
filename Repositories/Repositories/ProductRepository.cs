@@ -1,5 +1,6 @@
 ﻿using BOL;
 using DAL.DAO;
+using Microsoft.EntityFrameworkCore;
 using Repositories.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -19,7 +20,7 @@ namespace Repositories.Repositories
 
         public List<Product> GetProductList()
         {
-            return _productDAO.GetAll(c => c.Status == true).ToList();
+            return _productDAO.GetAll(c => c.Status == true).Include(c => c.Counter).ToList();
         }
 
         public bool SaveChange()
@@ -39,7 +40,8 @@ namespace Repositories.Repositories
 
         public Product GetById(Guid id)
         {
-            return _productDAO.GetById(id);
+            var productList =  _productDAO.GetAll(c => true).Include(c => c.Counter).ToList();
+            return productList?.FirstOrDefault(c => c.ProductId == id);
         }
     }
 }
