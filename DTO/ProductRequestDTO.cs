@@ -13,7 +13,7 @@ namespace DTO
         public string? ProductId { get; set; }
 
         [Required(ErrorMessage ="Please input product name!")]
-        [RegularExpression("^[a-zA-Z0-9]+$", ErrorMessage ="Product name can not include special character!")]
+        [RegularExpression("^[a-zA-Z0-9 ]+$", ErrorMessage ="Product name can not include special character!")]
         public string? ProductName { get; set; }
 
         [Required(ErrorMessage ="Please input product price!")]

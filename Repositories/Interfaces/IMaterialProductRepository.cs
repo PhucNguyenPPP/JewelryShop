@@ -12,5 +12,7 @@ namespace Repositories.Interfaces
         void AddRange(List<MaterialProduct> materialProducts);
 
         public void DeleteRange(List<MaterialProduct> materialProduct);
+
+        List<MaterialProduct> GetAllMaterialProductByProductId(Guid productId);
     }
 }

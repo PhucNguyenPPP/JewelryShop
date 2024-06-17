@@ -20,5 +20,9 @@ namespace BLL.Interfaces
         bool DeleteProduct(string productId);
 
         bool CheckNameExisted(string productName);
+
+        Product GetProductById (string productId);
+
+        ResponseDTO CheckValidationMaterialDTOList(List<MaterialDTO> list);
     }
 }

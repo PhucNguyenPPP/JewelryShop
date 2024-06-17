@@ -1,0 +1,129 @@
+﻿@page "{handler?}"
+@model PRN221_JewelryShop.Pages.Manager.ProductScreen.UpdateProductModel
+@{
+    Layout = "_LayoutManager";
+    var priceFormat = new System.Globalization.CultureInfo("en-US", false).NumberFormat;
+    priceFormat.NumberGroupSeparator = ".";
+
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewData["Title"]</title>
+    <link rel="stylesheet" href="~/css/AddProductStyle.css" />
+</head>
+<body>
+    <div class="header">
+        <h1>Update Product</h1>
+    </div>
+    <form method="post" enctype="multipart/form-data" asp-page-handler="UpdateProduct">
+        <input type="hidden" value="@Model.Product.ProductId" asp-for="ProductRequestDTO.ProductId"/>
+        <div class="content row">
+            <div class="col-md-6">
+                <div class="field">
+                    <label>Product Avatar</label>
+                    <input type="file" asp-for="ProductAvatar" />
+                </div>
+                <div class="field">
+                    <label>Product Name</label>
+                    <input type="text" asp-for="ProductRequestDTO.ProductName" value="@Model.Product.ProductName" required />
+                    <span class="text-danger" asp-validation-for="ProductRequestDTO.ProductName"></span>
+                    <span class="text-danger">@TempData["NameExist"]</span>
+                </div>
+                <div class="field">
+                    <label>Price</label>
+                    <input type="text" asp-for="ProductRequestDTO.Price" value="@Model.Product.Price" required />
+                    <span class="text-danger" asp-validation-for="ProductRequestDTO.Price"></span>
+                </div>
+                <div class="field">
+                    <label>Amount In Stock</label>
+                    <input type="number" min="1" asp-for="ProductRequestDTO.AmountInStock" value="@Model.Product.AmountInStock" required />
+                    <span class="text-danger" asp-validation-for="ProductRequestDTO.AmountInStock"></span>
+                </div>
+                <div class="field">
+                    <label>Counter</label>
+                    @if (Model.CounterList != null)
+                    {
+                        <select id="counterSelect" asp-for="ProductRequestDTO.CounterId" required>
+                            @foreach (var counter in Model.CounterList)
+                            {
+                                <option value="@counter.CounterId">@counter.CounterName</option>
+                            }
+                        </select>
+                    }
+                </div>
+            </div>
+            <div class="col-md-6">
+                @for (int i = 0; i <= 3; i++)
+                {
+                    <div class="field field-material">
+                        <div>
+                            <label>Material</label>
+                            @if (Model.MaterialList != null)
+                            {
+                                <select id="selectMaterial-@i" class="materialSelect" asp-for="MaterialDTOList[i].MaterialId">
+                                    <option></option>
+                                    @foreach (var material in Model.MaterialList)
+                                    {
+                                        <option value="@material.MaterialId">@material.MaterialName</option>
+                                    }
+                                </select>
+                            }
+                        </div>
+                        <div>
+                            <label>Size</label>
+                            <input type="text" id="sizeInput-@i" class="sizeInput" asp-for="MaterialDTOList[i].MaterialSize" />
+                        </div>
+                    </div>
+                }
+               
+                <p class="text-danger">@TempData["UpdateError"]</p>
+                <h5 class="notification-msg">@TempData["UpdateMsg"]</h5>
+                <button class="add-btn" type="submit">Update Product</button>
+            </div>
+
+        </div>
+    </form>
+    <script>
+
+        document.addEventListener("DOMContentLoaded", function () {
+            var materialSelects = document.getElementsByClassName("materialSelect");
+            var sizeInputs = document.getElementsByClassName("sizeInput");
+
+            for (let z = 0; z < materialSelects.length; z++) {
+                (function (index) {
+                    materialSelects[index].addEventListener("change", function () {
+                        var sizeInput = document.getElementById("sizeInput-" + index);
+                        if (this.options[this.selectedIndex].text.toLowerCase().includes("diamond")) {
+                            sizeInput.type = "number";
+                            sizeInput.min = 1;
+                        } else {
+                            sizeInput.type = "text";
+                            sizeInput.removeAttribute('min');
+                        }
+                    });
+                })(z);
+            }
+
+            document.getElementById('counterSelect').value = '@Model.Product.CounterId';
+
+        @for (int i = 0; i < Model.AvailableMaterialList.Count; i++)
+        {
+            var materialId = Model.AvailableMaterialList[i]?.MaterialId;
+            var materialSize = Model.AvailableMaterialList[i]?.MaterialSize?.ToString("#.###").TrimEnd('.').TrimEnd('0');
+            <text>
+                                    if ('@materialId' !== "null") {
+                    document.getElementById("selectMaterial-@i").value = '@materialId';
+                    document.getElementById("sizeInput-@i").value = '@materialSize';
+                }
+            </text>
+        }
+        });
+
+
+    </script>
+</body>
+</html>

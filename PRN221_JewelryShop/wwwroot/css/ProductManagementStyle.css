@@ -31,31 +31,34 @@
     margin-bottom: 20px;
     width: 110%;
 }
+
 .search-container {
     width: 70%;
 }
-.search-container input[type="text"] {
-    width: 40%;
-    padding: 8px;
-    margin-right: 10px;
-}
 
-.search-container button {
-    padding: 10px 30px;
-    background-color: #2D3748;
-    color: white;
-    border: none;
-    cursor: pointer;
-    border-radius: 5px;
-}
-
-    .search-container button:hover {
-        color: black;
-        background-color: grey;
+    .search-container input[type="text"] {
+        width: 40%;
+        padding: 8px;
+        margin-right: 10px;
     }
 
+    .search-container button {
+        padding: 10px 30px;
+        background-color: #2D3748;
+        color: white;
+        border: none;
+        cursor: pointer;
+        border-radius: 5px;
+    }
+
+        .search-container button:hover {
+            color: black;
+            background-color: grey;
+        }
+
 .add-new-container {
-    margin-left: 15%;
+    margin-left: 10%;
+    justify-items: end;
 }
 
 .add-new-button {
@@ -75,27 +78,26 @@
     .add-new-button i {
         margin-right: 10px;
     }
-    /*search and add new*/
-    /*table-management*/
-    .table-container {
-        overflow-x: auto;
-        width: 110%;
-        border: 1px solid black;
-        border-radius: 10px;
-        padding-bottom: 70px;
+/*search and add new*/
+/*table-management*/
+.table-container {
+    overflow-x: auto;
+    width: 110%;
+    border: 1px solid black;
+    border-radius: 10px;
+    padding-bottom: 70px;
+}
+
+    .table-container img {
+        width: 70%;
+        height: 70px;
     }
 
-        .table-container img {
-            width: 70%;
-            height: 70px;
-            border-radius: 50%;
-        }
-
-        .table-container table {
-            width: 120%;
-            border-collapse: collapse;
-            margin: auto;
-        }
+    .table-container table {
+        width: 120%;
+        border-collapse: collapse;
+        margin: auto;
+    }
 
     .table-container thead {
         background-color: #2D3748;
@@ -131,7 +133,18 @@
     min-width: 100px;
     box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
     z-index: 1;
+
 }
+    .dropdown-content .detail-button {
+        display: block;
+        color: #F36944;
+        padding: 10px;
+        text-align: left;
+        border: none;
+        width: 100%;
+        cursor: pointer;
+        width: 150px;
+    }
 
     .dropdown-content .edit-button {
         color: blue;
@@ -140,6 +153,7 @@
         border: none;
         width: 100%;
         cursor: pointer;
+        width: 150px;
     }
 
     .dropdown-content .delete-button {
@@ -149,17 +163,13 @@
         border: none;
         width: 100%;
         cursor: pointer;
+        width: 150px;
     }
-
+        .dropdown-content .detail-button i,
         .dropdown-content .edit-button i,
         .dropdown-content .delete-button i {
             margin-right: 5px;
         }
-
-    .dropdown-content button:hover {
-        background-color: #ddd;
-    }
-
 .dropdown:hover .dropdown-content {
     display: block;
 }
@@ -173,10 +183,12 @@
 .modal-header {
     background-color: #2D3748;
 }
+
     .modal-header h2 {
         color: white;
         margin-left: 30%;
     }
+
     .modal-header h5 {
         color: white;
         margin-left: 35%;
@@ -186,6 +198,7 @@
     .modal-header .close {
         color: white;
     }
+
 #updateModal img {
     width: 30%;
 }

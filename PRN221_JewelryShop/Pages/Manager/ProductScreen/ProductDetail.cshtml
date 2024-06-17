@@ -1,0 +1,67 @@
+﻿@page
+@model PRN221_JewelryShop.Pages.Manager.ProductScreen.ProductDetailModel
+@{
+    Layout = "_LayoutManager";
+    var priceFormat = new System.Globalization.CultureInfo("en-US", false).NumberFormat;
+    priceFormat.NumberGroupSeparator = ".";
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewData["Title"]</title>
+    <link rel="stylesheet" href="~/css/ProuductDetail.css" />
+</head>
+<body>
+    <div class="header">
+        <h1>Product Details</h1>
+    </div>
+    <div class="content row">
+        <div class="col-md-4">
+            <img src="data:image/png;base64,@(Model.Product?.AvatarImg)" />
+        </div>
+        <div class="col-md-4">
+            <div class="field">
+                <label>Product Name</label>
+                <span>@Model.Product?.ProductName</span>
+            </div>
+            <div class="field">
+                <label>Price</label>
+                <span>@Model.Product?.Price?.ToString("#,0", priceFormat) VND</span>
+            </div>
+            <div class="field">
+                <label>Amount In Stock</label>
+                <span>@Model.Product?.AmountInStock</span>
+            </div>
+            <div class="field">
+                <label>Counter</label>
+                <span>@Model.Product?.Counter?.CounterName</span>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="field">
+                <label>Materials</label>
+                <span>
+                    @if (Model.Product?.MaterialProducts != null)
+                    {
+                        <ul>
+                            @foreach (var material in Model.Product.MaterialProducts)
+                            {
+                                <li>@material.Material?.MaterialName - Size: @material.MaterialSize?.ToString("#.###").TrimEnd('.').TrimEnd('0') (Gold: Fences/ Diamond: Pellet)</li>
+                            }
+                        </ul>
+                    }
+                    else
+                    {
+                        <p>No materials available.</p>
+                    }
+                </span>
+            </div>
+            <a class="btn-update" href="/Manager/ProductScreen/UpdateProduct?id=@Model.ProductId">Update Product</a>
+        </div>
+
+    </div>
+</body>
+</html>

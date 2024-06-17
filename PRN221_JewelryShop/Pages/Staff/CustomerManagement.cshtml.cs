@@ -13,6 +13,7 @@ namespace PRN221_JewelryShop.Pages.Staff
         private readonly ICustomerService _customerService;
         private readonly IImageService _imageService;
         public List<Customer> CustomerList { get; set; }
+        public LoginResponse LoginResponse { get; set; }
 
         [BindProperty]
         public CustomerResquestDTO CustomerResquestDTO { get; set; }
@@ -37,7 +38,6 @@ namespace PRN221_JewelryShop.Pages.Staff
 
         }
 
-        public LoginResponse LoginResponse { get; set; }
         private void GetCustomerList()
         {
             var listAll = _customerService.GetAllCustomers();
