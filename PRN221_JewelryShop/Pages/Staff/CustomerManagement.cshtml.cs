@@ -108,7 +108,7 @@ namespace PRN221_JewelryShop.Pages.Staff
             CustomerResquestDTO.AvatarImg = _imageService.ConvertToBase64(CustomerAvatar);
             CustomerResquestDTO.EmployeeId = LoginResponse.EmployeeId.ToString();
 
-            var result = _customerService.UpdateCustomer(CustomerResquestDTO);
+            var result = _customerService.AddCustomer(CustomerResquestDTO);
             if (result)
             {
                 TempData["CreateMsg"] = "Update Customer Successfully";

@@ -1,0 +1,316 @@
+﻿@page "{handler?}"
+@model PRN221_JewelryShop.Pages.Staff.SaleOrderScreen.AddSaleOrderModel
+@inject Microsoft.AspNetCore.Antiforgery.IAntiforgery a
+@{
+    var priceFormat = new System.Globalization.CultureInfo("en-US", false).NumberFormat;
+    priceFormat.NumberGroupSeparator = ".";
+    var temp = TempData["CreateSaleOrderMsg"];
+    var token = a.GetAndStoreTokens(HttpContext).RequestToken;
+    Layout = "_LayoutStaff";
+}
+
+
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>@ViewData["Title"]</title>
+    <link rel="stylesheet" href="~/css/AddSaleOrder.css" />
+</head>
+<body>
+    <div class="header">
+        <h1>Add Sale Order</h1>
+    </div>
+    <div class="content row">
+        <div class="product-container col-md-8">
+            <form method="post" asp-page-handler="SearchProduct" id="searchProductForm">
+                <input type="hidden" asp-for="CustomerIdForm" value="@Model.Customer.CustomerId" />
+                <input type="text" id="txtSearchProduct" placeholder="Search by Product Name" asp-for="SearchProductValue" onchange="searchProduct()" />
+                <button class="search-btn" type="submit">Search</button>
+            </form>
+            <div id="results-product-container">
+                @if (Model.ProductResultList != null)
+                {
+                    if (Model.ProductResultList.Count == 0)
+                    {
+                        <div>
+                            <p>No result found</p>
+                        </div>
+                    }
+                    else
+                    {
+                        @foreach (var result in Model.ProductResultList)
+                        {
+                            <div class="product-item"
+                                 data-product-name="@result.ProductName"
+                                 data-product-price="@result.Price"
+                                 data-product-id="@result.ProductId"
+                                 data-amount-in-stock="@result.AmountInStock">
+                                <p>@result.ProductName</p>
+                            </div>
+                        }
+                    }
+                }
+            </div>
+            <div id="productFormContainer">
+                <form method="post" id="productForm">
+                    <div id="selectedProductsContainer">
+                        <div class="product-header">
+                            <span>Product Name</span>
+                            <span>Quantity</span>
+                            <span class="title-price">Price</span>
+                            <span class="title-total-price">Total Price</span>
+                        </div>
+                    </div>
+                    <div>Total All: <span id="totalAll">0</span></div>
+                    <input type="hidden" asp-for="CustomerIdForm" value="@Model.Customer.CustomerId" />
+                    <input name="__RequestVerificationToken" type="hidden" value="@token" />
+                    <button type="submit">Create Sale Order</button>
+                </form>
+            </div>
+        
+        </div>
+        <div class="customer-container col-md-4">
+            <div class="sale-order-info">
+                <span>Customer Name:</span>
+                <span>@Model.Customer.CustomerName</span>
+            </div>
+            <div class="sale-order-info">
+                <span>Phone:</span>
+                <span>@Model.Customer.PhoneNumber</span>
+            </div>
+            <div class="sale-order-info">
+                <span>Email:</span>
+                <span>@Model.Customer.Email</span>
+            </div>
+            <div class="sale-order-info">
+                <span>Promotion Code:</span>
+                <select id="promotionSelect">
+                    <option></option>
+                    <option value="a1">1 nua</option>
+                    <option value="a2">full</option>
+                </select>
+            </div>
+
+        </div>
+    </div>
+
+
+
+
+    <script>
+        document.addEventListener('DOMContentLoaded', (event) => {
+            // Function to format number with dots for thousands separator
+            function formatNumber(number) {
+                return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+            }
+
+            // Function to calculate total price of all products
+            function calculateTotalPrice() {
+                var total = 0;
+                document.querySelectorAll('.product-row').forEach(row => {
+                    var totalPriceElement = row.querySelector('.total-price');
+                    if (totalPriceElement) {
+                        var totalPrice = parseFloat(totalPriceElement.textContent.replace(/\./g, '').replace(',', '.'));
+                        total += totalPrice;
+                    }
+                });
+                return total;
+            }
+
+            // Function to load selected products from localStorage
+            function loadSelectedProducts() {
+                var selectedProducts = JSON.parse(localStorage.getItem('selectedProducts')) || [];
+
+                // Clear existing rows before adding new ones
+                var selectedProductsContainer = document.getElementById('selectedProductsContainer');
+                selectedProductsContainer.innerHTML = ''; // Clear existing rows
+                var productHeader = document.createElement('div');
+                productHeader.classList.add('product-header');
+                productHeader.innerHTML = `
+                            <span>Product Name</span>
+                            <span>Quantity</span>
+                            <span class="title-price">Price</span>
+                            <span class="title-total-price">Total Price</span>
+                        `;
+                selectedProductsContainer.appendChild(productHeader);
+                selectedProducts.forEach(product => {
+                    // Create a new row for the selected product
+                    var productRow = document.createElement('div');
+                    productRow.classList.add('product-row');
+
+                    // Create a span for the product name
+                    var nameSpan = document.createElement('span');
+                    nameSpan.textContent = product.name;
+
+                    // Create an input for the quantity
+                    var quantityInput = document.createElement('input');
+                    quantityInput.type = 'number';
+                    quantityInput.name = 'quantities';
+                    quantityInput.value = product.quantity;
+                    quantityInput.min = 1; // Set min based on amountInStock
+                    quantityInput.max = product.amountInStock; // Set max based on amountInStock // Set max based on data-amount-in-stock
+                    quantityInput.classList.add('quantity-input');
+
+                    // Create a span for the product price
+                    var priceSpan = document.createElement('span');
+                    priceSpan.textContent = formatNumber(product.price);
+
+                    // Create a span for the total price
+                    var totalSpan = document.createElement('span');
+                    totalSpan.textContent = formatNumber(product.totalPrice);
+                    totalSpan.classList.add('total-price');
+
+                    // Create a remove button
+                    var removeButton = document.createElement('i');
+                    removeButton.classList.add('fa', 'fa-trash', 'remove-button');
+                    removeButton.addEventListener('click', function () {
+                        productRow.remove();
+                        var totalPrice = calculateTotalPrice();
+                        document.getElementById('totalAll').textContent = formatNumber(totalPrice);
+                        // Remove from selectedProducts array
+                        selectedProducts = selectedProducts.filter(p => p.name !== product.name);
+                        localStorage.setItem('selectedProducts', JSON.stringify(selectedProducts));
+                    });
+
+                    // Update the total price when quantity changes
+                    quantityInput.addEventListener('input', function () {
+                        var quantity = parseInt(quantityInput.value);
+                        totalSpan.textContent = formatNumber(quantity * product.price);
+                        var totalPrice = calculateTotalPrice();
+                        document.getElementById('totalAll').textContent = formatNumber(totalPrice);
+
+                        // Update selectedProducts array with new quantity
+                        selectedProducts.forEach(p => {
+                            if (p.name === product.name) {
+                                p.quantity = quantity;
+                                p.totalPrice = quantity * product.price;
+                            }
+                        });
+                        localStorage.setItem('selectedProducts', JSON.stringify(selectedProducts));
+                    });
+
+                    // Append elements to the product row
+                    productRow.appendChild(nameSpan);
+                    productRow.appendChild(quantityInput);
+                    productRow.appendChild(priceSpan);
+                    productRow.appendChild(totalSpan);
+                    productRow.appendChild(removeButton);
+
+                    // Append the product row to the selected products container
+                    selectedProductsContainer.appendChild(productRow);
+                });
+
+                // Update total price initially
+                var totalPrice = calculateTotalPrice();
+                document.getElementById('totalAll').textContent = formatNumber(totalPrice);
+            }
+
+            // Event listener for adding product to selected products container
+            document.querySelectorAll('.product-item').forEach(item => {
+                item.addEventListener('click', function (event) {
+                    var amountInStock = parseInt(this.getAttribute('data-amount-in-stock'));
+
+                    if (amountInStock === 0) {
+                        alert('Product is out of stock.');
+                        return;
+                    }
+
+                    if (document.querySelectorAll('.product-row').length >= 5) {
+                        alert('Maximum of 5 products reached.');
+                        return;
+                    }
+
+                    var productId = this.getAttribute('data-product-id');
+                    var productName = this.getAttribute('data-product-name');
+                    var productPrice = parseFloat(this.getAttribute('data-product-price'));
+                    var amountInStock = parseInt(this.getAttribute('data-amount-in-stock'));
+
+                    // Check if product is already selected
+                    var selectedProducts = JSON.parse(localStorage.getItem('selectedProducts')) || [];
+                    var alreadySelected = selectedProducts.some(product => product.name === productName);
+
+                    if (!alreadySelected) {
+                        selectedProducts.push({ id: productId, name: productName, price: productPrice, quantity: 1, totalPrice: productPrice, amountInStock: amountInStock });
+                        localStorage.setItem('selectedProducts', JSON.stringify(selectedProducts));
+
+                        // Reload selected products
+                        loadSelectedProducts();
+                    } else {
+                        alert('Product already selected.');
+                    }
+                });
+            });
+
+            // Load selected products on page load
+            loadSelectedProducts();
+
+            function formatNumber(number) {
+                return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+            }
+
+
+
+            document.getElementById('productForm').addEventListener('submit', function (event) {
+                event.preventDefault();
+
+                var selectedProducts = JSON.parse(localStorage.getItem('selectedProducts')) || [];
+                var saleOrderDetails = selectedProducts.map(product => {
+                    return {
+                        ProductId: product.id,
+                        Amount: product.quantity
+                    };
+                });
+                var promotionValue = document.getElementById('promotionSelect').value;
+                var saleOrderRequestDTO = {
+                    CustomerId: '@Model.Customer.CustomerId',
+                    SaleOrderDetails: saleOrderDetails,
+                    PromotionCode: promotionValue
+                };
+
+                var token = '@token';
+
+                fetch('http://localhost:5281/Staff/SaleOrderScreen/AddSaleOrder/AddSaleOrder', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'RequestVerificationToken': token
+                    },
+                    body: JSON.stringify(saleOrderRequestDTO),
+                    processData: false,
+                })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Network response was not ok');
+                        }
+                        localStorage.removeItem('selectedProducts');
+                        document.getElementById('selectedProductsContainer').innerHTML = ''; // Clear selected products
+                        document.getElementById('totalAll').textContent = '0'; // Reset total price
+                        document.getElementById('productForm').reset(); // Reset form fields
+
+                        window.location.href = 'http://localhost:5281/Staff/SaleOrderScreen/SaleOrderManagement';
+                    })
+                   
+            });
+
+            document.addEventListener('click', function (event) {
+                var resultsContainer = document.getElementById('results-product-container');
+                var searchInput = document.getElementById('txtSearchProduct');
+                var productFormContainer = document.getElementById('productFormContainer');
+
+                if (!searchInput.contains(event.target) && !resultsContainer.contains(event.target) && !productFormContainer.contains(event.target)) {
+                    resultsContainer.style.display = 'none';
+                }
+            });
+
+            document.getElementById('txtSearchProduct').addEventListener('click', function (event) {
+                var resultsContainer = document.getElementById('results-product-container');
+                if (this.value.trim() !== "") {
+                    resultsContainer.style.display = 'block';
+                }
+            });
+        });
+    </script>
+</body>
+</html>

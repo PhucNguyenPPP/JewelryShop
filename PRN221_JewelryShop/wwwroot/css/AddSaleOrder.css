@@ -1,0 +1,154 @@
+﻿body {
+    font-family: Arial, sans-serif;
+    color: black;
+}
+
+/*header*/
+.header {
+    color: white;
+    background-color: #576678;
+    padding: 6px 0;
+    margin-bottom: 30px;
+}
+
+    .header h1 {
+        margin-left: 5%;
+        color: white;
+    }
+/*header*/
+.content {
+    margin-left: 5%;
+    width: 95%;
+    margin: 0 auto;
+    font-size: 20px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+    border-radius: 10px;
+    padding: 30px;
+}
+
+.product-container #txtSearchProduct {
+    width: 50%;
+}
+
+.product-container #results-product-container {
+    display: block;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.8);
+    width: 50%;
+    height: fit-content;
+    max-height: 150px;
+    overflow-x: auto;
+    overflow-y: auto;
+}
+
+
+#productFormContainer {
+    margin-top: 20px;
+    padding: 10px;
+    background-color: #f9f9f9;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+}
+
+.product-header,
+.product-row {
+    margin-top: 10px;
+    padding: 8px;
+    background-color: #fff;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+    display: flex;
+    align-items: center;
+    width: 100%;
+}
+
+    .product-header span:first-child,
+    .product-row span:first-child {
+        margin-right: 10px;
+        width: 50%;
+    }
+
+    .product-header span:nth-child(3),
+    .product-row span:nth-child(3) {
+        margin-right: 10px;
+        margin-left: 40px;
+    }
+
+
+    .product-header .quantity-input,
+    .product-row .quantity-input {
+        width: 100px;
+        padding: 5px;
+        border: 1px solid #ccc;
+        border-radius: 3px;
+        margin-right: 10px;
+        width: 5%;
+    }
+
+    .product-row input[type="number"] {
+        width: 50px;
+    }
+
+    .product-header .total-price,
+    .product-row .total-price {
+        font-weight: bold;
+        flex-grow: 1;
+        text-align: right;
+    }
+
+    .product-header .title-price,
+    .product-row .title-price {
+        margin-left: 40px;
+    }
+
+    .product-row .title-total-price,
+    .product-header .title-total-price {
+        font-weight: bold;
+        flex-grow: 1;
+        text-align: right;
+    }
+
+#productFormContainer button[type="submit"] {
+    margin-top: 10px;
+    padding: 8px 20px;
+    font-size: 16px;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+}
+
+    #productFormContainer button[type="submit"]:hover {
+        background-color: #0056b3;
+    }
+
+    #productFormContainer button[type="submit"]:focus {
+        outline: none;
+    }
+
+.search-btn {
+    color: white;
+    border: none;
+    border-radius: 10px;
+    background-color: #2D3748;
+    padding: 5px 20px;
+}
+
+    .search-btn:hover {
+        background-color: grey;
+        color: black;
+    }
+
+.customer-container .sale-order-info span:first-child {
+    font-weight: bold;
+    margin-right: 10px;
+}
+
+#promotionSelect {
+    width: 60%;
+    padding: 10px 0;
+}
+
+.notification-msg {
+    color: green;
+}
