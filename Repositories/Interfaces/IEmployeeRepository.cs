@@ -9,6 +9,11 @@ namespace Repositories.Interfaces
 {
     public interface IEmployeeRepository
     {
-        List<Employee> GetAllEmployees();
-    }
+		void AddEmployee(Employee employee);
+		List<Employee> GetAllEmployees();
+		Employee GetEmployee(Guid id);
+		List<Employee> SearchEmployees(string search);
+		bool SaveChange();
+		void UpdateEmployee(Employee emp);
+	}
 }

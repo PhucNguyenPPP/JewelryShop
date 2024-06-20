@@ -19,9 +19,36 @@ namespace Repositories.Repositories
             _employeeDao = employeeDao;
 
         }
-        public List<Employee> GetAllEmployees()
+
+		public void AddEmployee(Employee employee)
+		{
+			_employeeDao.Add(employee);
+		}
+
+		public List<Employee> GetAllEmployees()
         {
             return _employeeDao.GetAll(c => c.Status == true).Include(c => c.Role).ToList();
         }
-    }
+
+		public bool SaveChange()
+		{
+			return _employeeDao.SaveChange();
+		}
+
+
+		public Employee GetEmployee(Guid id)
+		{
+            return _employeeDao.GetById(id);
+		}
+
+		public List<Employee> SearchEmployees(string search)
+		{
+			return _employeeDao.GetAll(c => c.Status == true && c.EmployeeName.Contains(search)).Include(c => c.Role).ToList();
+		}
+
+		public void UpdateEmployee(Employee emp)
+		{
+			_employeeDao.Update(emp);
+		}
+	}
 }
