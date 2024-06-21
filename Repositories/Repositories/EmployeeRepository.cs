@@ -27,10 +27,19 @@ namespace Repositories.Repositories
 
 		public List<Employee> GetAllEmployees()
         {
-            return _employeeDao.GetAll(c => c.Status == true).Include(c => c.Role).ToList();
+            return _employeeDao.GetAll(c => c.Status == true)
+				.Include(c => c.Role)
+                .Include(c => c.Counter)
+                .Where(c => c.Role.RoleName == "Staff")
+				.ToList();
         }
 
-		public bool SaveChange()
+        public List<Employee> GetAllEmployeesForLogin()
+        {
+            return _employeeDao.GetAll(c => c.Status == true).Include(c => c.Role).Include(c => c.Counter).ToList();
+        }
+
+        public bool SaveChange()
 		{
 			return _employeeDao.SaveChange();
 		}
@@ -43,7 +52,11 @@ namespace Repositories.Repositories
 
 		public List<Employee> SearchEmployees(string search)
 		{
-			return _employeeDao.GetAll(c => c.Status == true && c.EmployeeName.Contains(search)).Include(c => c.Role).ToList();
+			return _employeeDao.GetAll(c => c.Status == true && c.EmployeeName.Contains(search))
+				.Include(c => c.Role)
+				.Include(c => c.Counter)
+                .Where(c => c.Role.RoleName == "Staff")
+                .ToList();
 		}
 
 		public void UpdateEmployee(Employee emp)

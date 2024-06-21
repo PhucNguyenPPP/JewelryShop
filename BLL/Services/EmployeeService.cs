@@ -17,9 +17,13 @@ namespace BLL.Services
 	public class EmployeeService : IEmployeeService
 	{
 		private readonly IEmployeeRepository _employeeRepo;
-		public EmployeeService(IEmployeeRepository employeeRepo) { 
+		private readonly IAuthService _authService;
+		private readonly IRoleService _roleService;
+		public EmployeeService(IEmployeeRepository employeeRepo, IAuthService authService,
+			IRoleService roleService) { 
 			_employeeRepo = employeeRepo;
-
+			_authService = authService;
+			_roleService = roleService;
 		}
 
 		private object CheckValidation(Employee employee)
@@ -27,15 +31,16 @@ namespace BLL.Services
 			throw new NotImplementedException();
 		}
 
-		public List<Employee> GetAllEmPloyee()
+		public List<Employee> GetAllEmployee()
 		{
 			var list = _employeeRepo.GetAllEmployees();
 			return list;
 		}
 
-		public Employee GetEmployee(Guid id)
+        public Employee GetEmployee(string id)
 		{
-			var emp = _employeeRepo.GetEmployee(id);
+			Guid.TryParse(id, out var employeeId);
+			var emp = _employeeRepo.GetEmployee(employeeId);
 			return emp;
 		}
 
@@ -45,9 +50,9 @@ namespace BLL.Services
 		}
 
 		public bool AddEmployee(EmployeeRequestDTO employeeDTO)
-		{
-			Guid.TryParse(employeeDTO.RoleId, out Guid roleId);
+		{			
 			var employeeId = Guid.NewGuid();
+			var roleId = _roleService.GetStaffRole().RoleId;
 			Employee employee = new Employee()
 			{
 				EmployeeId = employeeId,
@@ -59,7 +64,8 @@ namespace BLL.Services
 				Dob = employeeDTO.Dob,
 				RoleId = roleId,
 				PhoneNumber = employeeDTO.PhoneNumber,
-				PasswordHash = employeeDTO.PasswordHash,				
+				PasswordHash = _authService.HashPassword(employeeDTO.PasswordHash),
+				CounterId = Guid.Parse(employeeDTO.CounterId),
                 Status = true
 			};
 			_employeeRepo.AddEmployee(employee);
@@ -70,8 +76,7 @@ namespace BLL.Services
 		public bool UpdateEmployee(EmployeeRequestDTO employeeDTO)
 		{
 			Guid.TryParse(employeeDTO.EmployeeId, out Guid employeeId);
-            Guid.TryParse(employeeDTO.RoleId, out Guid roleId);
-			Employee? emp = _employeeRepo.GetEmployee(employeeId);
+            Employee? emp = _employeeRepo.GetEmployee(employeeId);
 			if (emp == null)
 			{
 				return false;
@@ -80,13 +85,12 @@ namespace BLL.Services
 			{
 				emp.AvatarImg = employeeDTO.AvatarImg;
 			}
-			emp.UserName = employeeDTO.UserName;
 			emp.EmployeeName = employeeDTO.EmployeeName;	
 			emp.Email = employeeDTO.Email;	
 			emp.Address = employeeDTO.Address;
 			emp.PhoneNumber = employeeDTO.PhoneNumber;
 			emp.Dob = employeeDTO.Dob;
-			emp.RoleId = roleId;
+			emp.CounterId = Guid.Parse(employeeDTO.CounterId);
 			_employeeRepo.UpdateEmployee(emp);
 			bool result = _employeeRepo.SaveChange();
 			return result;
@@ -105,5 +109,35 @@ namespace BLL.Services
 			bool result = _employeeRepo.SaveChange();
 			return result;
 		}
-	}
+
+        public bool CheckUserNameExist(string userName)
+        {
+            var list = _employeeRepo.GetAllEmployees();
+			if(list.Any(c=> c.UserName == userName))
+			{
+				return true;
+			}
+			return false;
+        }
+
+        public bool CheckEmailExist(string email)
+        {
+            var list = _employeeRepo.GetAllEmployees();
+            if (list.Any(c => c.Email == email))
+            {
+                return true;
+            }
+            return false;
+        }
+
+        public bool CheckPhoneExist(string phone)
+        {
+            var list = _employeeRepo.GetAllEmployees();
+            if (list.Any(c => c.PhoneNumber == phone))
+            {
+                return true;
+            }
+            return false;
+        }
+    }
 }

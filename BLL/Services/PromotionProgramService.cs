@@ -28,9 +28,8 @@ namespace BLL.Services
 
         public List<PromotionProgram> SearchPromotionProgram(string searchValue)
         {
-            List<PromotionProgram> promotionProgramsList = _promotionProgramRepository.GetPromotionProgramList()
-                .Where(c => c.PromotionProgramName.ToLower().Contains(searchValue)).ToList();
-            return promotionProgramsList;
+            List<PromotionProgram> promotionProgramsList = _promotionProgramRepository.GetPromotionProgramList().ToList();
+            return promotionProgramsList.Where(c => c.PromotionProgramName.ToLower().Contains(searchValue.ToLower())).ToList();
         }
 
         public bool DeletePromotionProgram(string promotionProgramId)

@@ -1,0 +1,220 @@
+﻿body {
+    font-family: Arial, sans-serif;
+    color: black;
+}
+
+/*header*/
+.header {
+    color: white;
+    background-color: #576678;
+    padding: 6px 0;
+    margin-bottom: 30px;
+}
+
+    .header h1 {
+        margin-left: 5%;
+        color: white;
+    }
+/*header*/
+
+
+.content {
+    margin-left: 5%;
+    width: 80%;
+    font-size: 15px;
+}
+
+/*search and add new*/
+.action-container {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+    width: 110%;
+}
+
+.search-container {
+    width: 70%;
+}
+
+    .search-container input[type="text"] {
+        width: 40%;
+        padding: 8px;
+        margin-right: 10px;
+    }
+
+    .search-container button {
+        padding: 10px 30px;
+        background-color: #2D3748;
+        color: white;
+        border: none;
+        cursor: pointer;
+        border-radius: 5px;
+    }
+
+        .search-container button:hover {
+            color: black;
+            background-color: grey;
+        }
+
+.add-new-container {
+    margin-left: 15%;
+}
+
+.add-new-button {
+    padding: 10px 30px;
+    background-color: #2D3748;
+    color: white;
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+    .add-new-button:hover {
+        color: black;
+        background-color: grey;
+    }
+
+    .add-new-button i {
+        margin-right: 10px;
+    }
+/*search and add new*/
+/*table-management*/
+.table-container {
+    overflow-x: auto;
+    width: 110%;
+    border: 1px solid black;
+    border-radius: 10px;
+    padding-bottom: 70px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.8);
+}
+
+    .table-container img {
+        width: 70%;
+        height: 70px;
+    }
+
+    .table-container table {
+        width: 120%;
+        border-collapse: collapse;
+        margin: auto;
+        border-radius: 10px;
+    }
+
+    .table-container thead {
+        background-color: #2D3748;
+        color: white;
+        text-align: center;
+    }
+
+
+    .table-container th,
+    .table-container td {
+        padding: 5px 5px;
+        text-align: center;
+        width: max-content;
+    }
+
+    .table-container tr {
+        border-bottom: 1px solid #ddd;
+    }
+
+    .table-container tbody tr:hover {
+        background-color: #f1f1f1;
+    }
+/*table-management*/
+
+/*dropdown option*/
+.dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+.dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: white;
+    min-width: 150px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index: 1;
+    margin-left: -140px;
+    text-align: left;
+}
+
+    .dropdown-content .add-sale-order-button {
+        color: orange;
+        padding: 10px;
+        text-align: left;
+        border: none;
+        width: max-content;
+    }
+
+    .dropdown-content .edit-button {
+        color: blue;
+        padding: 10px;
+        text-align: left;
+        border: none;
+        width: max-content;
+        cursor: pointer;
+    }
+
+    .dropdown-content .delete-button {
+        color: red;
+        padding: 10px;
+        text-align: left;
+        border: none;
+        width: max-content;
+        cursor: pointer;
+    }
+
+        .dropdown-content .add-sale-order-button i,
+        .dropdown-content .edit-button i,
+        .dropdown-content .delete-button i {
+            margin-right: 5px;
+        }
+
+    .dropdown-content button:hover {
+        background-color: #ddd;
+    }
+
+
+.dropdown-icon {
+    cursor: pointer;
+}
+/*dropdown option*/
+
+/*Pop up Modal */
+.modal-header {
+    background-color: #2D3748;
+}
+
+    .modal-header h2 {
+        color: white;
+        margin-left: 30%;
+    }
+
+    .modal-header h5 {
+        color: white;
+        margin-left: 35%;
+    }
+
+
+    .modal-header .close {
+        color: white;
+    }
+
+#updateModal img {
+    width: 30%;
+}
+/*Pop up Modal */
+.noti-msg {
+    color: green;
+}
+
+.pagination {
+    margin-top: 20px;
+}
+
+.form-group select {
+    width: 100%;
+    padding: 5px 0;
+}

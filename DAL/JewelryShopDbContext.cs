@@ -24,8 +24,6 @@ public partial class JewelryShopDbContext : DbContext
 
     public virtual DbSet<Counter> Counters { get; set; }
 
-    public virtual DbSet<CounterEmployee> CounterEmployees { get; set; }
-
     public virtual DbSet<Customer> Customers { get; set; }
 
     public virtual DbSet<Employee> Employees { get; set; }
@@ -56,29 +54,24 @@ public partial class JewelryShopDbContext : DbContext
     {
         modelBuilder.Entity<BuyBackOrder>(entity =>
         {
-            entity.HasKey(e => e.Bboid).HasName("PK__BuyBackO__7EBCD836F2776BE9");
+            entity.HasKey(e => e.Bboid).HasName("PK__BuyBackO__7EBCD83646D31C39");
 
             entity.ToTable("BuyBackOrder");
 
             entity.Property(e => e.Bboid)
                 .ValueGeneratedNever()
                 .HasColumnName("BBOId");
-            entity.Property(e => e.BbpolicyId).HasColumnName("BBPolicyId");
             entity.Property(e => e.CreatedDate).HasColumnType("datetime");
             entity.Property(e => e.TotalPrice).HasColumnType("decimal(18, 0)");
 
-            entity.HasOne(d => d.Bbpolicy).WithMany(p => p.BuyBackOrders)
-                .HasForeignKey(d => d.BbpolicyId)
-                .HasConstraintName("FK__BuyBackOr__BBPol__398D8EEE");
-
             entity.HasOne(d => d.Customer).WithMany(p => p.BuyBackOrders)
                 .HasForeignKey(d => d.CustomerId)
-                .HasConstraintName("FK__BuyBackOr__Custo__38996AB5");
+                .HasConstraintName("FK__BuyBackOr__Custo__398D8EEE");
         });
 
         modelBuilder.Entity<BuyBackOrderDetail>(entity =>
         {
-            entity.HasKey(e => e.BbodetailId).HasName("PK__BuyBackO__9EF99DA86F26073E");
+            entity.HasKey(e => e.BbodetailId).HasName("PK__BuyBackO__9EF99DA8331647CA");
 
             entity.ToTable("BuyBackOrderDetail");
 
@@ -105,7 +98,7 @@ public partial class JewelryShopDbContext : DbContext
 
         modelBuilder.Entity<BuyBackPolicy>(entity =>
         {
-            entity.HasKey(e => e.PolicyId).HasName("PK__BuyBackP__2E1339A461D083AC");
+            entity.HasKey(e => e.PolicyId).HasName("PK__BuyBackP__2E1339A4E3CC82A6");
 
             entity.ToTable("BuyBackPolicy");
 
@@ -116,7 +109,7 @@ public partial class JewelryShopDbContext : DbContext
 
         modelBuilder.Entity<Counter>(entity =>
         {
-            entity.HasKey(e => e.CounterId).HasName("PK__Counter__F12879C4DED3F4BE");
+            entity.HasKey(e => e.CounterId).HasName("PK__Counter__F12879C421BE0DD8");
 
             entity.ToTable("Counter");
 
@@ -124,27 +117,9 @@ public partial class JewelryShopDbContext : DbContext
             entity.Property(e => e.CounterName).HasMaxLength(100);
         });
 
-        modelBuilder.Entity<CounterEmployee>(entity =>
-        {
-            entity.HasKey(e => e.CounterEmployeeId).HasName("PK__CounterE__5320D1F35E19B7F3");
-
-            entity.ToTable("CounterEmployee");
-
-            entity.Property(e => e.CounterEmployeeId).ValueGeneratedNever();
-            entity.Property(e => e.WorkingDate).HasColumnType("datetime");
-
-            entity.HasOne(d => d.Counter).WithMany(p => p.CounterEmployees)
-                .HasForeignKey(d => d.CounterId)
-                .HasConstraintName("FK__CounterEm__Count__5165187F");
-
-            entity.HasOne(d => d.Employee).WithMany(p => p.CounterEmployees)
-                .HasForeignKey(d => d.EmployeeId)
-                .HasConstraintName("FK__CounterEm__Emplo__52593CB8");
-        });
-
         modelBuilder.Entity<Customer>(entity =>
         {
-            entity.HasKey(e => e.CustomerId).HasName("PK__Customer__A4AE64D8013C6E1F");
+            entity.HasKey(e => e.CustomerId).HasName("PK__Customer__A4AE64D855A28155");
 
             entity.ToTable("Customer");
 
@@ -159,12 +134,12 @@ public partial class JewelryShopDbContext : DbContext
 
             entity.HasOne(d => d.Employee).WithMany(p => p.Customers)
                 .HasForeignKey(d => d.EmployeeId)
-                .HasConstraintName("FK__Customer__Employ__29572725");
+                .HasConstraintName("FK__Customer__Employ__2C3393D0");
         });
 
         modelBuilder.Entity<Employee>(entity =>
         {
-            entity.HasKey(e => e.EmployeeId).HasName("PK__Employee__7AD04F11BE0F81ED");
+            entity.HasKey(e => e.EmployeeId).HasName("PK__Employee__7AD04F11AA1F7C94");
 
             entity.ToTable("Employee");
 
@@ -177,14 +152,18 @@ public partial class JewelryShopDbContext : DbContext
             entity.Property(e => e.PhoneNumber).HasMaxLength(20);
             entity.Property(e => e.UserName).HasMaxLength(100);
 
+            entity.HasOne(d => d.Counter).WithMany(p => p.Employees)
+                .HasForeignKey(d => d.CounterId)
+                .HasConstraintName("FK__Employee__Counte__286302EC");
+
             entity.HasOne(d => d.Role).WithMany(p => p.Employees)
                 .HasForeignKey(d => d.RoleId)
-                .HasConstraintName("FK__Employee__RoleId__267ABA7A");
+                .HasConstraintName("FK__Employee__RoleId__29572725");
         });
 
         modelBuilder.Entity<Material>(entity =>
         {
-            entity.HasKey(e => e.MaterialId).HasName("PK__Material__C50610F71BFA56E7");
+            entity.HasKey(e => e.MaterialId).HasName("PK__Material__C50610F786D35A0C");
 
             entity.ToTable("Material");
 
@@ -194,7 +173,7 @@ public partial class JewelryShopDbContext : DbContext
 
         modelBuilder.Entity<MaterialProduct>(entity =>
         {
-            entity.HasKey(e => e.MaterialProductId).HasName("PK__Material__219352D4CC4B1449");
+            entity.HasKey(e => e.MaterialProductId).HasName("PK__Material__219352D41BEF9D6D");
 
             entity.ToTable("MaterialProduct");
 
@@ -203,16 +182,16 @@ public partial class JewelryShopDbContext : DbContext
 
             entity.HasOne(d => d.Material).WithMany(p => p.MaterialProducts)
                 .HasForeignKey(d => d.MaterialId)
-                .HasConstraintName("FK__MaterialP__Mater__32E0915F");
+                .HasConstraintName("FK__MaterialP__Mater__33D4B598");
 
             entity.HasOne(d => d.Product).WithMany(p => p.MaterialProducts)
                 .HasForeignKey(d => d.ProductId)
-                .HasConstraintName("FK__MaterialP__Produ__33D4B598");
+                .HasConstraintName("FK__MaterialP__Produ__34C8D9D1");
         });
 
         modelBuilder.Entity<Product>(entity =>
         {
-            entity.HasKey(e => e.ProductId).HasName("PK__Product__B40CC6CD65D3B207");
+            entity.HasKey(e => e.ProductId).HasName("PK__Product__B40CC6CDE0A4BD69");
 
             entity.ToTable("Product");
 
@@ -223,12 +202,12 @@ public partial class JewelryShopDbContext : DbContext
 
             entity.HasOne(d => d.Counter).WithMany(p => p.Products)
                 .HasForeignKey(d => d.CounterId)
-                .HasConstraintName("FK__Product__Counter__300424B4");
+                .HasConstraintName("FK__Product__Counter__30F848ED");
         });
 
         modelBuilder.Entity<PromotionProgram>(entity =>
         {
-            entity.HasKey(e => e.PromotionProgramId).HasName("PK__Promotio__7869220AB13682FA");
+            entity.HasKey(e => e.PromotionProgramId).HasName("PK__Promotio__7869220A634F9AA9");
 
             entity.ToTable("PromotionProgram");
 
@@ -240,7 +219,7 @@ public partial class JewelryShopDbContext : DbContext
 
         modelBuilder.Entity<PromotionProgramCode>(entity =>
         {
-            entity.HasKey(e => e.PromotionCodeId).HasName("PK__Promotio__B537DD055A6947F8");
+            entity.HasKey(e => e.PromotionCodeId).HasName("PK__Promotio__B537DD05A10E03C5");
 
             entity.ToTable("PromotionProgramCode");
 
@@ -255,7 +234,7 @@ public partial class JewelryShopDbContext : DbContext
 
         modelBuilder.Entity<ReturnPolicy>(entity =>
         {
-            entity.HasKey(e => e.PolicyId).HasName("PK__ReturnPo__2E1339A459EFC001");
+            entity.HasKey(e => e.PolicyId).HasName("PK__ReturnPo__2E1339A4D079D8BD");
 
             entity.ToTable("ReturnPolicy");
 
@@ -266,7 +245,7 @@ public partial class JewelryShopDbContext : DbContext
 
         modelBuilder.Entity<Role>(entity =>
         {
-            entity.HasKey(e => e.RoleId).HasName("PK__Role__8AFACE1A0B4744C9");
+            entity.HasKey(e => e.RoleId).HasName("PK__Role__8AFACE1AC6E009BA");
 
             entity.ToTable("Role");
 
@@ -276,7 +255,7 @@ public partial class JewelryShopDbContext : DbContext
 
         modelBuilder.Entity<SaleOrder>(entity =>
         {
-            entity.HasKey(e => e.SaleOrderId).HasName("PK__SaleOrde__DB86E342A746C11C");
+            entity.HasKey(e => e.SaleOrderId).HasName("PK__SaleOrde__DB86E342592663E4");
 
             entity.ToTable("SaleOrder");
 
@@ -287,24 +266,20 @@ public partial class JewelryShopDbContext : DbContext
 
             entity.HasOne(d => d.Customer).WithMany(p => p.SaleOrders)
                 .HasForeignKey(d => d.CustomerId)
-                .HasConstraintName("FK__SaleOrder__Custo__49C3F6B7");
+                .HasConstraintName("FK__SaleOrder__Custo__48CFD27E");
 
             entity.HasOne(d => d.Employee).WithMany(p => p.SaleOrders)
                 .HasForeignKey(d => d.EmployeeId)
-                .HasConstraintName("FK__SaleOrder__Emplo__4AB81AF0");
-
-            entity.HasOne(d => d.Policy).WithMany(p => p.SaleOrders)
-                .HasForeignKey(d => d.PolicyId)
-                .HasConstraintName("FK__SaleOrder__Polic__47DBAE45");
+                .HasConstraintName("FK__SaleOrder__Emplo__49C3F6B7");
 
             entity.HasOne(d => d.PromotionCode).WithMany(p => p.SaleOrders)
                 .HasForeignKey(d => d.PromotionCodeId)
-                .HasConstraintName("FK__SaleOrder__Promo__48CFD27E");
+                .HasConstraintName("FK__SaleOrder__Promo__47DBAE45");
         });
 
         modelBuilder.Entity<SaleOrderDetail>(entity =>
         {
-            entity.HasKey(e => e.SaleOrderDetailId).HasName("PK__SaleOrde__F6EA425AFAAE1F6F");
+            entity.HasKey(e => e.SaleOrderDetailId).HasName("PK__SaleOrde__F6EA425A735AA0C4");
 
             entity.ToTable("SaleOrderDetail");
 
@@ -316,11 +291,11 @@ public partial class JewelryShopDbContext : DbContext
 
             entity.HasOne(d => d.Product).WithMany(p => p.SaleOrderDetails)
                 .HasForeignKey(d => d.ProductId)
-                .HasConstraintName("FK__SaleOrder__Produ__4E88ABD4");
+                .HasConstraintName("FK__SaleOrder__Produ__4D94879B");
 
             entity.HasOne(d => d.SaleOrder).WithMany(p => p.SaleOrderDetails)
                 .HasForeignKey(d => d.SaleOrderId)
-                .HasConstraintName("FK__SaleOrder__SaleO__4D94879B");
+                .HasConstraintName("FK__SaleOrder__SaleO__4CA06362");
         });
 
         OnModelCreatingPartial(modelBuilder);
