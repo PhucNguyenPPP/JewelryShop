@@ -18,7 +18,7 @@ namespace BLL.Services
 
         public LoginResponse CheckLogin(string username, string password)
         {
-            var employeeList = _employeeRepo.GetAllEmployees().ToList();
+            var employeeList = _employeeRepo.GetAllEmployeesForLogin().ToList();
             var employee = employeeList.FirstOrDefault(c => c.UserName == username
             && c.Status == true);
             if (employee == null)

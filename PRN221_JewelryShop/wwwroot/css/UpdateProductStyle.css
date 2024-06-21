@@ -22,7 +22,10 @@
     margin-left: 5%;
     width: 80%;
     margin: 0 auto;
-    font-size: 20px;
+    font-size: 15px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+    border-radius: 10px;
+    padding: 30px;
 }
 
     .content img {

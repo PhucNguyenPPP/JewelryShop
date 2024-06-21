@@ -105,19 +105,22 @@ namespace PRN221_JewelryShop.Pages.Staff
             }
 
             /*convert image file to base 64*/
-            CustomerResquestDTO.AvatarImg = _imageService.ConvertToBase64(CustomerAvatar);
+            if(CustomerAvatar != null)
+            {
+                CustomerResquestDTO.AvatarImg = _imageService.ConvertToBase64(CustomerAvatar);
+            }
             CustomerResquestDTO.EmployeeId = LoginResponse.EmployeeId.ToString();
 
-            var result = _customerService.UpdateCustomer(CustomerResquestDTO);
+            var result = _customerService.AddCustomer(CustomerResquestDTO);
             if (result)
             {
-                TempData["CreateMsg"] = "Update Customer Successfully";
+                TempData["CreateMsg"] = "Create Customer Successfully";
                 GetCustomerList();
                 return Page();
             }
             else
             {
-                TempData["CreateMsg"] = "Update Customer Unsuccessfully";
+                TempData["CreateMsg"] = "Create Customer Unsuccessfully";
                 return Page();
             }
         }

@@ -16,7 +16,6 @@ namespace DTO
         public string? CustomerName { get; set; }
 
         [Required(ErrorMessage = "Please input PhoneNumber.")]
-        [StringLength(10, ErrorMessage = "PhoneNumber number is invalid")]
         [RegularExpression("^0\\d{9}$", ErrorMessage = "PhoneNumber number is invalid.")]
         public string? PhoneNumber { get; set; }
 

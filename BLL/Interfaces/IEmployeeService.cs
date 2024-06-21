@@ -10,11 +10,14 @@ namespace BLL.Interfaces
 {
 	public interface IEmployeeService
 	{
-		List<Employee> GetAllEmPloyee();
-		List<Employee> SearchEmployees(string search);
-		Employee GetEmployee (Guid id);	
+		List<Employee> GetAllEmployee();
+        List<Employee> SearchEmployees(string search);
+		Employee GetEmployee (string id);	
 		bool AddEmployee (EmployeeRequestDTO employeeDTO);
 		bool UpdateEmployee(EmployeeRequestDTO employeeDTO);
 		bool DeleteEmployee (string id);
+		bool CheckUserNameExist(string userName);
+		bool CheckEmailExist(string email);
+		bool CheckPhoneExist(string phone);
 	}
 }

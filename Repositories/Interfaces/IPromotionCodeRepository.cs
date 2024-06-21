@@ -18,5 +18,9 @@ namespace Repositories.Interfaces
         bool SaveChange();
 
         PromotionProgramCode? GetById(Guid id);
+
+        List<PromotionProgramCode> GetAllPromotionCodeNotExpiredList();
+        void AddRangePromotionCode(List<PromotionProgramCode> promotionCodeList);
+        List<PromotionProgramCode> GetAllPromotionCodeList();
     }
 }

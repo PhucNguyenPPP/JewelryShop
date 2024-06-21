@@ -2,6 +2,7 @@
 @model PRN221_JewelryShop.Pages.Staff.CustomerManagementModel
 @{
     Layout = "_LayoutStaff";
+    var dateNow = DateTime.Now.ToString("yyyy-MM-dd");
 }
 
 <!DOCTYPE html>
@@ -12,7 +13,7 @@
     <title>Customer Management</title>
     <link rel="stylesheet" href="~/css/CustomerManagementStyle.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
     <div class="header">
@@ -46,7 +47,7 @@
                         <th>Email</th>
                         <th>Date of Birth</th>
                         <th>Registration Date</th>
-                        <th>Employee ID</th>
+                        <th>Created Employee</th>
                         <th>Actions</th>
                     </tr>
                 </thead>
@@ -104,7 +105,7 @@
             <span>Page @Model.CurrentPage of @Model.TotalPages</span>
         </div>
     </div>
-  
+
 
     <!-- Create Modal -->
     <div class="modal fade" id="createModal" tabindex="-1" role="dialog" aria-labelledby="createModalLabel" aria-hidden="true">
@@ -142,7 +143,7 @@
                             </div>
                             <div class="form-group">
                                 <label for="dob">Date of Birth</label>
-                                <input type="date" class="form-control" id="dob" asp-for="CustomerResquestDTO.Dob" required>
+                                <input type="date" class="form-control" id="dob" asp-for="CustomerResquestDTO.Dob" max="@dateNow" required>
                                 <p class="text-danger"><span asp-validation-for="CustomerResquestDTO.Dob"></span></p>
                             </div>
                             <div class="form-group">
@@ -200,7 +201,7 @@
                                 </div>
                                 <div class="form-group">
                                     <label for="dob">Date of Birth</label>
-                                    <input type="date" class="form-control" id="UpdateDob" asp-for="CustomerResquestDTO.Dob" required>
+                                    <input type="date" class="form-control" id="UpdateDob" asp-for="CustomerResquestDTO.Dob" max="@dateNow" required>
                                     <p class="text-danger"><span asp-validation-for="CustomerResquestDTO.Dob"></span></p>
                                 </div>
                                 <div class="form-group">
@@ -234,7 +235,7 @@
                 <div class="modal-body">
                     <p>Are you sure you want to delete this customer?</p>
                     <form method="post" id="deleteForm" asp-page-handler="DeleteCustomer">
-                        <input type="hidden" id="deleteId" asp-for="CustomerResquestDTO.CustomerId"/>
+                        <input type="hidden" id="deleteId" asp-for="CustomerResquestDTO.CustomerId" />
                     </form>
                 </div>
                 <div class="modal-footer">
@@ -246,19 +247,21 @@
     </div>
 
 
-    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
     <script>
         let currentEditId;
         let currentDeleteId;
 
 
         function openCreateModal() {
+            document.getElementById('createForm').reset();
             $('#createModal').modal('show');
         }
 
         function closeCreateModal() {
+            document.getElementById('createForm').reset();
             $('#createModal').modal('hide');
         }
 
@@ -289,12 +292,24 @@
         }
 
         function create() {
-            document.getElementById("createForm").submit();
-            $('#createModal').modal('hide');
+            var form = document.getElementById("createForm");
+            if (form.checkValidity()) {
+                form.submit();
+                $('#createModal').modal('hide');
+                resetForm();
+            } else {
+                form.reportValidity();
+            }
         }
         function update() {
-            document.getElementById("updateForm").submit();
-            $('#updateModal').modal('hide');
+            var form = document.getElementById("updateForm").submit();;
+            if (form.checkValidity()) {
+                form.submit();
+                $('#updateModal').modal('hide');
+                resetForm();
+            } else {
+                form.reportValidity();
+            }
         }
 
         function deleteSubmit() {
@@ -313,20 +328,32 @@
             });
         });
 
-        document.addEventListener("DOMContentLoaded", function () {
-            const createModelError = '@(TempData["CreateModelError"] ?? "")';
-            const createError = '@(TempData["CreateError"] ?? "")';
 
-            if (createModelError !== '' || createError !== '') {
-                $('#createModal').modal('show');
-            }
+        const createModelError = '@(TempData["CreateModelError"] ?? "")';
+        const createError = '@(TempData["CreateError"] ?? "")';
 
-            const updateModelError = '@(TempData["UpdateModelError"] ?? "")';
-            const updateError = '@(TempData["UpdateError"] ?? "")';
+        if (createModelError !== '' || createError !== '') {
+            $('#createModal').modal('show');
+        }
 
-            if (updateModelError !== '' || updateError !== '') {
-                $('#updateModal').modal('show');
-            }
+        const updateModelError = '@(TempData["UpdateModelError"] ?? "")';
+        const updateError = '@(TempData["UpdateError"] ?? "")';
+
+        if (updateModelError !== '' || updateError !== '') {
+            $('#updateModal').modal('show');
+        }
+        $(document).ready(function () {
+            // Toggle dropdown content on click
+            $('.dropdown').on('click', function () {
+                $(this).find('.dropdown-content').toggle();
+            });
+
+            // Close dropdown when clicking outside
+            $(document).on('click', function (e) {
+                if (!$(e.target).closest('.dropdown').length) {
+                    $('.dropdown-content').hide();
+                }
+            });
         });
     </script>
 </body>

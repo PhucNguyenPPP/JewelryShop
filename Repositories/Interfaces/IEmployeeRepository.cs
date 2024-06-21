@@ -11,7 +11,8 @@ namespace Repositories.Interfaces
     {
 		void AddEmployee(Employee employee);
 		List<Employee> GetAllEmployees();
-		Employee GetEmployee(Guid id);
+		List<Employee> GetAllEmployeesForLogin();
+        Employee GetEmployee(Guid id);
 		List<Employee> SearchEmployees(string search);
 		bool SaveChange();
 		void UpdateEmployee(Employee emp);

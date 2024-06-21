@@ -13,8 +13,6 @@ public partial class SaleOrder
 
     public DateTime? CreatedDate { get; set; }
 
-    public Guid? PolicyId { get; set; }
-
     public Guid? PromotionCodeId { get; set; }
 
     public Guid? CustomerId { get; set; }
@@ -24,8 +22,6 @@ public partial class SaleOrder
     public virtual Customer? Customer { get; set; }
 
     public virtual Employee? Employee { get; set; }
-
-    public virtual ReturnPolicy? Policy { get; set; }
 
     public virtual PromotionProgramCode? PromotionCode { get; set; }
 

@@ -25,9 +25,11 @@ public partial class Employee
 
     public bool? Status { get; set; }
 
+    public Guid? CounterId { get; set; }
+
     public Guid? RoleId { get; set; }
 
-    public virtual ICollection<CounterEmployee> CounterEmployees { get; set; } = new List<CounterEmployee>();
+    public virtual Counter? Counter { get; set; }
 
     public virtual ICollection<Customer> Customers { get; set; } = new List<Customer>();
 

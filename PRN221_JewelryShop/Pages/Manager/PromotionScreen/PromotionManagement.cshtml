@@ -1,0 +1,380 @@
+﻿@page "{handler?}"
+@inject Microsoft.AspNetCore.Antiforgery.IAntiforgery a
+@model PRN221_JewelryShop.Pages.Manager.PromotionScreen.PromotionManagementModel
+@{
+    Layout = "_LayoutManager";
+    var dateNow = DateTime.Now.ToString("yyyy-MM-dd");
+    var token = a.GetAndStoreTokens(HttpContext).RequestToken;
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Promotion Management</title>
+    <link rel="stylesheet" href="~/css/PromotionManagement.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="header">
+        <h1>Promotion Management</h1>
+    </div>
+    <div class="content">
+        <div class="action-container">
+            <div class="search-container">
+                <form method="get" class="form-inline mb-3" asp-page-handler="SearchPromotion">
+                    <input type="text" class="form-control mr-2 w-50" asp-for="@Model.SearchValue" placeholder="Search by Promotion Program Name" />
+                    <input type="hidden" name="SearchValue" value="@Model.SearchValue" />
+                    <button type="submit" class="btn btn-outline-primary">Search</button>
+                </form>
+            </div>
+            <div class="add-new-container">
+                <button class="add-new-button" type="button" onclick="openCreateModal()"><i class="fa-solid fa-circle-plus"></i> Add New</button>
+            </div>
+        </div>
+        <h5 class="noti-msg">@TempData["CreateMsg"]</h5>
+        <h5 class="noti-msg">@TempData["SearchMsg"]</h5>
+        <h5 class="noti-msg">@TempData["UpdateMsg"]</h5>
+        <h5 class="noti-msg">@TempData["DeleteMsg"]</h5>
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Promotion Program Name</th>
+                        <th>Created Date</th>
+                        <th>Expired Date</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model.PromotionProgramList != null)
+                    {
+                        @foreach (var s in Model.PromotionProgramList)
+
+                        {
+                            <tr id="promotion-@s.PromotionProgramId"
+                                data-promotion-code-list="@s.PromotionProgramCodes.ToList()">
+
+                                <td>@s.PromotionProgramName</td>
+                                <td>@s.CreatedDate</td>
+                                <td>@s.ExpiredDate</td>
+                                <td>
+                                    <div class="dropdown">
+                                        <span class="dropdown-icon"><i class="fa-solid fa-ellipsis"></i></span>
+                                        <div class="dropdown-content">
+                                            <button class="edit-button" type="button" onclick="RedirectToUpdatePromotionCode('@s.PromotionProgramId')"><i class="fa-solid fa-pen-to-square"></i>Update</button>
+                                            <button class="delete-button" type="button" onclick="openDeleteConfirmation('@s.PromotionProgramId')"><i class="fa-solid fa-trash"></i>Delete</button>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+        <div class="pagination">
+            <form method="get" asp-page-handler="Paging">
+
+                <input type="hidden" asp-for="@Model.CurrentPage" value="@(Model.CurrentPage -1)" />
+                <input type="hidden" name="SearchValue" value="@Model.SearchValue" />
+                <button type="submit" class="btn btn-outline-primary" @(Model.CurrentPage <= 1 ? "disabled" : "")>Previous</button>
+            </form>
+            <form method="get" asp-page-handler="Paging">
+                <input type="hidden" asp-for="@Model.CurrentPage" value="@(Model.CurrentPage + 1)" />
+                <input type="hidden" name="SearchValue" value="@Model.SearchValue" />
+                <button type="submit" class="btn btn-outline-primary" @(Model.CurrentPage == Model.TotalPages ? "disabled" : "")>Next</button>
+            </form>
+            <span>Page @Model.CurrentPage of @Model.TotalPages</span>
+        </div>
+    </div>
+
+
+    <!-- Create Modal -->
+    <div class="modal fade" id="createModal" tabindex="-1" role="dialog" aria-labelledby="createModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2 class="modal-title" id="createModalLabel">Add New Promotion Program</h2>
+                    <button type="button" onclick="closeCreateModal()" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form method="post" id="createForm" asp-page-handler="CreatePromotionProgram" enctype="multipart/form-data">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="promotionProgramName">Promotion Program Name</label>
+                                    <input type="text" class="form-control" id="promotionProgramName" asp-for="PromotionProgramDTO.PromotionProgramName" required>
+                                    <p class="text-danger"><span asp-validation-for="PromotionProgramDTO.PromotionProgramName"></span></p>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="expiredDate">Expired Date</label>
+                                    <input type="date" class="form-control" id="expiredDate" asp-for="PromotionProgramDTO.ExpiredDate" min="@dateNow" required>
+                                    <p class="text-danger"><span asp-validation-for="PromotionProgramDTO.ExpiredDate"></span></p>
+                                </div>
+                            </div>
+                        </div>
+                    
+                    <h4 class="fw-bold">Promotion Code</h4>
+                    <div class="row">
+                        <div class="form-group col-md-6">
+                            <label for="promotionCode">Promotion Code</label>
+                            <input type="text" class="form-control" id="promotionCode" required>
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label for="discountPercentage">Discount Percentage</label>
+                            <input type="number" class="form-control" min="1" max="100" id="discountPercentage" required>
+                        </div>
+                        <div class="form-group col-md-2">
+                            <button class="btn btn-primary" onclick="addPromotionPreview()">Add</button>
+                        </div>
+                    </div>
+                    <h4 class="fw-bold">Promotion Code List</h4>
+                    <div>
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>Promotion Code</th>
+                                    <th>Discount Percentage</th>
+                                </tr>
+                            </thead>
+                            <tbody id="promotionsTableBody">
+                                <!-- Promotion rows will be added here dynamically -->
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <h4 class="text-danger">@TempData["CreateError"]</h4>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" onclick="closeCreateModal()" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" onclick="create()">Create</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Delete Confirmation Modal -->
+    <div class="modal fade" id="deleteConfirmationModal" tabindex="-1" role="dialog" aria-labelledby="deleteConfirmationModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="deleteConfirmationModalLabel">Confirm Delete</h5>
+                    <button type="button" class="close" data-dismiss="modal" onclick="closeDeleteConfirmation()" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p>Are you sure you want to delete this promotion program?</p>
+                    <form method="post" id="deleteForm" asp-page-handler="DeletePromotionProgram">
+                        <input type="hidden" id="deleteId" asp-for="PromotionProgramDTO.PromotionProgramId" />
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal" onclick="closeDeleteConfirmation()">Cancel</button>
+                    <button type="button" class="btn btn-danger" onclick="deleteSubmit()">Delete</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+    <script>
+        let currentEditId;
+        let currentDeleteId;
+        let currentPromotions = [];
+
+        function openCreateModal() {
+            document.getElementById('createForm').reset();
+            $('#createModal').modal('show');
+        }
+
+        function closeCreateModal() {
+            document.getElementById('createForm').reset();
+
+            $('#createModal').modal('hide');
+        }
+
+        function RedirectToUpdatePromotionCode(promotionProgramId) {
+            window.location.href = `/Manager/PromotionScreen/UpdatePromotion?id=${promotionProgramId}`;
+        }
+
+        function closeUpdateModal() {
+            $('#updateModal').modal('hide');
+        }
+
+        function openDeleteConfirmation(deleteId) {
+            document.getElementById("deleteId").value = deleteId;
+            $('#deleteConfirmationModal').modal('show');
+        }
+
+        function closeDeleteConfirmation() {
+            $('#deleteConfirmationModal').modal('hide');
+        }
+
+        function create() {
+            const promotionProgramName = document.getElementById("promotionProgramName").value;
+            const expiredDate = document.getElementById("expiredDate").value;
+
+            if (!promotionProgramName || !expiredDate || currentPromotions.length === 0) {
+                alert("Please fill out all required fields and add at least one promotion code.");
+                return;
+            }
+
+            const promotionProgram = {
+                PromotionProgramName: promotionProgramName,
+                ExpiredDate: expiredDate,
+                PromotionCodeDTOs: currentPromotions
+            };
+            var token = '@token';
+            fetch('/Manager/PromotionScreen/PromotionManagement/CreatePromotion', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'RequestVerificationToken': token
+                },
+                body: JSON.stringify(promotionProgram),
+                processData: false,
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        window.location.href = 'http://localhost:5281/Manager/PromotionScreen/PromotionManagement';
+                    }
+                })
+                .then(data => {
+                    // Handle success scenario, e.g., show success message or redirect
+                    console.log('Success:', data);
+                    // Optionally redirect or show success message
+                    clearLocalStorage();
+                    window.location.href = 'http://localhost:5281/Manager/PromotionScreen/PromotionManagement';// Example: reload page after successful creation
+                })
+        }
+
+        function deleteSubmit() {
+            document.getElementById('deleteForm').submit();
+            $('#deleteConfirmationModal').modal('hide');
+        }
+
+        $(document).ready(function () {
+            $('.modal').modal({ show: false });
+
+            $('.close').on('click', function () {
+                $(this).closest('.modal').modal('hide');
+            });
+            $('.modal-footer button[data-dismiss="modal"]').on('click', function () {
+                $(this).closest('.modal').modal('hide');
+            });
+        });
+
+
+        const createModelError = '@(TempData["CreateModelError"] ?? "")';
+        const createError = '@(TempData["CreateError"] ?? "")';
+
+        if (createModelError !== '' || createError !== '') {
+            $('#createModal').modal('show');
+        }
+
+        const updateModelError = '@(TempData["UpdateModelError"] ?? "")';
+        const updateError = '@(TempData["UpdateError"] ?? "")';
+
+        if (updateModelError !== '' || updateError !== '') {
+            $('#updateModal').modal('show');
+        }
+        $(document).ready(function () {
+            // Toggle dropdown content on click
+            $('.dropdown').on('click', function () {
+                $(this).find('.dropdown-content').toggle();
+            });
+
+            // Close dropdown when clicking outside
+            $(document).on('click', function (e) {
+                if (!$(e.target).closest('.dropdown').length) {
+                    $('.dropdown-content').hide();
+                }
+            });
+        });
+
+        function addPromotionPreview() {
+            const promotionCode = document.getElementById("promotionCode").value;
+            const discountPercentage = document.getElementById("discountPercentage").value;
+
+            if (!promotionCode || !discountPercentage) {
+                alert("Please input promotion code and discount percentage");
+                return;
+            }
+
+            if (discountPercentage > 100 || discountPercentage < 1){
+                alert("The discount percentage must be in range 1 - 100%");
+                return;
+            }
+
+            const promotion = {
+                PromotionCodeName: promotionCode,
+                DiscountPercentage: discountPercentage,
+            };
+
+            currentPromotions.push(promotion);
+            savePromotionsToLocalStorage();
+            renderPromotionsTable();
+            // Clear the input fields
+            document.getElementById("promotionCode").value = "";
+            document.getElementById("discountPercentage").value = "";
+        }
+
+        function removePromotion(index) {
+            currentPromotions.splice(index, 1); // Remove promotion at given index
+            savePromotionsToLocalStorage(); // Update local storage
+            renderPromotionsTable(); // Re-render table
+        }
+
+        function loadPromotionsFromLocalStorage() {
+            const storedPromotions = JSON.parse(localStorage.getItem('promotions')) || [];
+            currentPromotions = storedPromotions;
+            renderPromotionsTable();
+        }
+
+        function savePromotionsToLocalStorage() {
+            localStorage.setItem('promotions', JSON.stringify(currentPromotions));
+        }
+
+        function clearLocalStorage() {
+            localStorage.removeItem('promotions');
+            currentPromotions = [];
+        }
+
+        function renderPromotionsTable() {
+            const tableBody = document.getElementById('promotionsTableBody');
+            tableBody.innerHTML = '';
+
+            currentPromotions.forEach((promotion, index) => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                                    <td>${promotion.PromotionCodeName}</td>
+                                    <td>${promotion.DiscountPercentage}</td>
+                                             <td>
+                            <button type="button" class="btn btn-danger btn-sm" onclick="removePromotion(${index})">Remove</button>
+                        </td>
+                                `;
+                tableBody.appendChild(row);
+            });
+        }
+
+        function resetPromotionTable() {
+            const tableBody = document.getElementById('promotionsTableBody');
+            tableBody.innerHTML = '';
+        }
+
+    </script>
+</body>
+</html>
+

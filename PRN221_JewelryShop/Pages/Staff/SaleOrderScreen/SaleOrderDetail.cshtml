@@ -1,0 +1,84 @@
+﻿@page "{handler?}"
+@model PRN221_JewelryShop.Pages.Staff.SaleOrderScreen.SaleOrderDetailModel
+@{
+    var priceFormat = new System.Globalization.CultureInfo("en-US", false).NumberFormat;
+    priceFormat.NumberGroupSeparator = ".";
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewData["Title"]</title>
+    <link rel="stylesheet" href="~/css/ProuductDetail.css" />
+</head>
+<body>
+    <div class="header">
+        <h1>Sale Order Details</h1>
+    </div>
+    <div class="content row">
+        <div class="col-md-4">
+            <div class="field">
+                <label>Customer Name</label>
+                <span>@Model.SaleOrder.Customer.CustomerName</span>
+            </div>
+            <div class="field">
+                <label>Phone</label>
+                <span>@Model.SaleOrder.Customer.PhoneNumber</span>
+            </div>
+            <div class="field">
+                <label>Email</label>
+                <span>@Model.SaleOrder.Customer.Email</span>
+            </div>
+            <div class="field">
+                <label>Created By</label>
+                <span>@Model.SaleOrder.Employee.EmployeeName</span>
+            </div>
+            <div class="field">
+                <label>Created Date</label>
+                <span>@Model.SaleOrder.CreatedDate</span>
+            </div>
+        </div>
+        <div class="col-md-8">
+            <div class="field">
+                <label>Materials</label>
+                @if (Model.SaleOrder.SaleOrderDetails != null)
+                {
+                    <table class="table table-bordered" >
+                        <thead>
+                            <tr>
+                                <th>Product Name</th>
+                                <th>Amount</th>
+                                <th>Price</th>
+                                <th>Return Price</th>
+                                <th>Return Date</th>
+                                <th>Return</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var s in Model.SaleOrder.SaleOrderDetails)
+                            {
+                                <tr>
+                                    <td>@s.Product.ProductName</td>
+                                    <td>@s.Amount</td>
+                                    <td>@s.FinalPrice?.ToString("#,0", priceFormat)</td>
+                                    <td>@s.ReturnPrice?.ToString("#,0", priceFormat)</td>
+                                    <td>@s.ReturnDate</td>
+                                    <td><button class="btn" style="background-color: orange">Return</button></td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                }
+                else
+                {
+                    <p>No materials available.</p>
+                }
+            </div>
+            <a class="btn-update" href="/Manager/ProductScreen/UpdateProduct?id=@Model.SaleOrderId">Update Sale Order</a>
+        </div>
+
+    </div>
+</body>
+</html>

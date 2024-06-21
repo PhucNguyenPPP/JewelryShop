@@ -81,6 +81,7 @@ namespace PRN221_JewelryShop.Pages.Manager.ProductScreen
 
             if(!ModelState.IsValid)
             {
+
                 return Page();
             }
 
@@ -105,7 +106,7 @@ namespace PRN221_JewelryShop.Pages.Manager.ProductScreen
             if(result)
             {
                 TempData["CreateMsg"] = "Create Successfully";
-                return Page();
+                return RedirectToPage("/Manager/ProductScreen/ProductManagement");
             } else
             {
                 TempData["CreateMsg"] = "Create Unsuccessfully";
