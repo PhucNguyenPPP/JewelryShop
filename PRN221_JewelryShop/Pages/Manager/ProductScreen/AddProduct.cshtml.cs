@@ -81,6 +81,7 @@ namespace PRN221_JewelryShop.Pages.Manager.ProductScreen
 
             if(!ModelState.IsValid)
             {
+
                 return Page();
             }
 

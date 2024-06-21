@@ -94,7 +94,7 @@
     }
 
     .table-container table {
-        width: 120%;
+        width: 100%;
         border-collapse: collapse;
         margin: auto;
         border-radius: 10px;
@@ -189,7 +189,7 @@
 
     .modal-header h2 {
         color: white;
-        margin-left: 30%;
+        margin-left: 23%;
     }
 
     .modal-header h5 {

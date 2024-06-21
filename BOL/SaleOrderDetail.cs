@@ -13,6 +13,10 @@ public partial class SaleOrderDetail
 
     public int? Amount { get; set; }
 
+    public decimal? TotalPrice { get; set; }
+
+    public decimal? FinalPrice { get; set; }
+
     public DateTime? ReturnDate { get; set; }
 
     public decimal? ReturnPrice { get; set; }

@@ -25,7 +25,7 @@ namespace Repositories.Repositories
 
         public PromotionProgram? GetById(Guid id)
         {
-            var promotionList = _promotionDAO.GetAll(c => true).ToList();
+            var promotionList = _promotionDAO.GetAll(c => true).Include(c => c.PromotionProgramCodes).ToList();
             return promotionList?.FirstOrDefault(c => c.PromotionProgramId == id);
         }
 

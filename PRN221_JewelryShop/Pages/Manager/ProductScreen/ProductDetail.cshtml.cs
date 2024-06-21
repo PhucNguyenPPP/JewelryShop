@@ -26,8 +26,7 @@ namespace PRN221_JewelryShop.Pages.Manager.ProductScreen
 
         }
 
-        public IActionResult
-            OnGet()
+        public IActionResult OnGet()
         {
             var loginResponseString = HttpContext.Session.GetString("LoginResponse");
             if (loginResponseString == null)
