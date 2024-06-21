@@ -47,7 +47,7 @@
                         <th>Email</th>
                         <th>Date of Birth</th>
                         <th>Registration Date</th>
-                        <th>Employee ID</th>
+                        <th>Created Employee</th>
                         <th>Actions</th>
                     </tr>
                 </thead>
@@ -79,7 +79,6 @@
                                     <div class="dropdown">
                                         <span class="dropdown-icon"><i class="fa-solid fa-ellipsis"></i></span>
                                         <div class="dropdown-content">
-                                            <button class="add-sale-order-button" onclick="RedirectToAddSaleOrder('@customer.CustomerId')"><i class="fa-solid fa-notes-medical"></i>Create sale order</button>
                                             <button class="edit-button" type="button" onclick="openUpdateModal('@customer.CustomerId')"><i class="fa-solid fa-pen-to-square"></i>Update</button>
                                             <button class="delete-button" type="button" onclick="openDeleteConfirmation('@customer.CustomerId')"><i class="fa-solid fa-trash"></i>Delete</button>
                                         </div>
@@ -316,10 +315,6 @@
         function deleteSubmit() {
             document.getElementById('deleteForm').submit();
             $('#deleteConfirmationModal').modal('hide');
-        }
-
-        function RedirectToAddSaleOrder(customerId) {
-            window.location.href = `/Staff/SaleOrderScreen/AddSaleOrder?id=${customerId}`;
         }
 
         $(document).ready(function () {

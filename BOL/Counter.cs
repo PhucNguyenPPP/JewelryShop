@@ -11,7 +11,7 @@ public partial class Counter
 
     public bool? Status { get; set; }
 
-    public virtual ICollection<CounterEmployee> CounterEmployees { get; set; } = new List<CounterEmployee>();
+    public virtual ICollection<Employee> Employees { get; set; } = new List<Employee>();
 
     public virtual ICollection<Product> Products { get; set; } = new List<Product>();
 }

@@ -1,6 +1,8 @@
 ﻿@page "{handler?}"
 @model PRN221_JewelryShop.Pages.Staff.SaleOrderScreen.SaleOrderDetailModel
 @{
+    var priceFormat = new System.Globalization.CultureInfo("en-US", false).NumberFormat;
+    priceFormat.NumberGroupSeparator = ".";
 }
 
 <!DOCTYPE html>
@@ -13,7 +15,7 @@
 </head>
 <body>
     <div class="header">
-        <h1>Product Details</h1>
+        <h1>Sale Order Details</h1>
     </div>
     <div class="content row">
         <div class="col-md-4">
@@ -43,11 +45,15 @@
                 <label>Materials</label>
                 @if (Model.SaleOrder.SaleOrderDetails != null)
                 {
-                    <table>
+                    <table class="table table-bordered" >
                         <thead>
                             <tr>
                                 <th>Product Name</th>
                                 <th>Amount</th>
+                                <th>Price</th>
+                                <th>Return Price</th>
+                                <th>Return Date</th>
+                                <th>Return</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -56,6 +62,10 @@
                                 <tr>
                                     <td>@s.Product.ProductName</td>
                                     <td>@s.Amount</td>
+                                    <td>@s.FinalPrice?.ToString("#,0", priceFormat)</td>
+                                    <td>@s.ReturnPrice?.ToString("#,0", priceFormat)</td>
+                                    <td>@s.ReturnDate</td>
+                                    <td><button class="btn" style="background-color: orange">Return</button></td>
                                 </tr>
                             }
                         </tbody>
