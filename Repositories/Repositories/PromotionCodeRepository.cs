@@ -13,6 +13,7 @@ namespace Repositories.Repositories
     public class PromotionCodeRepository : IPromotionCodeRepository
     {
         private readonly IGenericDAO<PromotionProgramCode> _codeDAO;
+        private readonly IGenericDAO<PromotionProgram> _promotionProgramDao;
         public PromotionCodeRepository(IGenericDAO<PromotionProgramCode> codeDAO)
         {
             _codeDAO = codeDAO;
@@ -42,6 +43,27 @@ namespace Repositories.Repositories
         public void UpdatePromotionCode(PromotionProgramCode promotionCode)
         {
             _codeDAO.Update(promotionCode);
+        }
+
+        public List<PromotionProgramCode> GetAllPromotionCodeNotExpiredList()
+        {
+            return _codeDAO.GetAll(c => c.Status == true)
+                .Include(c=> c.PromotionProgram)
+                .Where(t => t.PromotionProgram.ExpiredDate >= DateTime.Now && t.PromotionProgram.Status == true)
+                .ToList();
+        }
+
+        public void AddRangePromotionCode(List<PromotionProgramCode> promotionCodeList)
+        {
+            _codeDAO.AddRange(promotionCodeList);
+        }
+
+        public List<PromotionProgramCode> GetAllPromotionCodeList()
+        {
+            return _codeDAO.GetAll(c => c.Status == true)
+                .Include(c => c.PromotionProgram)
+                .Where(t => t.PromotionProgram.Status == true)
+                .ToList();
         }
     }
 }

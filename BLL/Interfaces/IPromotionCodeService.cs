@@ -18,5 +18,8 @@ namespace BLL.Interfaces
         bool UpdatePromotionCode(PromotionCodeDTO promotionCodeDTO, PromotionProgramDTO promotionProgramDTO);
 
         bool DeletePromotionCode(string promotionCodeId, PromotionProgramDTO promotionProgramDTO);
+        List<PromotionProgramCode> GetAllPromotionCodeNotExpiredList();
+        PromotionProgramCode GetPromotionCodeByPromotionCodeId(string id);
+        bool CheckPromotionCodeNameExists(string promotionCodeName);
     }
 }

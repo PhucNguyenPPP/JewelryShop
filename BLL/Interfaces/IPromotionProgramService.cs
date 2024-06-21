@@ -19,5 +19,9 @@ namespace BLL.Interfaces
 
         bool DeletePromotionProgram(string promotionProgramId);
 
+        bool CheckPromotionProgramExist(string promotionProgramName);
+
+        PromotionProgram GetPromotionProgram(string id);
+
     }
 }

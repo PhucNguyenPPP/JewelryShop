@@ -20,6 +20,10 @@ builder.Services.AddSession(options =>
 	options.Cookie.HttpOnly = true;
 	options.Cookie.IsEssential = true;
 });
+builder.Services.AddAntiforgery(options =>
+{
+    options.HeaderName = "RequestVerificationToken"; // Custom header name if needed
+});
 builder.Services.AddAutoMapper(typeof(Program).Assembly);
 //Add scope for services
 builder.Services.AddHttpClient<IGoldPriceService, GoldPriceService>()
@@ -34,6 +38,9 @@ builder.Services.AddScoped<IImageService, ImageService>();
 builder.Services.AddScoped<IMaterialProductService, MaterialProductService>();
 builder.Services.AddScoped<ICounterService, CounterService>();
 builder.Services.AddScoped<IMaterialService, MaterialService>();
+builder.Services.AddScoped<ISaleOrderService, SaleOrderService>();
+builder.Services.AddScoped<IPromotionProgramService, PromotionProgramService>();
+builder.Services.AddScoped<IPromotionCodeService, PromotionCodeService>();
 
 //Add scope for repositories*
 builder.Services.AddScoped<ICustomerRepository, CustomerRepository>();
@@ -42,6 +49,10 @@ builder.Services.AddScoped<IProductRepository, ProductRepository>();
 builder.Services.AddScoped<IMaterialProductRepository, MaterialProductRepository>();
 builder.Services.AddScoped<ICounterRepository, CounterRepository>();
 builder.Services.AddScoped<IMaterialRepository, MaterialRepository>();
+builder.Services.AddScoped<ISaleOrderRepository, SaleOrderRepository>();
+builder.Services.AddScoped<ISaleOrderDetailRepository, SaleOrderDetailRepository>();
+builder.Services.AddScoped<IPromotionProgramRepository, PromotionProgramRepository>();
+builder.Services.AddScoped<IPromotionCodeRepository, PromotionCodeRepository>();
 
 //Add scope for DAOs
 builder.Services.AddScoped<IGenericDAO<Customer>, GenericDAO<Customer>>();
@@ -50,6 +61,10 @@ builder.Services.AddScoped<IGenericDAO<Product>, GenericDAO<Product>>();
 builder.Services.AddScoped<IGenericDAO<MaterialProduct>, GenericDAO<MaterialProduct>>();
 builder.Services.AddScoped<IGenericDAO<Counter>, GenericDAO<Counter>>();
 builder.Services.AddScoped<IGenericDAO<Material>, GenericDAO<Material>>();
+builder.Services.AddScoped<IGenericDAO<SaleOrder>, GenericDAO<SaleOrder>>();
+builder.Services.AddScoped<IGenericDAO<SaleOrderDetail>, GenericDAO<SaleOrderDetail>>();
+builder.Services.AddScoped<IGenericDAO<PromotionProgram>, GenericDAO<PromotionProgram>>();
+builder.Services.AddScoped<IGenericDAO<PromotionProgramCode>, GenericDAO<PromotionProgramCode>>();
 
 var app = builder.Build();
 

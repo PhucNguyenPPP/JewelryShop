@@ -1,0 +1,83 @@
+﻿@page "{handler?}"
+@model PRN221_JewelryShop.Pages.Manager.PromotionScreen.UpdatePromotionModel
+@{
+    var priceFormat = new System.Globalization.CultureInfo("en-US", false).NumberFormat;
+    priceFormat.NumberGroupSeparator = ".";
+    var dateNow = DateTime.Now.ToString("yyyy-MM-dd");
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewData["Title"]</title>
+    <link rel="stylesheet" href="~/css/UpdatePromotion.css" />
+</head>
+<body>
+    <div class="header">
+        <h1>Update Promotion</h1>
+    </div>
+    <form method="post" asp-page-handler="UpdatePromotionProgram">
+        <input type="hidden" value="@Model.PromotionProgram?.PromotionProgramId" asp-for="PromotionProgramDTO.PromotionProgramId" />
+        <div class="content row">
+            <div class="col-md-4">
+                <div class="field">
+                    <label>Promotion Program Name</label>
+                    <input type="text" value="@Model.PromotionProgram?.PromotionProgramName" asp-for="PromotionProgramDTO.PromotionProgramName" required />
+                    <p class="text-danger">@TempData["PromotionProgramNameExist"]</p>
+                </div>
+                <div class="field">
+                    <label>Expired Date</label>
+                    <input type="date" value="@Model.PromotionProgram?.ExpiredDate?.ToString("yyyy-MM-dd")" min="@dateNow" asp-for="PromotionProgramDTO.ExpiredDate" required />
+                </div>
+            </div>
+            <div class="col-md-8">
+                    <div class="field field-promotion-code">
+                        <div>
+                            <label>Promotion Code List</label>
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th >Promotion Code</th>
+                                        <th>Discount Percentage</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                @if (Model.PromotionProgram?.PromotionProgramCodes != null)
+                                {
+                                    @for (int i = 0; i < Model.PromotionProgram?.PromotionProgramCodes.Count; i++)
+                                    {
+                                        <tr>
+                                            <input type="hidden" 
+                                                value="@Model.PromotionProgram?.PromotionProgramCodes.ToList()[i].PromotionCodeId" 
+                                                asp-for="PromotionProgramDTO.PromotionCodeDTOs[i].PromotionCodeId"
+                                                />
+                                            <td class="input-promotioncode">
+                                                <input type="text" 
+                                                    value="@Model.PromotionProgram?.PromotionProgramCodes.ToList()[i].PromotionCodeName"
+                                                       asp-for="PromotionProgramDTO.PromotionCodeDTOs[i].PromotionCodeName" />
+                                            </td>
+                                            <td class="input-discountpercentage">
+                                                <input type="number"
+                                                    value="@Model.PromotionProgram?.PromotionProgramCodes.ToList()[i].DiscountPercentage?.ToString("#,0", priceFormat)"
+                                                       asp-for="PromotionProgramDTO.PromotionCodeDTOs[i].DiscountPercentage" min="1" max="100" />
+                                            </td>
+                                        </tr>
+                                    }
+                                }
+                                </tbody>
+                            </table>
+                        <p class="text-danger">@TempData["PromotionCodeNameExist"]</p>
+                        </div>                     
+                    </div>
+
+                <p class="text-danger">@TempData["UpdateError"]</p>
+                <h5 class="notification-msg">@TempData["UpdateMsg"]</h5>
+                <button class="add-btn btn btn-primary" type="submit">Update Promotion</button>
+            </div>
+
+        </div>
+    </form>
+    </body>
+</html>

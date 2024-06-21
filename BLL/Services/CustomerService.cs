@@ -131,6 +131,14 @@ namespace BLL.Services
             var result = _customerRepo.SaveChange();
             return result;
         }
+
+        public Customer SearchCustomerByEmailOrPhone(string searchValue)
+        {
+            var customerList = _customerRepo.GetAllCustomers().ToList();
+
+            return customerList.FirstOrDefault(c => (c.Email.ToLower() == (searchValue.ToLower())
+                || c.PhoneNumber.ToLower() == (searchValue.ToLower())));
+        }
     }
 }
 

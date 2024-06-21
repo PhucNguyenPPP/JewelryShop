@@ -12,7 +12,6 @@ namespace DTO
         public string? PromotionProgramId { get; set; }
 
         [Required(ErrorMessage = "Please input promotion program name!")]
-        [RegularExpression("^[a-zA-Z0-9]+$", ErrorMessage = "Promotion program name can not include special character!")]
         public string? PromotionProgramName { get; set; }
 
         [Required(ErrorMessage = "Please input created date!")]
@@ -21,7 +20,7 @@ namespace DTO
         [Required(ErrorMessage = "Please input expiredDate!")]
         public string? ExpiredDate { get; set; }
 
-        //public List<PromotionCodeDTO>? PromotionCodeDTOs { get; set; }
+        public List<PromotionCodeDTO>? PromotionCodeDTOs { get; set; }
 
     }
 }
