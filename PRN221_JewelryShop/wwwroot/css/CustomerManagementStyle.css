@@ -21,7 +21,7 @@
 .content {
     margin-left: 5%;
     width: 80%;
-    font-size: 20px;
+    font-size: 15px;
 }
 
 /*search and add new*/
@@ -109,7 +109,7 @@
 
     .table-container th,
     .table-container td {
-        padding: 5px 10px;
+        padding: 5px 5px;
         text-align: center;
         width: max-content;
     }
@@ -176,9 +176,6 @@
         background-color: #ddd;
     }
 
-.dropdown:hover .dropdown-content {
-    display: block;
-}
 
 .dropdown-icon {
     cursor: pointer;

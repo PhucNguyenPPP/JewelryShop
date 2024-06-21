@@ -16,6 +16,8 @@
         color: white;
     }
 /*header*/
+
+
 .content {
     margin-left: 5%;
     width: 80%;
@@ -26,9 +28,10 @@
     padding: 30px;
 }
 
-.lable-material {
-    font-weight: bold;
-}
+    .content img {
+        border: solid 1px;
+        width: 100%;
+    }
 
 .field {
     margin-bottom: 15px;
@@ -39,42 +42,10 @@
         font-weight: bold;
         margin-bottom: 5px;
     }
-
-    .field input {
-        width: 90%;
-        padding: 5px 0;
-    }
-
-    .field select {
-        width: 90%;
-        padding: 10px 0;
-    }
-
-.field-material {
-    display: flex
+.field-promotion-code .input-promotioncode{
+    width: 100%;
 }
 
-    .field-material select {
-        width: 90%;
-    }
-
-    .field-material input{
-        width: 30%;
-    }
-
-.notification-msg {
-    color: green;
+.field-promotion-code .input-promotioncode input {
+    width: 100%;
 }
-
-.add-btn {
-    background-color: #2D3748;
-    color: white;
-    border: none;
-    padding: 10px;
-    border-radius: 10px;
-}
-
-    .add-btn:hover {
-        color: black;
-        background-color: grey;
-    }

@@ -13,5 +13,6 @@ namespace BLL.Interfaces
         Customer GetCustomer(string customerID);
         bool CheckPhoneAlreadyExists(string phoneNumber);
         bool CheckEmailAlreadyExists(string email);
+        Customer SearchCustomerByEmailOrPhone(string searchValue);
     }
 }

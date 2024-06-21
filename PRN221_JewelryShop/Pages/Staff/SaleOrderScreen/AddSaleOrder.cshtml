@@ -25,7 +25,7 @@
     <div class="content row">
         <div class="product-container col-md-8">
             <form method="post" asp-page-handler="SearchProduct" id="searchProductForm">
-                <input type="hidden" asp-for="CustomerIdForm" value="@Model.Customer.CustomerId" />
+                <input type="hidden" asp-for="CustomerIdForm" value="@Model.Customer?.CustomerId" />
                 <input type="text" id="txtSearchProduct" placeholder="Search by Product Name" asp-for="SearchProductValue" onchange="searchProduct()" />
                 <button class="search-btn" type="submit">Search</button>
             </form>
@@ -63,33 +63,49 @@
                             <span class="title-total-price">Total Price</span>
                         </div>
                     </div>
-                    <div>Total All: <span id="totalAll">0</span></div>
-                    <input type="hidden" asp-for="CustomerIdForm" value="@Model.Customer.CustomerId" />
+                    <div class="fw-bold">Total Original Price: <span id="totalOriginal">0</span></div>
+                    <div class="fw-bold">Total After Discount: <span id="totalAll">0</span></div>
+                    <input type="hidden" asp-for="CustomerIdForm" value="@Model.Customer?.CustomerId" />
                     <input name="__RequestVerificationToken" type="hidden" value="@token" />
                     <button type="submit">Create Sale Order</button>
                 </form>
             </div>
-        
+
         </div>
         <div class="customer-container col-md-4">
             <div class="sale-order-info">
+                <form method="get" asp-page-handler="SearchCustomer">
+                    <input type="text" asp-for="SearchCustomer" required />
+                    <button class="search-btn" type="submit">Search</button>
+                </form>
+                <h5 class="text-danger">@TempData["ErrorSearchCustomer"]</h5>
+            </div>
+            <div class="sale-order-info">
                 <span>Customer Name:</span>
-                <span>@Model.Customer.CustomerName</span>
+                <span>@Model.Customer?.CustomerName</span>
             </div>
             <div class="sale-order-info">
                 <span>Phone:</span>
-                <span>@Model.Customer.PhoneNumber</span>
+                <span>@Model.Customer?.PhoneNumber</span>
             </div>
             <div class="sale-order-info">
                 <span>Email:</span>
-                <span>@Model.Customer.Email</span>
+                <span>@Model.Customer?.Email</span>
             </div>
             <div class="sale-order-info">
                 <span>Promotion Code:</span>
                 <select id="promotionSelect">
                     <option></option>
-                    <option value="a1">1 nua</option>
-                    <option value="a2">full</option>
+                    @if (Model.PromotionCodeList != null)
+                    {
+                        @foreach (var i in Model.PromotionCodeList)
+                        {
+                            <option value="@i.PromotionCodeId"
+                                    data-discount="@i.DiscountPercentage">
+                                @i.PromotionCodeName
+                            </option>
+                        }
+                    }
                 </select>
             </div>
 
@@ -119,7 +135,23 @@
                 return total;
             }
 
-            // Function to load selected products from localStorage
+            // Function to calculate the total price with promotion discount
+            function calculateTotalPriceWithDiscount(totalPrice) {
+                var promotionSelect = document.getElementById('promotionSelect');
+                var discount = parseFloat(promotionSelect.options[promotionSelect.selectedIndex].getAttribute('data-discount')) || 0;
+                var discountedTotal = totalPrice - (totalPrice * (discount / 100));
+                return discountedTotal;
+            }
+
+            // Function to update the total price displayed
+            function updateTotalPriceDisplay() {
+                var totalPrice = calculateTotalPrice();
+                var discountedTotal = calculateTotalPriceWithDiscount(totalPrice);
+                document.getElementById('totalOriginal').textContent = formatNumber(totalPrice);
+                document.getElementById('totalAll').textContent = formatNumber(discountedTotal);
+            }
+
+            // Load selected products from localStorage
             function loadSelectedProducts() {
                 var selectedProducts = JSON.parse(localStorage.getItem('selectedProducts')) || [];
 
@@ -150,7 +182,7 @@
                     quantityInput.name = 'quantities';
                     quantityInput.value = product.quantity;
                     quantityInput.min = 1; // Set min based on amountInStock
-                    quantityInput.max = product.amountInStock; // Set max based on amountInStock // Set max based on data-amount-in-stock
+                    quantityInput.max = product.amountInStock; // Set max based on data-amount-in-stock
                     quantityInput.classList.add('quantity-input');
 
                     // Create a span for the product price
@@ -168,7 +200,7 @@
                     removeButton.addEventListener('click', function () {
                         productRow.remove();
                         var totalPrice = calculateTotalPrice();
-                        document.getElementById('totalAll').textContent = formatNumber(totalPrice);
+                        updateTotalPriceDisplay();
                         // Remove from selectedProducts array
                         selectedProducts = selectedProducts.filter(p => p.name !== product.name);
                         localStorage.setItem('selectedProducts', JSON.stringify(selectedProducts));
@@ -179,7 +211,7 @@
                         var quantity = parseInt(quantityInput.value);
                         totalSpan.textContent = formatNumber(quantity * product.price);
                         var totalPrice = calculateTotalPrice();
-                        document.getElementById('totalAll').textContent = formatNumber(totalPrice);
+                        updateTotalPriceDisplay();
 
                         // Update selectedProducts array with new quantity
                         selectedProducts.forEach(p => {
@@ -203,8 +235,7 @@
                 });
 
                 // Update total price initially
-                var totalPrice = calculateTotalPrice();
-                document.getElementById('totalAll').textContent = formatNumber(totalPrice);
+                updateTotalPriceDisplay();
             }
 
             // Event listener for adding product to selected products container
@@ -246,16 +277,29 @@
             // Load selected products on page load
             loadSelectedProducts();
 
-            function formatNumber(number) {
-                return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
-            }
-
-
+            // Event listener for promotion select change
+            document.getElementById('promotionSelect').addEventListener('change', updateTotalPriceDisplay);
 
             document.getElementById('productForm').addEventListener('submit', function (event) {
                 event.preventDefault();
 
                 var selectedProducts = JSON.parse(localStorage.getItem('selectedProducts')) || [];
+
+                // Check if there are no selected products
+                if (selectedProducts.length === 0) {
+                    alert('Please select at least one product.');
+                    return;
+                }
+
+               
+                var customer = @Html.Raw(Json.Serialize(Model.Customer?.CustomerId));
+                console.log(customer)
+                if (customer === null || customer === undefined) {
+                    alert('Please search and select a customer before creating sale orders.');
+                    return;
+                }
+
+
                 var saleOrderDetails = selectedProducts.map(product => {
                     return {
                         ProductId: product.id,
@@ -264,7 +308,7 @@
                 });
                 var promotionValue = document.getElementById('promotionSelect').value;
                 var saleOrderRequestDTO = {
-                    CustomerId: '@Model.Customer.CustomerId',
+                    CustomerId: '@Model.Customer?.CustomerId',
                     SaleOrderDetails: saleOrderDetails,
                     PromotionCode: promotionValue
                 };
@@ -291,7 +335,6 @@
 
                         window.location.href = 'http://localhost:5281/Staff/SaleOrderScreen/SaleOrderManagement';
                     })
-                   
             });
 
             document.addEventListener('click', function (event) {

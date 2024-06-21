@@ -2,6 +2,7 @@
 @model PRN221_JewelryShop.Pages.Staff.CustomerManagementModel
 @{
     Layout = "_LayoutStaff";
+    var dateNow = DateTime.Now.ToString("yyyy-MM-dd");
 }
 
 <!DOCTYPE html>
@@ -143,7 +144,7 @@
                             </div>
                             <div class="form-group">
                                 <label for="dob">Date of Birth</label>
-                                <input type="date" class="form-control" id="dob" asp-for="CustomerResquestDTO.Dob" required>
+                                <input type="date" class="form-control" id="dob" asp-for="CustomerResquestDTO.Dob" max="@dateNow" required>
                                 <p class="text-danger"><span asp-validation-for="CustomerResquestDTO.Dob"></span></p>
                             </div>
                             <div class="form-group">
@@ -201,7 +202,7 @@
                                 </div>
                                 <div class="form-group">
                                     <label for="dob">Date of Birth</label>
-                                    <input type="date" class="form-control" id="UpdateDob" asp-for="CustomerResquestDTO.Dob" required>
+                                    <input type="date" class="form-control" id="UpdateDob" asp-for="CustomerResquestDTO.Dob" max="@dateNow" required>
                                     <p class="text-danger"><span asp-validation-for="CustomerResquestDTO.Dob"></span></p>
                                 </div>
                                 <div class="form-group">
@@ -256,10 +257,12 @@
 
 
         function openCreateModal() {
+            document.getElementById('createForm').reset();
             $('#createModal').modal('show');
         }
 
         function closeCreateModal() {
+            document.getElementById('createForm').reset();
             $('#createModal').modal('hide');
         }
 
@@ -290,12 +293,24 @@
         }
 
         function create() {
-            document.getElementById("createForm").submit();
-            $('#createModal').modal('hide');
+            var form = document.getElementById("createForm");
+            if (form.checkValidity()) {
+                form.submit();
+                $('#createModal').modal('hide');
+                resetForm();
+            } else {
+                form.reportValidity();
+            }
         }
         function update() {
-            document.getElementById("updateForm").submit();
-            $('#updateModal').modal('hide');
+            var form = document.getElementById("updateForm").submit();;
+            if (form.checkValidity()) {
+                form.submit();
+                $('#updateModal').modal('hide');
+                resetForm();
+            } else {
+                form.reportValidity();
+            }
         }
 
         function deleteSubmit() {
@@ -332,7 +347,19 @@
         if (updateModelError !== '' || updateError !== '') {
             $('#updateModal').modal('show');
         }
+        $(document).ready(function () {
+            // Toggle dropdown content on click
+            $('.dropdown').on('click', function () {
+                $(this).find('.dropdown-content').toggle();
+            });
 
+            // Close dropdown when clicking outside
+            $(document).on('click', function (e) {
+                if (!$(e.target).closest('.dropdown').length) {
+                    $('.dropdown-content').hide();
+                }
+            });
+        });
     </script>
 </body>
 </html>

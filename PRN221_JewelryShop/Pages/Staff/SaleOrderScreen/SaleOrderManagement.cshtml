@@ -29,6 +29,9 @@
                     <button type="submit" class="btn btn-outline-primary">Search</button>
                 </form>
             </div>
+            <div class="add-new-container">
+                <a class="add-new-button" href="/Staff/SaleOrderScreen/AddSaleOrder"><i class="fa-solid fa-circle-plus"></i> Add New</a>
+            </div>
         </div>
         <h5 class="noti-msg">@TempData["CreateMsg"]</h5>
         <h5 class="noti-msg">@TempData["SearchMsg"]</h5>
@@ -95,7 +98,19 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
     <script>
-        
+        $(document).ready(function () {
+            // Toggle dropdown content on click
+            $('.dropdown').on('click', function () {
+                $(this).find('.dropdown-content').toggle();
+            });
+
+            // Close dropdown when clicking outside
+            $(document).on('click', function (e) {
+                if (!$(e.target).closest('.dropdown').length) {
+                    $('.dropdown-content').hide();
+                }
+            });
+        });
     </script>
 </body>
 </html>

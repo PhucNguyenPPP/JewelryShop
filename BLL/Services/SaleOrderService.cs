@@ -1,6 +1,7 @@
 ﻿using BLL.Interfaces;
 using BOL;
 using DTO;
+using Microsoft.IdentityModel.Tokens;
 using Repositories.Interfaces;
 using Repositories.Repositories;
 using System;
@@ -17,29 +18,44 @@ namespace BLL.Services
         private readonly IProductService _productService;
         private readonly ISaleOrderDetailRepository _saleOrderDetailRepo;
         private readonly IProductRepository _productRepo;
+        private readonly IPromotionCodeService _promotionCodeService;
         public SaleOrderService(ISaleOrderRepository saleOrderRepo, IProductService productService,
             ISaleOrderDetailRepository saleOrderDetailRepo,
-            IProductRepository productRepo)
+            IProductRepository productRepo, IPromotionCodeService promotionCodeService)
         {
             _saleOrderRepo = saleOrderRepo;
             _productService =  productService;
             _saleOrderDetailRepo = saleOrderDetailRepo;
             _productRepo = productRepo;
+            _promotionCodeService = promotionCodeService;
         }
 
         public bool AddSaleOrder(SaleOrderRequestDTO saleOrderDTO, Guid employeeId)
         {
             var saleOrderId = Guid.NewGuid();
-            decimal? totalPrice = 0;
+            decimal? totalPriceAll = 0;
             List<SaleOrderDetail> saleOrderDetails = new List<SaleOrderDetail>();
+
+            decimal? discountPercentage = 0;
+            if (!saleOrderDTO.PromotionCode.IsNullOrEmpty())
+            {
+                var promotionCode = _promotionCodeService.GetPromotionCodeByPromotionCodeId(saleOrderDTO.PromotionCode);
+                discountPercentage = promotionCode.DiscountPercentage;
+            }
 
             foreach (var i in saleOrderDTO.SaleOrderDetails)
             {
                 var product = _productService.GetProductById(i.ProductId);
-                totalPrice += product.Price * i.Amount;
+                totalPriceAll += product.Price * i.Amount;
 
+                //Get price of 1 product
+                decimal? totalPriceProductDetail = 0;
+                totalPriceProductDetail += product.Price * i.Amount;
+
+                //set amount in stock
                 product.AmountInStock -= i.Amount;
                 _productRepo.UpdateProduct(product);
+
 
                 SaleOrderDetail saleOrderDetail = new SaleOrderDetail()
                 {
@@ -47,20 +63,23 @@ namespace BLL.Services
                     SaleOrderId = saleOrderId,
                     ProductId = Guid.Parse(i.ProductId),
                     Amount = i.Amount,
+                    TotalPrice = product.Price,
+                    FinalPrice = totalPriceProductDetail - (product.Price * (discountPercentage/100)),
                 };
                 saleOrderDetails.Add(saleOrderDetail);
             }
 
+
             SaleOrder saleOrder = new SaleOrder()
             {
                 SaleOrderId = saleOrderId,
-                TotalPrice = totalPrice,
-                FinalPrice = totalPrice,
+                TotalPrice = totalPriceAll,
+                FinalPrice = totalPriceAll - (totalPriceAll * (discountPercentage / 100)),
                 CreatedDate = DateTime.Now,
                 CustomerId = Guid.Parse(saleOrderDTO.CustomerId),
-                EmployeeId = employeeId
+                EmployeeId = employeeId,
+                PromotionCodeId = Guid.TryParse(saleOrderDTO.PromotionCode, out Guid parsePromotionCodeId) ? parsePromotionCodeId : null
             };
-
             _saleOrderRepo.AddSaleOrder(saleOrder);
             _saleOrderDetailRepo.AddRangeSaleOrderDetail(saleOrderDetails);
             return _saleOrderRepo.SaveChange();

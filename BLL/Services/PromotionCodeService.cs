@@ -19,14 +19,14 @@ namespace BLL.Services
         }
         public List<PromotionProgramCode> GetPromotionCodeList(PromotionProgramDTO promotionProgramDTO)
         {
-            Guid.TryParse(promotionProgramDTO.PromotionProgramId, out Guid id );
+            Guid.TryParse(promotionProgramDTO.PromotionProgramId, out Guid id);
             return _promotionCodeRepository.GetPromotionCodeList(id).ToList();
         }
 
         public List<PromotionProgramCode> SearchPromotionCode(string searchValue, PromotionProgramDTO promotionProgramDTO)
         {
             List<PromotionProgramCode> promotionProgramCodes = _promotionCodeRepository.GetPromotionCodeList(Guid.Parse(promotionProgramDTO.PromotionProgramId)).
-                Where(c=> c.PromotionCodeName == searchValue).ToList();
+                Where(c => c.PromotionCodeName == searchValue).ToList();
             return promotionProgramCodes;
         }
 
@@ -59,7 +59,7 @@ namespace BLL.Services
             bool result = _promotionCodeRepository.SaveChange();
             return result;
         }
-        
+
         public bool UpdatePromotionCode(PromotionCodeDTO promotionCodeDTO, PromotionProgramDTO promotionProgramDTO)
         {
             Guid.TryParse(promotionCodeDTO.PromotionCodeId, out Guid promotionCodeID);
@@ -68,12 +68,33 @@ namespace BLL.Services
             {
                 PromotionProgramId = promotionProgramID,
                 PromotionCodeId = promotionCodeID,
-                PromotionCodeName= promotionCodeDTO.PromotionCodeName,
-                DiscountPercentage= promotionCodeDTO.DiscountPercentage,
+                PromotionCodeName = promotionCodeDTO.PromotionCodeName,
+                DiscountPercentage = promotionCodeDTO.DiscountPercentage,
             };
             _promotionCodeRepository.UpdatePromotionCode(promotionProgramCode);
             bool result = _promotionCodeRepository.SaveChange();
             return result;
+        }
+
+        public List<PromotionProgramCode> GetAllPromotionCodeNotExpiredList()
+        {
+            return _promotionCodeRepository.GetAllPromotionCodeNotExpiredList();
+        }
+
+        public PromotionProgramCode GetPromotionCodeByPromotionCodeId(string id)
+        {
+            Guid.TryParse(id, out Guid promotionCodeID);
+            return _promotionCodeRepository.GetById(promotionCodeID);
+        }
+
+        public bool CheckPromotionCodeNameExists(string promotionCodeName)
+        {
+            var promotionCodeList = _promotionCodeRepository.GetAllPromotionCodeList();
+            if (promotionCodeList.Any(c => c.PromotionCodeName == promotionCodeName))
+            {
+                return true;
+            }
+            return false;
         }
     }
 }

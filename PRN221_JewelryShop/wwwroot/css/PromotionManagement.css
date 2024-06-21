@@ -94,7 +94,7 @@
     }
 
     .table-container table {
-        width: 120%;
+        width: 100%;
         border-collapse: collapse;
         margin: auto;
         border-radius: 10px;
@@ -136,16 +136,16 @@
     min-width: 150px;
     box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
     z-index: 1;
-    margin-left: -110px;
+    margin-left: -140px;
     text-align: left;
 }
 
-    .dropdown-content .detail-button {
+    .dropdown-content .add-sale-order-button {
         color: orange;
         padding: 10px;
         text-align: left;
         border: none;
-        display: block;
+        width: max-content;
     }
 
     .dropdown-content .edit-button {
@@ -155,11 +155,18 @@
         border: none;
         width: max-content;
         cursor: pointer;
-        display: block;
     }
 
+    .dropdown-content .delete-button {
+        color: red;
+        padding: 10px;
+        text-align: left;
+        border: none;
+        width: max-content;
+        cursor: pointer;
+    }
 
-        .dropdown-content .detail-button i,
+        .dropdown-content .add-sale-order-button i,
         .dropdown-content .edit-button i,
         .dropdown-content .delete-button i {
             margin-right: 5px;
@@ -182,7 +189,7 @@
 
     .modal-header h2 {
         color: white;
-        margin-left: 30%;
+        margin-left: 23%;
     }
 
     .modal-header h5 {
