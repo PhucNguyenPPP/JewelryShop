@@ -1,0 +1,45 @@
+﻿@page
+@model PRN221_JewelryShop.Pages.Staff.GoldPriceScreen.GoldPriceModel
+@{
+    Layout = "_LayoutStaff";
+    var priceFormat = new System.Globalization.CultureInfo("en-US", false).NumberFormat;
+    priceFormat.NumberGroupSeparator = ".";
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewData["Title"]</title>
+    <link rel="stylesheet" href="~/css/GoldPrice.css" />
+</head>
+<body>
+    <div class="header">
+        <h1>Gold Price</h1>
+    </div>
+    <div class="content">
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Gold Type</th>
+                    <th>Sell Price</th>
+                    <th>Buy Price</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model.GoldPriceList != null)
+                {
+                    @foreach (var i in Model.GoldPriceList)
+                    {
+                        <tr>
+                            <td>@i.Type</td>
+                            <td>@i.SellPrice.ToString("#,0", priceFormat) VND</td>
+                            <td>@i.BuyPrice.ToString("#,0", priceFormat) VND</td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    </div>
+</body>
+</html>
