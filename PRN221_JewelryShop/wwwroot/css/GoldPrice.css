@@ -1,0 +1,29 @@
+﻿body {
+    font-family: Arial, sans-serif;
+    color: black;
+}
+
+/*header*/
+.header {
+    color: white;
+    background-color: #576678;
+    padding: 6px 0;
+    margin-bottom: 30px;
+}
+
+    .header h1 {
+        margin-left: 5%;
+        color: white;
+    }
+/*header*/
+
+
+.content {
+    margin-left: 5%;
+    width: 80%;
+    margin: 0 auto;
+    font-size: 15px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+    border-radius: 10px;
+    padding: 30px;
+}

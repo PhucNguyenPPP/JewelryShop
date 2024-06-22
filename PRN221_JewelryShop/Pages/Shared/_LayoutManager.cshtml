@@ -13,7 +13,7 @@
 <body>
     <div style="background-color: black; height: 80px; display: flex; justify-content: space-between">
         <img style=" width: 10%; height: 70%; margin-left: 20px;margin-top: 0.5%;" src="https://uploads.turbologo.com/uploads/design/hq_preview_image/499442/draw_svg20201116-31497-1tu3ppl.svg.png" />
-        <button style="background-color: white; border: none; border-radius: 5px; height: 40%; margin-right: 20px; margin-top: 1%;">Logout</button>
+        <button style="background-color: white; border: none; border-radius: 5px; height: 40%; margin-right: 20px; margin-top: 1%;" onclick="Logout()">Logout</button>
     </div>
     <div class="wrapper d-flex align-items-stretch">
         <nav id="sidebar" style="background-color: #2D3748; font-size: 20px">
@@ -41,10 +41,10 @@
                         <a href="/Manager/ReturnPolicyScreen/ReturnPolicyManagement"><i class="fa-solid fa-rotate-left mr-2"></i>Return Policies</a>
                     </li>
                     <li>
-                        <a href="#"><i class="fa-solid fa-book mr-2"></i>Buy Back Policies</a>
+                        <a href="/Manager/BuyBackPolicyScreen/BuyBackPolicyManagement"><i class="fa-solid fa-book mr-2"></i>Buy Back Policies</a>
                     </li>
                     <li>
-                        <a href="#"><i class="fa-solid fa-money-bill mr-2"></i>Gold Price</a>
+                        <a href="/Manager/GoldPriceScreen/GoldPrice"><i class="fa-solid fa-money-bill mr-2"></i>Gold Price</a>
                     </li>
                 </ul>
             </div>
@@ -69,7 +69,11 @@
     <script src="~/js/SideBarJs/main.js"></script>
     <script src="~/js/SideBarJs/bootstrap.min.js"></script>
     <script src="~/js/SideBarJs/jquery.min.js"></script>
-
+    <script>
+        function Logout() {
+            window.location.href = "/Logout"
+        }
+    </script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>
