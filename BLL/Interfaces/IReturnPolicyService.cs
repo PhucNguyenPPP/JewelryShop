@@ -12,5 +12,7 @@ namespace BLL.Interfaces
     {
         List<ReturnPolicy> GetAllReturnPolicies();
         bool UpdateReturnPolicy(List<ReturnPolicyRequestDTO> returnPolicyRequestDTOs);
+        ReturnPolicy GetReturnPolicyDateAllowReturn();
+        ReturnPolicy GetReturnPolicyRefundPercentage();
     }
 }

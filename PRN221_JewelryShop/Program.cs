@@ -44,6 +44,8 @@ builder.Services.AddScoped<IPromotionCodeService, PromotionCodeService>();
 builder.Services.AddScoped<IEmployeeService, EmployeeService>();
 builder.Services.AddScoped<IRoleService, RoleService>();
 builder.Services.AddScoped<IReturnPolicyService, ReturnPolicyService>();
+builder.Services.AddScoped<IBuyBackPolicyService, BuyBackPolicyService>();
+builder.Services.AddScoped<IBuyBackOrderService, BuyBackOrderService>();
 
 //Add scope for repositories*
 builder.Services.AddScoped<ICustomerRepository, CustomerRepository>();
@@ -59,7 +61,9 @@ builder.Services.AddScoped<IPromotionCodeRepository, PromotionCodeRepository>();
 builder.Services.AddScoped<IEmployeeRepository, EmployeeRepository>();
 builder.Services.AddScoped<IRoleRepository, RoleRepository>();
 builder.Services.AddScoped<IReturnPolicyRepository, ReturnPolicyRepository>();
-
+builder.Services.AddScoped<IBuyBackPolicyRepository, BuyBackPolicyRepository>();
+builder.Services.AddScoped<IBuyBackOrderRepository, BuyBackOrderRepository>();
+builder.Services.AddScoped<IBuyBackOrderDetailRepository, BuyBackOrderDetailRepository>();
 //Add scope for DAOs
 builder.Services.AddScoped<IGenericDAO<Customer>, GenericDAO<Customer>>();
 builder.Services.AddScoped<IGenericDAO<Employee>, GenericDAO<Employee>>();
@@ -74,6 +78,9 @@ builder.Services.AddScoped<IGenericDAO<PromotionProgramCode>, GenericDAO<Promoti
 builder.Services.AddScoped<IGenericDAO<Employee>, GenericDAO<Employee>>();
 builder.Services.AddScoped<IGenericDAO<Role>, GenericDAO<Role>>();
 builder.Services.AddScoped<IGenericDAO<ReturnPolicy>, GenericDAO<ReturnPolicy>>();
+builder.Services.AddScoped<IGenericDAO<BuyBackPolicy>, GenericDAO<BuyBackPolicy>>();
+builder.Services.AddScoped<IGenericDAO<BuyBackOrder>, GenericDAO<BuyBackOrder>>();
+builder.Services.AddScoped<IGenericDAO<BuyBackOrderDetail>, GenericDAO<BuyBackOrderDetail>>();
 
 var app = builder.Build();
 

@@ -1,5 +1,6 @@
 ﻿using BOL;
 using DAL.DAO;
+using Microsoft.EntityFrameworkCore;
 using Repositories.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -19,6 +20,19 @@ namespace Repositories.Repositories
         public void AddRangeSaleOrderDetail(List<SaleOrderDetail> list)
         {
             _saleOrderDetailDao.AddRange(list);
+        }
+
+        public SaleOrderDetail GetSaleOrderDetailByProductId(Guid productId, Guid saleOrderId)
+        {
+            return _saleOrderDetailDao.GetAll(c => c.ProductId == productId && c.SaleOrderId == saleOrderId)
+                .Include(c => c.Product)
+                .Include(c => c.SaleOrder)
+                .FirstOrDefault();
+        }
+
+        public void UpdateSaleOrderDetail(SaleOrderDetail model)
+        {
+            _saleOrderDetailDao.Update(model);
         }
     }
 }

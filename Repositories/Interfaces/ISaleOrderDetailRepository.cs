@@ -10,5 +10,7 @@ namespace Repositories.Interfaces
     public interface ISaleOrderDetailRepository
     {
         void AddRangeSaleOrderDetail(List<SaleOrderDetail> list);
+        void UpdateSaleOrderDetail(SaleOrderDetail model);
+        SaleOrderDetail GetSaleOrderDetailByProductId(Guid productId, Guid saleOrderId);
     }
 }
