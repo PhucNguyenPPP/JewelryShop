@@ -1,8 +1,14 @@
 ﻿@page "{handler?}"
 @model PRN221_JewelryShop.Pages.Staff.SaleOrderScreen.SaleOrderDetailModel
+@inject Microsoft.AspNetCore.Antiforgery.IAntiforgery a
 @{
     var priceFormat = new System.Globalization.CultureInfo("en-US", false).NumberFormat;
     priceFormat.NumberGroupSeparator = ".";
+    var token = a.GetAndStoreTokens(HttpContext).RequestToken;
+    var currentDate = DateTime.Now;
+    var createdDate = Model.SaleOrder?.CreatedDate ?? DateTime.Now;
+    var returnPolicyDays = Model.ReturnPolicyDateAllowReturn?.PolicyValue ?? 0;
+    var isReturnAllowed = (currentDate - createdDate).TotalDays <= returnPolicyDays;
 }
 
 <!DOCTYPE html>
@@ -12,73 +18,423 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@ViewData["Title"]</title>
     <link rel="stylesheet" href="~/css/ProuductDetail.css" />
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" />
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
 </head>
 <body>
     <div class="header">
         <h1>Sale Order Details</h1>
     </div>
-    <div class="content row">
-        <div class="col-md-4">
-            <div class="field">
-                <label>Customer Name</label>
-                <span>@Model.SaleOrder.Customer.CustomerName</span>
-            </div>
-            <div class="field">
-                <label>Phone</label>
-                <span>@Model.SaleOrder.Customer.PhoneNumber</span>
-            </div>
-            <div class="field">
-                <label>Email</label>
-                <span>@Model.SaleOrder.Customer.Email</span>
-            </div>
-            <div class="field">
-                <label>Created By</label>
-                <span>@Model.SaleOrder.Employee.EmployeeName</span>
-            </div>
-            <div class="field">
-                <label>Created Date</label>
-                <span>@Model.SaleOrder.CreatedDate</span>
-            </div>
-        </div>
-        <div class="col-md-8">
-            <div class="field">
-                <label>Materials</label>
-                @if (Model.SaleOrder.SaleOrderDetails != null)
-                {
-                    <table class="table table-bordered" >
-                        <thead>
-                            <tr>
-                                <th>Product Name</th>
-                                <th>Amount</th>
-                                <th>Price</th>
-                                <th>Return Price</th>
-                                <th>Return Date</th>
-                                <th>Return</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach (var s in Model.SaleOrder.SaleOrderDetails)
-                            {
-                                <tr>
-                                    <td>@s.Product.ProductName</td>
-                                    <td>@s.Amount</td>
-                                    <td>@s.FinalPrice?.ToString("#,0", priceFormat)</td>
-                                    <td>@s.ReturnPrice?.ToString("#,0", priceFormat)</td>
-                                    <td>@s.ReturnDate</td>
-                                    <td><button class="btn" style="background-color: orange">Return</button></td>
-                                </tr>
-                            }
-                        </tbody>
-                    </table>
-                }
-                else
-                {
-                    <p>No materials available.</p>
-                }
-            </div>
-            <a class="btn-update" href="/Manager/ProductScreen/UpdateProduct?id=@Model.SaleOrderId">Update Sale Order</a>
-        </div>
+    <div class="content" style="margin: auto;">
+        <div class="row">
+            <div class="col-md-6">
+                <div class="field">
+                    <label>Customer Name</label>
+                    <span>@Model.SaleOrder?.Customer?.CustomerName</span>
+                </div>
+                <div class="field">
+                    <label>Phone</label>
+                    <span>@Model.SaleOrder?.Customer?.PhoneNumber</span>
+                </div>
+                <div class="field">
+                    <label>Email</label>
+                    <span>@Model.SaleOrder?.Customer?.Email</span>
+                </div>
 
+            </div>
+            <div class="col-md-6">
+                <div class="field">
+                    <label>Created By</label>
+                    <span>@Model.SaleOrder?.Employee?.EmployeeName</span>
+                </div>
+                <div class="field">
+                    <label>Created Date</label>
+                    <span>@Model.SaleOrder?.CreatedDate</span>
+                </div>
+                <div class="field">
+                    <label>Promotion Code</label>
+                    <span>@Model.SaleOrder?.PromotionCode?.PromotionCodeName</span>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+
+                <div class="field">
+                    <label>Materials</label>
+                    @if (Model.SaleOrder?.SaleOrderDetails != null)
+                    {
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>Product Name</th>
+                                    <th>Amount</th>
+                                    <th>Price</th>
+                                    <th>Return Price</th>
+                                    <th>Return Date</th>
+                                    <th>Return Status</th>
+                                    <th>Buy Back Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var s in Model.SaleOrder.SaleOrderDetails)
+                                {
+                                    <tr>
+                                        <td>@s.Product?.ProductName</td>
+                                        <td>@s.Amount</td>
+                                        <td>@s.FinalPrice?.ToString("#,0", priceFormat)</td>
+                                        <td>@s.ReturnPrice?.ToString("#,0", priceFormat)</td>
+                                        <td>@s.ReturnDate</td>
+                                        <td>
+                                            @if (s.ReturnPrice != null)
+                                            {
+                                                <input type="checkbox" disabled checked readonly />
+                                            }
+                                            else
+                                            {
+                                                <p>Not yet</p>
+
+                                            }
+                                        </td>
+                                        <td>
+                                            @if (s.IsBuyBack != false)
+                                            {
+                                                <input type="checkbox" disabled checked readonly />
+                                            }
+                                            else
+                                            {
+                                                <p>Not yet</p>
+                                            }
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    }
+                    else
+                    {
+                        <p>No materials available.</p>
+                    }
+                </div>
+                <button class="btn" style="background-color: orange" data-toggle="modal" data-target="#returnModal" @(isReturnAllowed ? "" : "disabled")>Return</button>
+                <button class="btn" style="background-color: darkturquoise" data-toggle="modal" data-target="#buyBackModal">Buy Back</button>
+                @if (!isReturnAllowed)
+                {
+                    <p class="text-danger">The product can only be returned within @Model.ReturnPolicyDateAllowReturn?.PolicyValue  days after the order is created.</p>
+                }
+                <p style="color: green">@TempData["ReturnMsg"]</p>
+                <p style="color: green">@TempData["BuyBackMsg"]</p>
+            </div>
+        </div>
     </div>
+
+    <div class="modal fade" id="returnModal" tabindex="-1" role="dialog" aria-labelledby="returnModalLabel" aria-hidden="true">
+        <div class="modal-dialog" style="max-width: 80%" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="returnModalLabel">Return Confirmation</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    @if (Model.SaleOrder?.SaleOrderDetails != null)
+                    {
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th></th>
+                                    <th>Product Name</th>
+                                    <th>Amount</th>
+                                    <th>Price</th>
+                                    <th>Return Price</th>
+                                    <th>Return Date</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var s in Model.SaleOrder.SaleOrderDetails)
+                                {
+                                    @if (s.ReturnPrice == null && s.IsBuyBack == false)
+                                    {
+                                        <tr>
+                                            <td><input type="checkbox" class="refund-checkbox" data-product-id="@s.ProductId" data-final-price="@s.FinalPrice" data-refund-percentage="@Model.ReturnPolicyRefundPercentage?.PolicyValue" /></td>
+                                            <td>@s.Product?.ProductName</td>
+                                            <td>@s.Amount</td>
+                                            <td>@s.FinalPrice?.ToString("#,0", priceFormat)</td>
+                                            <td>@s.ReturnPrice?.ToString("#,0", priceFormat)</td>
+                                            <td>@s.ReturnDate</td>
+                                        </tr>
+                                    }
+                                }
+                            </tbody>
+                        </table>
+                        <div class="total-price fw-bold">
+                            <label>Total Refund: </label>
+                            <span id="total-refund">0</span>
+                        </div>
+                    }
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="button" id="btn-confirm-return" class="btn" style="background-color: orange">Confirm Return</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Buy Back Modal -->
+    <div class="modal fade" id="buyBackModal" tabindex="-1" role="dialog" aria-labelledby="buyBackModalLabel" aria-hidden="true">
+        <div class="modal-dialog" style="max-width: 80%" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="buyBackModalLabel">Buy Back Confirmation</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    @if (Model.SaleOrder?.SaleOrderDetails != null)
+                    {
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th></th>
+                                    <th>Product Name</th>
+                                    <th>Amount</th>
+                                    <th>Price</th>
+                                    <th>Buy Back Policy</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var s in Model.SaleOrder.SaleOrderDetails)
+                                {
+                                    @if (s.ReturnPrice == null && s.IsBuyBack == false)
+                                    {
+                                        <tr>
+                                            <td><input type="checkbox" class="buyback-checkbox" data-product-id="@s.ProductId" data-final-price="@s.FinalPrice" disabled /></td>
+                                            <td>@s.Product?.ProductName</td>
+                                            <td>@s.Amount</td>
+                                            <td>@s.FinalPrice?.ToString("#,0", priceFormat)</td>
+                                            <td>
+                                                @if (Model.BuyBackPolicyList != null)
+                                                {
+                                                    <select class="buyback-policy" data-checkbox-id="@s.ProductId" data-product-name="@s.Product?.ProductName">
+                                                        <option></option>
+                                                        @foreach (var i in Model.BuyBackPolicyList)
+                                                        {
+                                                            <option value="@i.PolicyId" data-buyback-policyname="@i.PolicyName" data-buyback-percentage="@i.PolicyValue">@i.PolicyName</option>
+                                                        }
+                                                    </select>
+                                                }
+                                            </td>
+                                        </tr>
+                                    }
+                                }
+                            </tbody>
+                        </table>
+                        <div class="total-price fw-bold">
+                            <label>Total Buy Back: </label>
+                            <span id="total-buyback">0</span>
+                        </div>
+                    }
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="button" id="btn-confirm-buyback" class="btn" style="background-color: darkturquoise">Confirm Buy Back</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const checkboxes = document.querySelectorAll(".refund-checkbox");
+            const totalRefundSpan = document.getElementById("total-refund");
+
+            checkboxes.forEach(checkbox => {
+                checkbox.addEventListener("change", updateTotalRefund);
+            });
+
+            function updateTotalRefund() {
+                let totalRefund = 0;
+                checkboxes.forEach(checkbox => {
+                    if (checkbox.checked) {
+                        const finalPrice = parseFloat(checkbox.dataset.finalPrice) || 0;
+                        const refundPercentage = parseFloat(checkbox.dataset.refundPercentage) || 0;
+                        totalRefund += finalPrice * (refundPercentage / 100);
+                    }
+                });
+                totalRefundSpan.textContent = totalRefund.toLocaleString("en-US") + " VND";
+            }
+
+            // Handle Confirm Return button click
+            const btnConfirmReturn = document.getElementById("btn-confirm-return");
+            if (btnConfirmReturn) {
+                btnConfirmReturn.addEventListener("click", function () {
+                    const selectedProductIds = [];
+                    checkboxes.forEach(checkbox => {
+                        if (checkbox.checked) {
+                            const productId = checkbox.dataset.productId;
+                            selectedProductIds.push(productId);
+                        }
+                    });
+                    var token = '@token';
+                    const saleOrderId = '@Model.SaleOrder?.SaleOrderId';
+                    fetch('/Staff/SaleOrderScreen/SaleOrderDetail/ReturnProduct', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'RequestVerificationToken': token
+                        },
+                        body: JSON.stringify({ saleOrderId: saleOrderId, productIds: selectedProductIds }),
+                        processData: false,
+                    })
+                        .then(response => {
+                            if (!response.ok) {
+                                throw new Error('Network response was not ok');
+                            }
+                            window.location.reload();// assuming server responds with JSON
+                        })
+                        .then(data => {
+                            console.log('Returned products:', data);
+                            window.location.reload(); // Reload page or update UI as needed
+                        })
+                        .catch(error => {
+                            console.error('Error during return:', error);
+                            // Handle error, show error message, etc.
+                        });
+                });
+            }
+
+            // Buyback functionality
+            const buybackCheckboxes = document.querySelectorAll(".buyback-checkbox");
+            const totalBuybackSpan = document.getElementById("total-buyback");
+
+            const policySelects = document.querySelectorAll(".buyback-policy");
+            policySelects.forEach(select => {
+                select.addEventListener("change", function () {
+                    const checkboxId = select.dataset.checkboxId;
+                    const relatedCheckbox = document.querySelector(`.buyback-checkbox[data-product-id="${checkboxId}"]`);
+                    if (select.value) {
+                        relatedCheckbox.disabled = false;
+                    } else {
+                        relatedCheckbox.disabled = true;
+                        relatedCheckbox.checked = false;
+                    }
+                    updateTotalBuyback();
+                });
+            });
+
+            buybackCheckboxes.forEach(checkbox => {
+                checkbox.addEventListener("change", function () {
+                    const productId = checkbox.dataset.productId;
+                    const relatedSelect = document.querySelector(`.buyback-policy[data-checkbox-id="${productId}"]`);
+                    if (checkbox.checked) {
+                        relatedSelect.disabled = true;
+                    } else {
+                        relatedSelect.disabled = false;
+                    }
+                    updateTotalBuyback();
+                });
+            });
+
+            function updateTotalBuyback() {
+                let totalBuyback = 0;
+                buybackCheckboxes.forEach(checkbox => {
+                    if (checkbox.checked) {
+                        const finalPrice = parseFloat(checkbox.dataset.finalPrice) || 0;
+                        const policySelect = document.querySelector(`.buyback-policy[data-checkbox-id="${checkbox.dataset.productId}"]`);
+                        if (policySelect.selectedOptions[0].dataset.buybackPolicyname == "Only Gold") {
+                            switch (policySelect.dataset.productName) {
+                                case 'SJC Gold Bar 100 fences':
+                                    var goldPrice = @(Model.GoldPriceDTOList?.FirstOrDefault(c => c.Type == "SJC Gold Bar")?.BuyPrice);
+                                    totalBuyback += goldPrice;
+                                    break;
+                                case 'SJC Gold Bar 50 fences':
+                                    var goldPrice = @(Model.GoldPriceDTOList?.FirstOrDefault(c => c.Type == "SJC Gold Bar")?.BuyPrice * 0.5);
+                                    totalBuyback += goldPrice;
+                                    break;
+                                case 'SJC Gold Bar 10 fences':
+                                    var goldPrice = @(Model.GoldPriceDTOList?.FirstOrDefault(c => c.Type == "SJC Gold Bar")?.BuyPrice * 0.1);
+                                    totalBuyback += goldPrice;
+                                    break;
+                                case '24K Gold 50 fences':
+                                    var goldPrice = @(Model.GoldPriceDTOList?.FirstOrDefault(c => c.Type == "24K Gold")?.BuyPrice * 0.5);
+                                    totalBuyback += goldPrice;
+                                    break;
+                                case '18K Gold 50 fences':
+                                    var goldPrice = @(Model.GoldPriceDTOList?.FirstOrDefault(c => c.Type == "18K Gold")?.BuyPrice * 0.5);
+                                    totalBuyback += goldPrice;
+                                    break;
+                                case '14K Gold 50 fences':
+                                    var goldPrice = @(Model.GoldPriceDTOList?.FirstOrDefault(c => c.Type == "14K Gold")?.BuyPrice * 0.5);
+                                    totalBuyback += goldPrice;
+                                    break;
+                                case '10K Gold 50 fences':
+                                    var goldPrice = @(Model.GoldPriceDTOList?.FirstOrDefault(c => c.Type == "10K Gold")?.BuyPrice * 0.5);
+                                    totalBuyback += goldPrice;
+                                    break;
+                                default:
+                                    break;
+                            }
+                        } else {
+                            const buybackPercentage = parseFloat(policySelect.selectedOptions[0].dataset.buybackPercentage) || 0;
+                            totalBuyback += finalPrice * (buybackPercentage / 100);
+                        }
+                    }
+                });
+                totalBuybackSpan.textContent = totalBuyback.toLocaleString("en-US") + " VND";
+            }
+
+            const btnConfirmBuyBack = document.getElementById("btn-confirm-buyback");
+            if (btnConfirmBuyBack) {
+                btnConfirmBuyBack.addEventListener("click", function () {
+                    const selectedProductIds = [];
+                    const selectedPolicies = [];
+
+                    buybackCheckboxes.forEach(checkbox => {
+                        if (checkbox.checked) {
+                            selectedProductIds.push(checkbox.dataset.productId);
+                            const relatedSelect = document.querySelector(`.buyback-policy[data-checkbox-id="${checkbox.dataset.productId}"]`);
+                            selectedPolicies.push(relatedSelect.value);
+                        }
+                    });
+
+                    var token = '@token';
+                    const saleOrderId = '@Model.SaleOrder?.SaleOrderId';
+
+                    // Example endpoint for buyback action (adjust endpoint as per your application)
+                    fetch('/Staff/SaleOrderScreen/SaleOrderDetail/BuyBackProduct', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'RequestVerificationToken': token
+                        },
+                        body: JSON.stringify({
+                            saleOrderId: saleOrderId,
+                            productIds: selectedProductIds,
+                            policyIds: selectedPolicies
+                        }),
+                        processData: false,
+                    })
+                        .then(response => {
+                            if (!response.ok) {
+                                throw new Error('Network response was not ok');
+                            }
+                            window.location.reload();
+                        })
+                        .then(data => {
+                            console.log('Confirmed buyback:', data);
+                            window.location.reload(); // Reload page or update UI as needed
+                        })
+                        .catch(error => {
+                            console.error('Error during buyback:', error);
+                            // Handle error, show error message, etc.
+                        });
+                });
+            }
+        });
+    </script>
 </body>
 </html>

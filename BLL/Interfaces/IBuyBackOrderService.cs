@@ -7,9 +7,8 @@ using System.Threading.Tasks;
 
 namespace BLL.Interfaces
 {
-    public interface IGoldPriceService
+    public interface IBuyBackOrderService
     {
-        List<GoldPriceDTO> GetGoldPrices();
-
+        bool BuyBackSaleOrder (BuyBackRequestDTO model);
     }
 }

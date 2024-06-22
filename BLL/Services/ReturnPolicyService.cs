@@ -22,6 +22,18 @@ namespace BLL.Services
             return _returnPolicyRepo.GetAllReturnPolicies();
         }
 
+        public ReturnPolicy GetReturnPolicyDateAllowReturn()
+        {
+            var list = _returnPolicyRepo.GetAllReturnPolicies();
+            return list.FirstOrDefault(c => c.PolicyName == "Days Allowed Return");
+        }
+
+        public ReturnPolicy GetReturnPolicyRefundPercentage()
+        {
+            var list = _returnPolicyRepo.GetAllReturnPolicies();
+            return list.FirstOrDefault(c => c.PolicyName == "Refund Percentage");
+        }
+
         public bool UpdateReturnPolicy(List<ReturnPolicyRequestDTO> returnPolicyRequestDTOs)
         {
             for(int i = 0; i < returnPolicyRequestDTOs.Count; i++)

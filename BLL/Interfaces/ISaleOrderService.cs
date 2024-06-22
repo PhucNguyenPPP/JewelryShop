@@ -15,5 +15,6 @@ namespace BLL.Interfaces
         ResponseDTO CheckAmountInStock(SaleOrderRequestDTO model);
         List<SaleOrder> SearchSaleOrder(string searchValue);
         SaleOrder GetSaleOrderById(string id);
+        bool ReturnSaleOrder(ReturnRequestDTO model);
     }
 }

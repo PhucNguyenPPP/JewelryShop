@@ -1,4 +1,5 @@
-﻿using DTO;
+﻿using BOL;
+using DTO;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,9 +8,8 @@ using System.Threading.Tasks;
 
 namespace BLL.Interfaces
 {
-    public interface IGoldPriceService
+    public interface IBuyBackPolicyService
     {
-        List<GoldPriceDTO> GetGoldPrices();
-
+        List<BuyBackPolicy> GetAllBuyBackPolicies();
     }
 }
