@@ -1,4 +1,5 @@
-﻿using DTO;
+﻿using BOL;
+using DTO;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,6 +10,9 @@ namespace BLL.Interfaces
 {
     public interface IBuyBackOrderService
     {
+        List<BuyBackOrder> GetAllBuyBackOrders();
+        List<BuyBackOrder> SearchBuyBackOrders(string searchValue);
         bool BuyBackSaleOrder (BuyBackRequestDTO model);
+        BuyBackOrder GetBuyBackOrderById (string id);
     }
 }

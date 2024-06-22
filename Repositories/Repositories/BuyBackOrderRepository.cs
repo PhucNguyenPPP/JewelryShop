@@ -1,5 +1,6 @@
 ﻿using BOL;
 using DAL.DAO;
+using Microsoft.EntityFrameworkCore;
 using Repositories.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -19,6 +20,30 @@ namespace Repositories.Repositories
         public void AddBuyBackOrder(BuyBackOrder model)
         {
             _buyBackOrderDao.Add(model);
+        }
+
+        public List<BuyBackOrder> GetAllBuyBackOrders()
+        {
+            return _buyBackOrderDao.GetAll(c => true)
+                .Include(c => c.Customer)
+                .Include(c => c.BuyBackOrderDetails)
+                .ThenInclude(c => c.Product)
+                .Include(c => c.BuyBackOrderDetails)
+                .ThenInclude(d => d.Policy)
+                .OrderByDescending(c => c.CreatedDate)
+                .ToList();
+        }
+
+        public BuyBackOrder GetBuyBackOrder(Guid id)
+        {
+            return _buyBackOrderDao.GetAll(c => c.Bboid == id)
+                .Include(c => c.Customer)
+                .Include(c => c.BuyBackOrderDetails)
+                .ThenInclude(c => c.Product)
+                .Include(c => c.BuyBackOrderDetails)
+                .ThenInclude(d => d.Policy)
+                .OrderByDescending(c => c.CreatedDate)
+                .FirstOrDefault();
         }
 
         public bool SaveChange()

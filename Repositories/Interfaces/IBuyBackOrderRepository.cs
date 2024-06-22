@@ -11,5 +11,7 @@ namespace Repositories.Interfaces
     {
         void AddBuyBackOrder(BuyBackOrder model);
         bool SaveChange();
+        List<BuyBackOrder> GetAllBuyBackOrders();
+        BuyBackOrder GetBuyBackOrder(Guid id);
     }
 }
