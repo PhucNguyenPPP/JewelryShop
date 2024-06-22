@@ -2,6 +2,7 @@
 @model PRN221_JewelryShop.Pages.Staff.SaleOrderScreen.SaleOrderDetailModel
 @inject Microsoft.AspNetCore.Antiforgery.IAntiforgery a
 @{
+    Layout = "_LayoutStaff";
     var priceFormat = new System.Globalization.CultureInfo("en-US", false).NumberFormat;
     priceFormat.NumberGroupSeparator = ".";
     var token = a.GetAndStoreTokens(HttpContext).RequestToken;
@@ -42,13 +43,12 @@
                     <label>Email</label>
                     <span>@Model.SaleOrder?.Customer?.Email</span>
                 </div>
-
-            </div>
-            <div class="col-md-6">
                 <div class="field">
                     <label>Created By</label>
                     <span>@Model.SaleOrder?.Employee?.EmployeeName</span>
                 </div>
+            </div>
+            <div class="col-md-6">
                 <div class="field">
                     <label>Created Date</label>
                     <span>@Model.SaleOrder?.CreatedDate</span>
@@ -56,6 +56,10 @@
                 <div class="field">
                     <label>Promotion Code</label>
                     <span>@Model.SaleOrder?.PromotionCode?.PromotionCodeName</span>
+                </div>
+                <div class="field">
+                    <label>Total Price</label>
+                    <span>@Model.SaleOrder?.FinalPrice</span>
                 </div>
             </div>
         </div>
@@ -112,10 +116,6 @@
                                 }
                             </tbody>
                         </table>
-                    }
-                    else
-                    {
-                        <p>No materials available.</p>
                     }
                 </div>
                 <button class="btn" style="background-color: orange" data-toggle="modal" data-target="#returnModal" @(isReturnAllowed ? "" : "disabled")>Return</button>
