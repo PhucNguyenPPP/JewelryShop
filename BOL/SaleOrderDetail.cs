@@ -21,6 +21,8 @@ public partial class SaleOrderDetail
 
     public decimal? ReturnPrice { get; set; }
 
+    public bool? IsBuyBack { get; set; }
+
     public virtual Product? Product { get; set; }
 
     public virtual SaleOrder? SaleOrder { get; set; }

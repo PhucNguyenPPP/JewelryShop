@@ -66,7 +66,13 @@
                                         <span class="dropdown-icon"><i class="fa-solid fa-ellipsis"></i></span>
                                         <div class="dropdown-content">
                                             <a class="detail-button" href="/Manager/ProductScreen/ProductDetail?id=@product.ProductId"><i class="fa-solid fa-circle-info"></i>Detail</a>
-                                            <a class="edit-button" href="/Manager/ProductScreen/UpdateProduct?id=@product.ProductId"><i class="fa-solid fa-pen-to-square"></i>Update</a>
+                                            @if (product.ProductName != "SJC Gold Bar 100 fences" && product.ProductName != "SJC Gold Bar 50 fences"
+                                           && product.ProductName != "SJC Gold Bar 10 fences" && product.ProductName != "24K Gold 50 fences"
+                                           && product.ProductName != "18K Gold 50 fences" && product.ProductName != "14K Gold 50 fences"
+                                           && product.ProductName != "10K Gold 50 fences")
+                                            {
+                                                <a class="edit-button" href="/Manager/ProductScreen/UpdateProduct?id=@product.ProductId"><i class="fa-solid fa-pen-to-square"></i>Update</a>
+                                            }                                           
                                             <button class="delete-button" type="button" onclick="openDeleteConfirmation('@product.ProductId')"><i class="fa-solid fa-trash"></i>Delete</button>
                                         </div>
                                     </div>

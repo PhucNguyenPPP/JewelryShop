@@ -3,12 +3,6 @@ using BOL;
 using DTO;
 using Microsoft.IdentityModel.Tokens;
 using Repositories.Interfaces;
-using Repositories.Repositories;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace BLL.Services
 {
@@ -19,15 +13,19 @@ namespace BLL.Services
         private readonly ISaleOrderDetailRepository _saleOrderDetailRepo;
         private readonly IProductRepository _productRepo;
         private readonly IPromotionCodeService _promotionCodeService;
+        private readonly IReturnPolicyService _returnPolicyService;
+
         public SaleOrderService(ISaleOrderRepository saleOrderRepo, IProductService productService,
             ISaleOrderDetailRepository saleOrderDetailRepo,
-            IProductRepository productRepo, IPromotionCodeService promotionCodeService)
+            IProductRepository productRepo, IPromotionCodeService promotionCodeService,
+            IReturnPolicyService returnPolicyService)
         {
             _saleOrderRepo = saleOrderRepo;
             _productService =  productService;
             _saleOrderDetailRepo = saleOrderDetailRepo;
             _productRepo = productRepo;
             _promotionCodeService = promotionCodeService;
+            _returnPolicyService = returnPolicyService;
         }
 
         public bool AddSaleOrder(SaleOrderRequestDTO saleOrderDTO, Guid employeeId)
@@ -65,6 +63,7 @@ namespace BLL.Services
                     Amount = i.Amount,
                     TotalPrice = product.Price,
                     FinalPrice = totalPriceProductDetail - (product.Price * (discountPercentage/100)),
+                    IsBuyBack = false,
                 };
                 saleOrderDetails.Add(saleOrderDetail);
             }
@@ -118,6 +117,20 @@ namespace BLL.Services
             Guid.TryParse(id, out Guid parseSaleOrderId);
             var saleOrder = _saleOrderRepo.GetSaleOrderById(parseSaleOrderId);
             return saleOrder;
+        }
+
+        public bool ReturnSaleOrder(ReturnRequestDTO model)
+        {
+            var refundPercentage = _returnPolicyService.GetReturnPolicyRefundPercentage();
+            decimal refundPercentageValue = Convert.ToDecimal(refundPercentage.PolicyValue) / 100m;
+            foreach (var id in model.ProductIds)
+            {
+                var saleOrderDetail = _saleOrderDetailRepo.GetSaleOrderDetailByProductId(Guid.Parse(id), Guid.Parse(model.SaleOrderId));
+                saleOrderDetail.ReturnDate = DateTime.Now;
+                saleOrderDetail.ReturnPrice = saleOrderDetail.FinalPrice * refundPercentageValue;
+                _saleOrderDetailRepo.UpdateSaleOrderDetail(saleOrderDetail);
+            }
+            return _saleOrderRepo.SaveChange();
         }
     }
 }

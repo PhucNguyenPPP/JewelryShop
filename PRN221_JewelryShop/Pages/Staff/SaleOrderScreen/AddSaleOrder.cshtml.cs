@@ -88,6 +88,7 @@ namespace PRN221_JewelryShop.Pages.Staff.SaleOrderScreen
 
         public IActionResult OnGetSearchCustomer()
         {
+            PromotionCodeList = _promotionCodeService.GetAllPromotionCodeNotExpiredList();
             var loginResponseString = HttpContext.Session.GetString("LoginResponse");
             if (loginResponseString == null)
             {
