@@ -62,7 +62,9 @@
                                     <div class="dropdown">
                                         <span class="dropdown-icon"><i class="fa-solid fa-ellipsis"></i></span>
                                         <div class="dropdown-content">
-                                            <button class="edit-button" type="button" onclick="openUpdateModal('@e.PolicyId')"><i class="fa-solid fa-pen-to-square"></i>Update</button>
+                                            @if(e.PolicyValue != null){
+                                                <button class="edit-button" type="button" onclick="openUpdateModal('@e.PolicyId')"><i class="fa-solid fa-pen-to-square"></i>Update</button>
+                                            }
                                             <button class="delete-button" type="button" onclick="openDeleteConfirmation('@e.PolicyId')"><i class="fa-solid fa-trash"></i>Delete</button>
                                         </div>
                                     </div>

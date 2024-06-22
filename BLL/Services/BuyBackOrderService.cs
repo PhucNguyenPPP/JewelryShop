@@ -106,6 +106,7 @@ namespace BLL.Services
                         Bboid = bbOrderId,
                         ProductId = Guid.Parse(model.ProductIds[i]),
                         Bbprice = priceGold,
+                        Amount = saleOrderDetail.Amount,
                     };
                     buyBackOrderDetails.Add(buyBackOrderDetail);
                 }
@@ -113,14 +114,15 @@ namespace BLL.Services
                 else
                 {
                     var policyValue = Convert.ToDecimal(bbPolicy.PolicyValue);
-                    totalPrice += saleOrderDetail.FinalPrice * (policyValue);
+                    totalPrice += saleOrderDetail.FinalPrice * (policyValue/100);
                     BuyBackOrderDetail buyBackOrderDetail = new BuyBackOrderDetail()
                     {
                         BbodetailId = Guid.NewGuid(),
                         PolicyId = Guid.Parse(model.PolicyIds[i]),
                         Bboid = bbOrderId,
                         ProductId = Guid.Parse(model.ProductIds[i]),
-                        Bbprice = saleOrderDetail.FinalPrice * (policyValue),
+                        Bbprice = saleOrderDetail.FinalPrice * (policyValue/100),
+                        Amount = saleOrderDetail.Amount,
                     };
                     buyBackOrderDetails.Add(buyBackOrderDetail);
                 }
@@ -138,6 +140,23 @@ namespace BLL.Services
 
             _buyBackOrderRepo.AddBuyBackOrder(buyBackOrder);
             return _buyBackOrderRepo.SaveChange();
+        }
+
+        public List<BuyBackOrder> GetAllBuyBackOrders()
+        {
+            return _buyBackOrderRepo.GetAllBuyBackOrders();
+        }
+
+        public BuyBackOrder GetBuyBackOrderById(string id)
+        {
+            Guid.TryParse(id, out Guid parseId);
+            return _buyBackOrderRepo.GetBuyBackOrder(parseId);
+        }
+
+        public List<BuyBackOrder> SearchBuyBackOrders(string searchValue)
+        {
+            var list = GetAllBuyBackOrders();
+            return list.Where(c => c.Customer.CustomerName.ToLower().Contains(searchValue.ToLower())).ToList();
         }
     }
 }

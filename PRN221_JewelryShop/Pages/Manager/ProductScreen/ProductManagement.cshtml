@@ -157,6 +157,20 @@
             });
         });
 
+        $(document).ready(function () {
+            // Toggle dropdown content on click
+            $('.dropdown').on('click', function () {
+                $(this).find('.dropdown-content').toggle();
+            });
+
+            // Close dropdown when clicking outside
+            $(document).on('click', function (e) {
+                if (!$(e.target).closest('.dropdown').length) {
+                    $('.dropdown-content').hide();
+                }
+            });
+        });
+
     </script>
 </body>
 </html>
