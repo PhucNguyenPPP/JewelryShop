@@ -9,7 +9,7 @@ public partial class BuyBackOrder
 
     public decimal? TotalPrice { get; set; }
 
-    public DateTime? CreatedDate { get; set; }
+    public DateTime CreatedDate { get; set; }
 
     public Guid? CustomerId { get; set; }
 

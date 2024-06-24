@@ -61,7 +61,7 @@
                                 data-phonenumber="@e.PhoneNumber"
                                 data-email="@e.Email"
                                 data-address="@e.Address"
-                                data-dob="@e.Dob?.ToString("yyyy-MM-dd")"
+                                data-dob="@e.Dob.ToString("yyyy-MM-dd")"
                                 data-counterId="@e.CounterId">
 
                                 <td><img src="data:image/png;base64,@(e.AvatarImg)" /></td>
@@ -69,7 +69,7 @@
                                 <td>@e.PhoneNumber</td>
                                 <td>@e.Address</td>
                                 <td>@e.Email</td>
-                                <td>@e.Dob?.ToString("yyyy/MM/dd")</td>
+                                <td>@e.Dob.ToString("yyyy/MM/dd")</td>
                                 <td>@e.Counter.CounterName</td>
                                 <td>
                                     <div class="dropdown">

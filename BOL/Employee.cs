@@ -19,7 +19,7 @@ public partial class Employee
 
     public string? Email { get; set; }
 
-    public DateTime? Dob { get; set; }
+    public DateTime Dob { get; set; }
 
     public string? AvatarImg { get; set; }
 
