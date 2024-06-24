@@ -15,9 +15,9 @@ public partial class Customer
 
     public string? Email { get; set; }
 
-    public DateTime? Dob { get; set; }
+    public DateTime Dob { get; set; }
 
-    public DateTime? RegistrationDate { get; set; }
+    public DateTime RegistrationDate { get; set; }
 
     public string? AvatarImg { get; set; }
 
