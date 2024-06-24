@@ -28,7 +28,7 @@ namespace DTO
 		[RegularExpression("^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\\.[a-zA-Z0-9-]+)*$", ErrorMessage = "Please input the correct email!")]
 		public string? Email { get; set; }
 		[Required(ErrorMessage = "Please input Dob!")]
-		public DateTime? Dob { get; set; }
+		public DateTime Dob { get; set; }
 		public string? AvatarImg { get; set; }
 		public string? CounterId { get; set; }
 		public bool? Status { get; set; }

@@ -9,9 +9,9 @@ public partial class PromotionProgram
 
     public string? PromotionProgramName { get; set; }
 
-    public DateTime? CreatedDate { get; set; }
+    public DateTime CreatedDate { get; set; }
 
-    public DateTime? ExpiredDate { get; set; }
+    public DateTime ExpiredDate { get; set; }
 
     public bool? Status { get; set; }
 

@@ -54,7 +54,7 @@
                     </div>
                     <div class="input-field">
                         <label for="birthdate"><i class="fa-solid fa-cake-candles"></i>Birthdate:</label>
-                        <input type="date" id="birthdate" asp-for="CustomerResquestDTO.Dob" max="@dateNow" value="@Model.Customer.Dob?.ToString("yyyy-MM-dd")" required>
+                        <input type="date" id="birthdate" asp-for="CustomerResquestDTO.Dob" max="@dateNow" value="@Model.Customer.Dob.ToString("yyyy-MM-dd")" required>
                         <p class="text-danger"><span asp-validation-for="CustomerResquestDTO.Dob"></span></p>
                     </div>
                     <div>
