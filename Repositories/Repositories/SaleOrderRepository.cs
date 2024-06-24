@@ -37,7 +37,7 @@ namespace Repositories.Repositories
 
 		public List<SaleOrder> GetAllSaleOrdersInMonth(int year, int month)
 		{
-			return _saleOrderDao.GetAll(c => true)
+			return _saleOrderDao.GetAll(c => c.CreatedDate.Month==month && c.CreatedDate.Year==year)
 				 .Include(c => c.Employee)
 				 .Include(c => c.Customer)
 				 .Include(c => c.PromotionCode)
@@ -60,7 +60,26 @@ namespace Repositories.Repositories
             return saleOrderList?.FirstOrDefault(c => c.SaleOrderId == parseSaleOrderId);
         }
 
-        public bool SaveChange()
+		public decimal? GetTotalSalesInMonth(int year, int month)
+		{
+			List<SaleOrder> list = _saleOrderDao.GetAll(c => c.CreatedDate.Month == month && c.CreatedDate.Year == year)
+				 .Include(c => c.Employee)
+				 .Include(c => c.Customer)
+				 .Include(c => c.PromotionCode)
+				 .Include(c => c.SaleOrderDetails)
+				 .ThenInclude(i => i.Product)
+				 .OrderByDescending(c => c.CreatedDate)
+				 .ToList();
+            decimal? total = 0;  
+            foreach (SaleOrder saleOrder in list)
+            {
+                total = total + saleOrder.FinalPrice;
+            }
+            return total;
+
+		}
+
+		public bool SaveChange()
         {
             return _saleOrderDao.SaveChange();
         }

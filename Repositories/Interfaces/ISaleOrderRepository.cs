@@ -14,5 +14,6 @@ namespace Repositories.Interfaces
         bool SaveChange();
         SaleOrder GetSaleOrderById(Guid parseSaleOrderId);
 		List<SaleOrder> GetAllSaleOrdersInMonth(int year, int month);
+		decimal? GetTotalSalesInMonth(int year, int month);
 	}
 }

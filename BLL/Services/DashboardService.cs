@@ -15,10 +15,15 @@ namespace BLL.Services
 		public DashboardService(ISaleOrderRepository saleOrderRepository) {
 			_saleOrderRepository = saleOrderRepository;
 		}
-
 		public List<SaleOrder> GetAllSaleOrdersInMonth(int year, int month)
 		{
 			return _saleOrderRepository.GetAllSaleOrdersInMonth(year, month);
 		}
+
+		public decimal? GetTotalSalesInMonth(int year, int month)
+		{
+			return _saleOrderRepository.GetTotalSalesInMonth(year, month);
+		}
+
 	}
 }

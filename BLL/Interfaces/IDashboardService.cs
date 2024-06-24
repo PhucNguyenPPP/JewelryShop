@@ -10,5 +10,7 @@ namespace BLL.Interfaces
 	public interface IDashboardService
 	{
 		List<SaleOrder> GetAllSaleOrdersInMonth(int year, int month);
+		decimal? GetTotalSalesInMonth(int year, int month);
+
 	}
 }
