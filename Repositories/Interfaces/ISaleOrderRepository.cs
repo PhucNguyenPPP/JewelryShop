@@ -13,5 +13,6 @@ namespace Repositories.Interfaces
         void AddSaleOrder(SaleOrder saleOrder);
         bool SaveChange();
         SaleOrder GetSaleOrderById(Guid parseSaleOrderId);
-    }
+		List<SaleOrder> GetAllSaleOrdersInMonth(int year, int month);
+	}
 }

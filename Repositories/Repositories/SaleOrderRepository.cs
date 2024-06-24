@@ -35,7 +35,19 @@ namespace Repositories.Repositories
                  .ToList();
         }
 
-        public SaleOrder GetSaleOrderById(Guid parseSaleOrderId)
+		public List<SaleOrder> GetAllSaleOrdersInMonth(int year, int month)
+		{
+			return _saleOrderDao.GetAll(c => true)
+				 .Include(c => c.Employee)
+				 .Include(c => c.Customer)
+				 .Include(c => c.PromotionCode)
+				 .Include(c => c.SaleOrderDetails)
+				 .ThenInclude(i => i.Product)
+				 .OrderByDescending(c => c.CreatedDate)
+				 .ToList();
+		}
+
+		public SaleOrder GetSaleOrderById(Guid parseSaleOrderId)
         {
             var saleOrderList = _saleOrderDao.GetAll(c => true)
                 .Include(c => c.Employee)
