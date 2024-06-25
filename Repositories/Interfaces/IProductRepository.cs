@@ -21,5 +21,6 @@ namespace Repositories.Interfaces
         bool SaveChange();
 
         Product GetById(Guid id);
-    }
+		List<Product> GetTopSellingProductInMonth(List<Guid> ordDetailList);
+	}
 }

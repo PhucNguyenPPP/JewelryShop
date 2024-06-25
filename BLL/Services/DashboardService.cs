@@ -12,12 +12,25 @@ namespace BLL.Services
 	public class DashboardService : IDashboardService
 	{
 		private readonly ISaleOrderRepository _saleOrderRepository;
-		public DashboardService(ISaleOrderRepository saleOrderRepository) {
+		private readonly ISaleOrderDetailRepository _saleOrderDetailRepository;
+		private readonly IProductRepository _productRepository;
+		public DashboardService(ISaleOrderRepository saleOrderRepository, ISaleOrderDetailRepository saleOrderDetailRepository
+			, IProductRepository productRepository) {
 			_saleOrderRepository = saleOrderRepository;
+			_saleOrderDetailRepository = saleOrderDetailRepository;
+			_productRepository = productRepository;
 		}
 		public List<SaleOrder> GetAllSaleOrdersInMonth(int year, int month)
 		{
 			return _saleOrderRepository.GetAllSaleOrdersInMonth(year, month);
+		}
+
+		public List<Product> GetTopSellingProductInMonth(int year, int month)
+		{
+			var saleOrdList = _saleOrderRepository.GetAllSaleOrderIDInMonth(year,month);
+			var ordDetailList= _saleOrderDetailRepository.GetTopSellingProductIDInMonth(saleOrdList);
+			var productList = _productRepository.GetTopSellingProductInMonth(ordDetailList);
+			return productList; 
 		}
 
 		public decimal? GetTotalSalesInMonth(int year, int month)

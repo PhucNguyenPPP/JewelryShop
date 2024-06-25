@@ -15,5 +15,6 @@ namespace Repositories.Interfaces
         SaleOrder GetSaleOrderById(Guid parseSaleOrderId);
 		List<SaleOrder> GetAllSaleOrdersInMonth(int year, int month);
 		decimal? GetTotalSalesInMonth(int year, int month);
+		List<Guid> GetAllSaleOrderIDInMonth(int year, int month);
 	}
 }

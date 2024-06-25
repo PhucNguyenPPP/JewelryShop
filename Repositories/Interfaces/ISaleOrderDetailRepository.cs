@@ -12,5 +12,6 @@ namespace Repositories.Interfaces
         void AddRangeSaleOrderDetail(List<SaleOrderDetail> list);
         void UpdateSaleOrderDetail(SaleOrderDetail model);
         SaleOrderDetail GetSaleOrderDetailByProductId(Guid productId, Guid saleOrderId);
-    }
+		List<Guid> GetTopSellingProductIDInMonth(List<Guid> saleOrdList);
+	}
 }
