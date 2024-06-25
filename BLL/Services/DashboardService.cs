@@ -33,6 +33,11 @@ namespace BLL.Services
 			return productList; 
 		}
 
+		public decimal? GetTotalSalesAmountInRange(DateTime start, DateTime end)
+		{
+			return _saleOrderRepository.GetTotalSalesAmountInRange(start, end);
+		}
+
 		public decimal? GetTotalSalesInMonth(int year, int month)
 		{
 			return _saleOrderRepository.GetTotalSalesInMonth(year, month);
