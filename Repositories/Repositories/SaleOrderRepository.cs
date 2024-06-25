@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Repositories.Interfaces;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -66,7 +67,23 @@ namespace Repositories.Repositories
             return saleOrderList?.FirstOrDefault(c => c.SaleOrderId == parseSaleOrderId);
         }
 
-
+		public decimal? GetTotalSalesAmountInRange(DateTime start, DateTime end)
+		{
+			List<SaleOrder> list = _saleOrderDao.GetAll(c => c.CreatedDate > start && c.CreatedDate < end)
+				 .Include(c => c.Employee)
+				 .Include(c => c.Customer)
+				 .Include(c => c.PromotionCode)
+				 .Include(c => c.SaleOrderDetails)
+				 .ThenInclude(i => i.Product)
+				 .OrderByDescending(c => c.CreatedDate)
+				 .ToList();
+			decimal? total = 0;
+			foreach (SaleOrder saleOrder in list)
+			{
+				total = total + saleOrder.FinalPrice;
+			}
+			return total;	
+		}
 
 		public decimal? GetTotalSalesInMonth(int year, int month)
 		{
