@@ -17,7 +17,7 @@ public partial class SaleOrderDetail
 
     public decimal? FinalPrice { get; set; }
 
-    public DateTime ReturnDate { get; set; }
+    public DateTime? ReturnDate { get; set; }
 
     public decimal? ReturnPrice { get; set; }
 
