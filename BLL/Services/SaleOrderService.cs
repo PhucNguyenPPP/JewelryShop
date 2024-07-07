@@ -75,6 +75,8 @@ namespace BLL.Services
                 TotalPrice = totalPriceAll,
                 FinalPrice = totalPriceAll - (totalPriceAll * (discountPercentage / 100)),
                 CreatedDate = DateTime.Now,
+                PaymentMethod = saleOrderDTO.PaymentMethod,
+                TransactionCode = saleOrderDTO.TransactionCode,
                 CustomerId = Guid.Parse(saleOrderDTO.CustomerId),
                 EmployeeId = employeeId,
                 PromotionCodeId = Guid.TryParse(saleOrderDTO.PromotionCode, out Guid parsePromotionCodeId) ? parsePromotionCodeId : null

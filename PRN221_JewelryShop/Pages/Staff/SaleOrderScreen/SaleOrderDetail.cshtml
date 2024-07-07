@@ -53,14 +53,34 @@
                     <label>Created Date</label>
                     <span>@Model.SaleOrder?.CreatedDate</span>
                 </div>
-                <div class="field">
-                    <label>Promotion Code</label>
-                    <span>@Model.SaleOrder?.PromotionCode?.PromotionCodeName</span>
-                </div>
+                @if (@Model.SaleOrder?.PromotionCode != null)
+                {
+                    <div class="field">
+                        <label>Promotion Code</label>
+                        <span>@Model.SaleOrder?.PromotionCode?.PromotionCodeName</span>
+                    </div>
+                }  else
+                {
+                    <div class="field">
+                        <label>Promotion Code</label>
+                        <span>N/A</span>
+                    </div>
+                }
                 <div class="field">
                     <label>Total Price</label>
-                    <span>@Model.SaleOrder?.FinalPrice</span>
+                    <span>@Model.SaleOrder?.FinalPrice?.ToString("#,0", priceFormat) VND</span>
                 </div>
+                <div class="field">
+                    <label>Payment method</label>
+                    <span>@Model.SaleOrder?.PaymentMethod</span>
+                </div>
+                @if (@Model.SaleOrder?.PaymentMethod == "Banking")
+                {
+                    <div class="field">
+                        <label>Transaction Code</label>
+                        <span>@Model.SaleOrder?.TransactionCode</span>
+                    </div>
+                }
             </div>
         </div>
         <div class="row">

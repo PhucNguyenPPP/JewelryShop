@@ -13,6 +13,10 @@ public partial class SaleOrder
 
     public DateTime CreatedDate { get; set; }
 
+    public string? PaymentMethod { get; set; }
+
+    public string? TransactionCode { get; set; }
+
     public Guid? PromotionCodeId { get; set; }
 
     public Guid? CustomerId { get; set; }
