@@ -3,9 +3,9 @@ using System.Collections.Generic;
 
 namespace BOL;
 
-public partial class BuyBackOrder
+public partial class ReturnOrder
 {
-    public Guid Bboid { get; set; }
+    public Guid ReturnOrderId { get; set; }
 
     public decimal? TotalPrice { get; set; }
 
@@ -17,13 +17,9 @@ public partial class BuyBackOrder
 
     public Guid? SaleOrderId { get; set; }
 
-    public virtual ICollection<BuyBackOrderDetail> BuyBackOrderDetails { get; set; } = new List<BuyBackOrderDetail>();
-
     public virtual Customer? Customer { get; set; }
 
     public virtual Employee? Employee { get; set; }
-
-    public virtual ICollection<ReturnOrderDetail> ReturnOrderDetails { get; set; } = new List<ReturnOrderDetail>();
 
     public virtual SaleOrder? SaleOrder { get; set; }
 }

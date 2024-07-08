@@ -23,11 +23,15 @@ public partial class SaleOrder
 
     public Guid? EmployeeId { get; set; }
 
+    public virtual ICollection<BuyBackOrder> BuyBackOrders { get; set; } = new List<BuyBackOrder>();
+
     public virtual Customer? Customer { get; set; }
 
     public virtual Employee? Employee { get; set; }
 
     public virtual PromotionProgramCode? PromotionCode { get; set; }
+
+    public virtual ICollection<ReturnOrder> ReturnOrders { get; set; } = new List<ReturnOrder>();
 
     public virtual ICollection<SaleOrderDetail> SaleOrderDetails { get; set; } = new List<SaleOrderDetail>();
 }

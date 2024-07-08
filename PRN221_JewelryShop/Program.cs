@@ -46,6 +46,7 @@ builder.Services.AddScoped<IRoleService, RoleService>();
 builder.Services.AddScoped<IReturnPolicyService, ReturnPolicyService>();
 builder.Services.AddScoped<IBuyBackPolicyService, BuyBackPolicyService>();
 builder.Services.AddScoped<IBuyBackOrderService, BuyBackOrderService>();
+builder.Services.AddScoped<IDashboardService, DashboardService>();
 
 //Add scope for repositories*
 builder.Services.AddScoped<ICustomerRepository, CustomerRepository>();

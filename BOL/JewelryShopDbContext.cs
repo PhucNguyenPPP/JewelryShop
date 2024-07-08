@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using BOL;
 using Microsoft.EntityFrameworkCore;
 
-namespace DAL;
+namespace BOL;
 
 public partial class JewelryShopDbContext : DbContext
 {

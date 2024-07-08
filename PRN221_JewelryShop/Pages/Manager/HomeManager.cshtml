@@ -3,4 +3,92 @@
 @{
     Layout = "_LayoutManager";
 }
-<h1>Manager</h1>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        /* Reset default styles */
+
+
+        main {
+            padding: 20px;
+        }
+
+        section {
+            margin-bottom: 20px;
+        }
+
+        h2 {
+            border-bottom: 2px solid #333;
+            padding-bottom: 5px;
+        }
+
+        .orders-list {
+            display: flex;
+            flex-wrap: wrap;
+        }
+
+        .order-item {
+            background-color: #f9f9f9;
+            padding: 10px;
+            margin: 5px;
+            border-radius: 5px;
+            width: calc(25% - 10px); /* Adjust as per your layout */
+        }
+
+        .product {
+            background-color: #f0f0f0;
+            padding: 10px;
+            border-radius: 5px;
+        }
+
+        .employee-sales {
+            background-color: #e0e0e0;
+            padding: 10px;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <main>
+        <section id="saleOrders">
+            <h2>Sale Orders</h2>
+            <div class="orders-list">
+                <!-- Display sale orders here -->
+                    <div class="order-item">
+                        <p>@Model.SaleOrdersInMonth.Count</p>
+                    </div>
+            </div>
+        </section>
+
+        <section id="totalSales">
+            <h2>Total Sales</h2>
+            <p>Total Sales Amount: @Model.TotalSalesInMonth</p>
+        </section>
+
+        <section id="topProduct">
+            <h2>Top Selling Product</h2>
+            <div class="product">
+                <h3>@Model.TopSellingProductInMonth.FirstOrDefault()?.ProductName</h3>
+            </div>
+        </section>
+
+        <section id="salesRange">
+            <h2>Sales Range</h2>
+            <p>Total Sales Amount in Range: @Model.TotalSalesAmountInRange</p>
+        </section>
+
+        <section id="employeeSales">
+            <h2>Employee Sales</h2>
+            @* <div class="employee-sales">
+                <h3>@Model.TotalSalesOfEmployeeInMonth.Employee.Name</h3>
+                <p>Total Sales: @Model.TotalSalesOfEmployeeInMonth.TotalSalesAmount</p>
+            </div> *@
+        </section>
+    </main>
+</body>
+</html>
