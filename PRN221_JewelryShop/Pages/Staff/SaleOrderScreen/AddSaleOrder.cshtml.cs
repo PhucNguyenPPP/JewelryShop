@@ -90,7 +90,7 @@ namespace PRN221_JewelryShop.Pages.Staff.SaleOrderScreen
 
             if (!SearchProductValue.IsNullOrEmpty())
             {
-                ProductResultList = _productService.SearchProduct(SearchProductValue);
+                ProductResultList = _productService.SearchProductByStaff(SearchProductValue, LoginResponse.EmployeeId.ToString());
             }
             return Page();
         }

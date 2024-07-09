@@ -38,6 +38,10 @@ namespace Repositories.Repositories
                  .Include(c => c.PromotionCode)
                  .Include(c => c.SaleOrderDetails)
                  .ThenInclude(i => i.Product)
+				 .Include(c => c.BuyBackOrders)
+				 .ThenInclude(c => c.BuyBackOrderDetails)
+				 .Include(c => c.ReturnOrders)
+				 .ThenInclude(c => c.ReturnOrderDetails)
                  .OrderByDescending(c => c.CreatedDate)
                  .ToList();
         }
@@ -57,11 +61,16 @@ namespace Repositories.Repositories
 		public SaleOrder GetSaleOrderById(Guid parseSaleOrderId)
         {
             var saleOrderList = _saleOrderDao.GetAll(c => true)
-                .Include(c => c.Employee)
-                .Include(c => c.Customer)
-                .Include(c => c.PromotionCode)
-                .Include(c => c.SaleOrderDetails)
-                .ThenInclude(i => i.Product)
+				.Include(c => c.Employee)
+                 .Include(c => c.Customer)
+                 .Include(c => c.PromotionCode)
+                 .Include(c => c.SaleOrderDetails)
+                 .ThenInclude(i => i.Product)
+                 .Include(c => c.BuyBackOrders)
+                 .ThenInclude(c => c.BuyBackOrderDetails)
+                 .Include(c => c.ReturnOrders)
+                 .ThenInclude(c => c.ReturnOrderDetails)
+                 .OrderByDescending(c => c.CreatedDate)
                 .OrderByDescending(c => c.CreatedDate)
                 .ToList();
             return saleOrderList?.FirstOrDefault(c => c.SaleOrderId == parseSaleOrderId);

@@ -23,7 +23,5 @@ public partial class BuyBackOrder
 
     public virtual Employee? Employee { get; set; }
 
-    public virtual ICollection<ReturnOrderDetail> ReturnOrderDetails { get; set; } = new List<ReturnOrderDetail>();
-
     public virtual SaleOrder? SaleOrder { get; set; }
 }
