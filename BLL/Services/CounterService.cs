@@ -85,7 +85,13 @@ namespace BLL.Services
            return _counterRepo.GetAllCounter();
         }
 
-		public List<Counter> SearchCounter(string searchValue)
+        public Counter GetCounterById(string counterId)
+        {
+			Guid.TryParse(counterId, out Guid parseCounterId);
+			return _counterRepo.GetById(parseCounterId);
+        }
+
+        public List<Counter> SearchCounter(string searchValue)
 		{
 			List<Counter> counter = _counterRepo.GetAllCounter().ToList();
 			return counter.Where(c => c.CounterName.ToLower().Contains(searchValue.ToLower())).ToList();

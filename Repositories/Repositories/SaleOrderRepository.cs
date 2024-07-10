@@ -8,6 +8,7 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Schema;
 
 namespace Repositories.Repositories
 {
@@ -92,6 +93,12 @@ namespace Repositories.Repositories
 				total = total + saleOrder.FinalPrice;
 			}
 			return total;	
+		}
+
+		public decimal? GetTotalSalesByEmployee(Guid employeeId, int year, int month)
+		{
+			return _saleOrderDao.GetAll(s => s.EmployeeId == employeeId&&s.CreatedDate.Year==year&&s.CreatedDate.Month==month).Sum(s => s.TotalPrice);			
+			
 		}
 
 		public decimal? GetTotalSalesInMonth(int year, int month)
