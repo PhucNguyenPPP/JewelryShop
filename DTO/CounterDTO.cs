@@ -14,9 +14,5 @@ namespace DTO
 		[Required(ErrorMessage = "Please input counter name!")]
 		[RegularExpression("^[a-zA-Z0-9 ]+$", ErrorMessage = "Counter name can not include special character!")]
 		public string? CounterName { get; set; }
-
-		public List <EmployeeRequestDTO> Employees { get; set; }
-
-		public List<ProductRequestDTO> Products { get; set; }
 	}
 }

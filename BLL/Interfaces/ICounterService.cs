@@ -21,5 +21,6 @@ namespace BLL.Interfaces
 		bool DeleteCounter(string counterId);
 
 		bool CheckCounterExist(string counterName);
+		Counter GetCounterById (string counterId);
 	}
 }
