@@ -26,7 +26,11 @@ namespace BLL.Services
 			{
 				CounterId = counterId,
 				CounterName = counterDTO.CounterName,
+				Status = true
 			};
+			_counterRepo.AddCounter(counter);
+			bool result = _counterRepo.SaveChange();
+			return result;
 
 		}
 
@@ -89,7 +93,18 @@ namespace BLL.Services
 
 		public bool UpdateCounter(CounterDTO counterDTO)
 		{
-			throw new NotImplementedException();
+			Guid.TryParse(counterDTO.CounterId, out Guid counterId);
+
+			Counter? counter = _counterRepo.GetAllCounter().Where(c => c.CounterId.Equals(counterId)).FirstOrDefault();
+			if (counter == null)
+			{
+				return false;
+			}
+
+			counter.CounterName = counterDTO.CounterName;
+			_counterRepo.UpdateCounter(counter);
+			bool result = _counterRepo.SaveChange();
+			return result;
 		}
 	}
 }
