@@ -78,7 +78,7 @@ namespace Repositories.Repositories
 
 		public decimal? GetTotalSalesAmountInRange(DateTime start, DateTime end)
 		{
-			List<SaleOrder> list = _saleOrderDao.GetAll(c => c.CreatedDate > start && c.CreatedDate < end)
+			List<SaleOrder> list = _saleOrderDao.GetAll(c => c.CreatedDate >= start && c.CreatedDate <= end)
 				 .Include(c => c.Employee)
 				 .Include(c => c.Customer)
 				 .Include(c => c.PromotionCode)
@@ -117,5 +117,17 @@ namespace Repositories.Repositories
         {
             return _saleOrderDao.SaveChange();
         }
-    }
+
+		public List<SaleOrder> GetAllSaleOrdersInRange(DateTime start, DateTime end)
+		{
+			return _saleOrderDao.GetAll(c => c.CreatedDate >= start  && c.CreatedDate <= end)
+				 .Include(c => c.Employee)
+				 .Include(c => c.Customer)
+				 .Include(c => c.PromotionCode)
+				 .Include(c => c.SaleOrderDetails)
+				 .ThenInclude(i => i.Product)
+				 .OrderByDescending(c => c.CreatedDate)
+				 .ToList();
+		}
+	}
 }
