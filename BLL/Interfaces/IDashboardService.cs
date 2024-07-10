@@ -13,6 +13,7 @@ namespace BLL.Interfaces
 		decimal? GetTotalSalesInMonth(int year, int month);
 		List<Product> GetTopSellingProductInMonth (int year, int month);
 		decimal? GetTotalSalesAmountInRange (DateTime start, DateTime end);
+		List<SaleOrder> GetAllSaleOrdersInRange(DateTime start, DateTime end);
 		object GetTotalSalesOfEmployeeInMonth(Guid employeeId,int year, int month);
 	}
 }
