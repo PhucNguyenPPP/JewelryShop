@@ -13,5 +13,10 @@ namespace Repositories.Interfaces
         void AddSaleOrder(SaleOrder saleOrder);
         bool SaveChange();
         SaleOrder GetSaleOrderById(Guid parseSaleOrderId);
-    }
+		List<SaleOrder> GetAllSaleOrdersInMonth(int year, int month);
+		decimal? GetTotalSalesInMonth(int year, int month);
+		List<Guid> GetAllSaleOrderIDInMonth(int year, int month);
+		decimal? GetTotalSalesAmountInRange(DateTime start, DateTime end);
+		List<SaleOrder> GetAllSaleOrdersInRange(DateTime start, DateTime end);
+	}
 }

@@ -29,7 +29,7 @@
                 </div>
                 <div class="field">
                     <label>Expired Date</label>
-                    <input type="date" value="@Model.PromotionProgram?.ExpiredDate?.ToString("yyyy-MM-dd")" min="@dateNow" asp-for="PromotionProgramDTO.ExpiredDate" required />
+                    <input type="date" value="@Model.PromotionProgram?.ExpiredDate.ToString("yyyy-MM-dd")" min="@dateNow" asp-for="PromotionProgramDTO.ExpiredDate" required />
                 </div>
             </div>
             <div class="col-md-8">

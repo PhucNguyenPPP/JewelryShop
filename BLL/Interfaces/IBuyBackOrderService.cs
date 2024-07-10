@@ -12,7 +12,7 @@ namespace BLL.Interfaces
     {
         List<BuyBackOrder> GetAllBuyBackOrders();
         List<BuyBackOrder> SearchBuyBackOrders(string searchValue);
-        bool BuyBackSaleOrder (BuyBackRequestDTO model);
+        bool BuyBackSaleOrder (BuyBackRequestDTO model, string employeeId);
         BuyBackOrder GetBuyBackOrderById (string id);
     }
 }

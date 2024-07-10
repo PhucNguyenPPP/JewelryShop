@@ -19,7 +19,7 @@ public partial class Employee
 
     public string? Email { get; set; }
 
-    public DateTime? Dob { get; set; }
+    public DateTime Dob { get; set; }
 
     public string? AvatarImg { get; set; }
 
@@ -29,9 +29,13 @@ public partial class Employee
 
     public Guid? RoleId { get; set; }
 
+    public virtual ICollection<BuyBackOrder> BuyBackOrders { get; set; } = new List<BuyBackOrder>();
+
     public virtual Counter? Counter { get; set; }
 
     public virtual ICollection<Customer> Customers { get; set; } = new List<Customer>();
+
+    public virtual ICollection<ReturnOrder> ReturnOrders { get; set; } = new List<ReturnOrder>();
 
     public virtual Role? Role { get; set; }
 

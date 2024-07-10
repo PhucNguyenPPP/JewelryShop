@@ -15,9 +15,9 @@ public partial class Customer
 
     public string? Email { get; set; }
 
-    public DateTime? Dob { get; set; }
+    public DateTime Dob { get; set; }
 
-    public DateTime? RegistrationDate { get; set; }
+    public DateTime RegistrationDate { get; set; }
 
     public string? AvatarImg { get; set; }
 
@@ -28,6 +28,8 @@ public partial class Customer
     public virtual ICollection<BuyBackOrder> BuyBackOrders { get; set; } = new List<BuyBackOrder>();
 
     public virtual Employee? Employee { get; set; }
+
+    public virtual ICollection<ReturnOrder> ReturnOrders { get; set; } = new List<ReturnOrder>();
 
     public virtual ICollection<SaleOrder> SaleOrders { get; set; } = new List<SaleOrder>();
 }

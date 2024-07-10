@@ -11,7 +11,11 @@ public partial class SaleOrder
 
     public decimal? FinalPrice { get; set; }
 
-    public DateTime? CreatedDate { get; set; }
+    public DateTime CreatedDate { get; set; }
+
+    public string? PaymentMethod { get; set; }
+
+    public string? TransactionCode { get; set; }
 
     public Guid? PromotionCodeId { get; set; }
 
@@ -19,11 +23,15 @@ public partial class SaleOrder
 
     public Guid? EmployeeId { get; set; }
 
+    public virtual ICollection<BuyBackOrder> BuyBackOrders { get; set; } = new List<BuyBackOrder>();
+
     public virtual Customer? Customer { get; set; }
 
     public virtual Employee? Employee { get; set; }
 
     public virtual PromotionProgramCode? PromotionCode { get; set; }
+
+    public virtual ICollection<ReturnOrder> ReturnOrders { get; set; } = new List<ReturnOrder>();
 
     public virtual ICollection<SaleOrderDetail> SaleOrderDetails { get; set; } = new List<SaleOrderDetail>();
 }

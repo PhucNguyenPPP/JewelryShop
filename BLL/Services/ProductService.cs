@@ -18,13 +18,15 @@ namespace BLL.Services
         private readonly IMaterialProductRepository _materialProductRepository;
         private readonly IMaterialService _materialService;
         private readonly IGoldPriceService _goldPriceService;
+        private readonly IEmployeeService _employeeService;
         public ProductService(IProductRepository productRepository, IMaterialProductRepository materialProductRepository,
-            IMaterialService materialService, IGoldPriceService goldPriceService)
+            IMaterialService materialService, IGoldPriceService goldPriceService, IEmployeeService employeeService)
         {
             _productRepository = productRepository;
             _materialProductRepository = materialProductRepository;
             _materialService = materialService;
             _goldPriceService = goldPriceService;
+            _employeeService = employeeService;
         }
 
         public List<Product> GetProductList()
@@ -371,6 +373,71 @@ namespace BLL.Services
             }
             return new ResponseDTO("Check Validation Successfully", true);
 
+        }
+
+        public List<Product> SearchProductByStaff(string searchValue, string employeeId)
+        {
+            var goldPriceList = _goldPriceService.GetGoldPrices();
+            var counterId = _employeeService.GetEmployee(employeeId).CounterId;
+            List<Product> productList = _productRepository.GetProductList().
+                Where(c => c.ProductName.ToLower().Contains(searchValue.ToLower()) && c.CounterId == counterId).ToList();
+
+            var goldBar100fences = productList.FirstOrDefault(c => c.ProductName == "SJC Gold Bar 100 fences");
+            var priceGoldBar100fences = goldPriceList.FirstOrDefault(p => p.Type == "SJC Gold Bar");
+
+            if (goldBar100fences != null && priceGoldBar100fences != null)
+            {
+                goldBar100fences.Price = Convert.ToDecimal(priceGoldBar100fences.SellPrice);
+            }
+
+            var goldBar50fences = productList.FirstOrDefault(c => c.ProductName == "SJC Gold Bar 50 fences");
+            var priceGoldBar50fences = goldPriceList.FirstOrDefault(p => p.Type == "SJC Gold Bar");
+
+            if (goldBar50fences != null && priceGoldBar50fences != null)
+            {
+                goldBar50fences.Price = Convert.ToDecimal((50 * priceGoldBar50fences.SellPrice) / 100);
+            }
+
+            var goldBar10fences = productList.FirstOrDefault(c => c.ProductName == "SJC Gold Bar 10 fences");
+            var priceGoldBar10fences = goldPriceList.FirstOrDefault(p => p.Type == "SJC Gold Bar");
+
+            if (goldBar10fences != null && priceGoldBar10fences != null)
+            {
+                goldBar10fences.Price = Convert.ToDecimal((10 * priceGoldBar10fences.SellPrice) / 100);
+            }
+
+            var gold24K50fences = productList.FirstOrDefault(c => c.ProductName == "24K Gold 50 fences");
+            var pricegold24K50fences = goldPriceList.FirstOrDefault(p => p.Type == "24K Gold");
+
+            if (gold24K50fences != null && pricegold24K50fences != null)
+            {
+                gold24K50fences.Price = Convert.ToDecimal((50 * pricegold24K50fences.SellPrice) / 100);
+            }
+
+            var gold18K50fences = productList.FirstOrDefault(c => c.ProductName == "18K Gold 50 fences");
+            var pricegold18K50fences = goldPriceList.FirstOrDefault(p => p.Type == "18K Gold");
+
+            if (gold18K50fences != null && pricegold18K50fences != null)
+            {
+                gold18K50fences.Price = Convert.ToDecimal((50 * pricegold18K50fences.SellPrice) / 100);
+            }
+
+            var gold14K50fences = productList.FirstOrDefault(c => c.ProductName == "14K Gold 50 fences");
+            var pricegold14K50fences = goldPriceList.FirstOrDefault(p => p.Type == "14K Gold");
+
+            if (gold14K50fences != null && pricegold14K50fences != null)
+            {
+                gold14K50fences.Price = Convert.ToDecimal((50 * pricegold14K50fences.SellPrice) / 100);
+            }
+
+            var gold10K50fences = productList.FirstOrDefault(c => c.ProductName == "10K Gold 50 fences");
+            var pricegold10K50fences = goldPriceList.FirstOrDefault(p => p.Type == "10K Gold");
+
+            if (gold10K50fences != null && pricegold10K50fences != null)
+            {
+                gold10K50fences.Price = Convert.ToDecimal((50 * pricegold10K50fences.SellPrice) / 100);
+            }
+            return productList;
         }
     }
 }

@@ -1,5 +1,5 @@
 ﻿@page "{handler?}"
-@model PRN221_JewelryShop.Pages.Staff.BuyBackOrderScreen.BuyBackOrderManagementModel
+@model PRN221_JewelryShop.Pages.Staff.ReturnOrderScreen.ReturnOrderManagementModel
 @{
     Layout = "_LayoutStaff";
     var priceFormat = new System.Globalization.CultureInfo("en-US", false).NumberFormat;
@@ -18,12 +18,12 @@
 </head>
 <body>
     <div class="header">
-        <h1>Buy Back Order Management</h1>
+        <h1>Return Order Management</h1>
     </div>
     <div class="content">
         <div class="action-container">
             <div class="search-container">
-                <form method="get" class="form-inline mb-3" asp-page-handler="SearchBuyBackOrder">
+                <form method="get" class="form-inline mb-3" asp-page-handler="SearchReturnOrder">
                     <input type="text" class="form-control mr-2 w-50" asp-for="@Model.SearchValue" placeholder="Search by Customer Name" />
                     <input type="hidden" name="SearchValue" value="@Model.SearchValue" />
                     <button type="submit" class="btn btn-outline-primary">Search</button>
@@ -43,9 +43,9 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @if (Model.BuyBackOrderList != null)
+                    @if (Model.ReturnOrderList != null)
                     {
-                        @foreach (var s in Model.BuyBackOrderList)
+                        @foreach (var s in Model.ReturnOrderList)
 
                         {
                             <tr>
@@ -57,7 +57,7 @@
                                     <div class="dropdown">
                                         <span class="dropdown-icon"><i class="fa-solid fa-ellipsis"></i></span>
                                         <div class="dropdown-content">
-                                            <a class="detail-button" href="/Staff/BuyBackOrderScreen/BuyBackOrderDetail?id=@s.Bboid"><i class="fa-solid fa-circle-info"></i>Detail</a>
+                                            <a class="detail-button" href="/Staff/ReturnOrderScreen/ReturnOrderDetail?id=@s.ReturnOrderId"><i class="fa-solid fa-circle-info"></i>Detail</a>
                                         </div>
                                     </div>
                                 </td>

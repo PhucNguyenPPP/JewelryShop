@@ -14,6 +14,7 @@ namespace PRN221_JewelryShop.Pages.Staff.SaleOrderScreen
         private readonly IBuyBackPolicyService _buyBackPolicyService;
         private readonly IGoldPriceService _goldPriceService;
         private readonly IBuyBackOrderService _buyBackOrderService;
+        private readonly IReturnOrderService _returnOrderService;
 
         public LoginResponse LoginResponse { get; set; }
         public SaleOrder? SaleOrder { get; set; }
@@ -27,13 +28,14 @@ namespace PRN221_JewelryShop.Pages.Staff.SaleOrderScreen
         public List<GoldPriceDTO>? GoldPriceDTOList { get; set; }
         public SaleOrderDetailModel(ISaleOrderService saleOrderService, IReturnPolicyService returnPolicyService,
             IBuyBackPolicyService buyBackPolicyService, IGoldPriceService goldPriceService,
-            IBuyBackOrderService buyBackOrderService)
+            IBuyBackOrderService buyBackOrderService, IReturnOrderService returnOrderService)
         {
             _saleOrderService = saleOrderService;
             _returnPolicyService = returnPolicyService;
             _buyBackPolicyService  = buyBackPolicyService;
             _goldPriceService = goldPriceService;
             _buyBackOrderService = buyBackOrderService;
+            _returnOrderService = returnOrderService;
         }
         public IActionResult OnGet()
         {
@@ -92,7 +94,7 @@ namespace PRN221_JewelryShop.Pages.Staff.SaleOrderScreen
             {
                 return RedirectToPage("/Login");
             }
-            var result = _saleOrderService.ReturnSaleOrder(model);
+            var result = _returnOrderService.ReturnSaleOrder(model, LoginResponse.EmployeeId.ToString());
             if (result)
             {
                 TempData["ReturnMsg"] = "Return Successfully";
@@ -123,7 +125,7 @@ namespace PRN221_JewelryShop.Pages.Staff.SaleOrderScreen
             {
                 return RedirectToPage("/Login");
             }
-            var result = _buyBackOrderService.BuyBackSaleOrder(model);
+            var result = _buyBackOrderService.BuyBackSaleOrder(model, LoginResponse.EmployeeId.ToString());
             if (result)
             {
                 TempData["BuyBackMsg"] = "Buy back Successfully";
