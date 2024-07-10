@@ -11,7 +11,8 @@ namespace DTO
     {
         public string? CustomerId { get; set; }
         public List<SaleOrderDetailDTO>? SaleOrderDetails { get; set; }
-
-        public string? PromotionCode {  get; set; } 
+        public string? PromotionCode {  get; set; }
+        public string? PaymentMethod { get; set; }
+        public string? TransactionCode { get; set; }
     }
 }

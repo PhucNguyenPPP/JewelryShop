@@ -32,7 +32,7 @@ namespace BLL.Services
             _buyBackOrderDetailRepo = buyBackOrderDetailRepo;
         }
 
-        public bool BuyBackSaleOrder(BuyBackRequestDTO model)
+        public bool BuyBackSaleOrder(BuyBackRequestDTO model, string employeeId)
         {
             var bbPolicyList = _buyBackPolicyService.GetAllBuyBackPolicies();
             var saleOrder = _saleOrderRepo.GetSaleOrderById(Guid.Parse(model.SaleOrderId));
@@ -46,12 +46,9 @@ namespace BLL.Services
             {
                 var bbPolicy = bbPolicyList.FirstOrDefault(c => c.PolicyId == Guid.Parse(model.PolicyIds[i]));
 
-                //update sale order detail thành status đã buy back
                 var saleOrderDetail = _saleOrderDetailRepo
                     .GetSaleOrderDetailByProductId(Guid.Parse(model.ProductIds[i]), Guid.Parse(model.SaleOrderId));
-                saleOrderDetail.IsBuyBack = true;
 
-                _saleOrderDetailRepo.UpdateSaleOrderDetail(saleOrderDetail);
 
                 // nếu là vàng thì lấy giá trên thị trường
                 if (bbPolicy.PolicyName == "Only Gold")
@@ -60,43 +57,43 @@ namespace BLL.Services
                     if (saleOrderDetail.Product.ProductName == "SJC Gold Bar 100 fences")
                     {
                         priceGold = Convert.ToDecimal(goldPriceList.FirstOrDefault(c => c.Type == "SJC Gold Bar").BuyPrice);
-                        totalPrice += priceGold;
+                        totalPrice += priceGold * Int32.Parse(model.Amount[i]);
                     }
 
                     if (saleOrderDetail.Product.ProductName == "SJC Gold Bar 50 fences")
                     {
                         priceGold = Convert.ToDecimal(goldPriceList.FirstOrDefault(c => c.Type == "SJC Gold Bar").BuyPrice * 0.5);
-                        totalPrice += priceGold;
+                        totalPrice += priceGold * Int32.Parse(model.Amount[i]);
                     }
 
                     if (saleOrderDetail.Product.ProductName == "SJC Gold Bar 10 fences")
                     {
                         priceGold = Convert.ToDecimal(goldPriceList.FirstOrDefault(c => c.Type == "SJC Gold Bar").BuyPrice * 0.1);
-                        totalPrice += priceGold;
+                        totalPrice += priceGold * Int32.Parse(model.Amount[i]);
                     }
 
                     if (saleOrderDetail.Product.ProductName == "24K Gold 50 fences")
                     {
                         priceGold = Convert.ToDecimal(goldPriceList.FirstOrDefault(c => c.Type == "24K Gold").BuyPrice * 0.5);
-                        totalPrice += priceGold;
+                        totalPrice += priceGold * Int32.Parse(model.Amount[i]);
                     }
 
                     if (saleOrderDetail.Product.ProductName == "18K Gold 50 fences")
                     {
                         priceGold = Convert.ToDecimal(goldPriceList.FirstOrDefault(c => c.Type == "18K Gold").BuyPrice * 0.5);
-                        totalPrice += priceGold;
+                        totalPrice += priceGold * Int32.Parse(model.Amount[i]);
                     }
 
                     if (saleOrderDetail.Product.ProductName == "14K Gold 50 fences")
                     {
                         priceGold = Convert.ToDecimal(goldPriceList.FirstOrDefault(c => c.Type == "14K Gold").BuyPrice * 0.5);
-                        totalPrice += priceGold;
+                        totalPrice += priceGold * Int32.Parse(model.Amount[i]);
                     }
 
                     if (saleOrderDetail.Product.ProductName == "10K Gold 50 fences")
                     {
                         priceGold = Convert.ToDecimal(goldPriceList.FirstOrDefault(c => c.Type == "10K Gold").BuyPrice * 0.5);
-                        totalPrice += priceGold;
+                        totalPrice += priceGold * Int32.Parse(model.Amount[i]);
                     }
 
                     BuyBackOrderDetail buyBackOrderDetail = new BuyBackOrderDetail()
@@ -105,8 +102,8 @@ namespace BLL.Services
                         PolicyId = Guid.Parse(model.PolicyIds[i]),
                         Bboid = bbOrderId,
                         ProductId = Guid.Parse(model.ProductIds[i]),
-                        Bbprice = priceGold,
-                        Amount = saleOrderDetail.Amount,
+                        Bbprice = priceGold * Int32.Parse(model.Amount[i]),
+                        Amount = Int32.Parse(model.Amount[i]),
                     };
                     buyBackOrderDetails.Add(buyBackOrderDetail);
                 }
@@ -114,15 +111,16 @@ namespace BLL.Services
                 else
                 {
                     var policyValue = Convert.ToDecimal(bbPolicy.PolicyValue);
-                    totalPrice += saleOrderDetail.FinalPrice * (policyValue/100);
+                    totalPrice += ((saleOrderDetail.FinalPrice / saleOrderDetail.Amount) * (policyValue / 100)) * Int32.Parse(model.Amount[i]);
                     BuyBackOrderDetail buyBackOrderDetail = new BuyBackOrderDetail()
                     {
                         BbodetailId = Guid.NewGuid(),
                         PolicyId = Guid.Parse(model.PolicyIds[i]),
                         Bboid = bbOrderId,
                         ProductId = Guid.Parse(model.ProductIds[i]),
-                        Bbprice = saleOrderDetail.FinalPrice * (policyValue/100),
-                        Amount = saleOrderDetail.Amount,
+                        Bbprice = ((saleOrderDetail.FinalPrice / saleOrderDetail.Amount) * (policyValue/100)) * Int32.Parse(model.Amount[i]),
+                        Amount = Int32.Parse(model.Amount[i]),
+                        
                     };
                     buyBackOrderDetails.Add(buyBackOrderDetail);
                 }
@@ -136,6 +134,8 @@ namespace BLL.Services
                 TotalPrice = totalPrice,
                 CreatedDate = DateTime.Now,
                 CustomerId = saleOrder.CustomerId,
+                EmployeeId = Guid.Parse(employeeId),
+                SaleOrderId = saleOrder.SaleOrderId,
             };
 
             _buyBackOrderRepo.AddBuyBackOrder(buyBackOrder);

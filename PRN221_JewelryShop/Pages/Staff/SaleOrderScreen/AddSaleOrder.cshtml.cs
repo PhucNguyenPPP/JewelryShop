@@ -1,4 +1,5 @@
 using BLL.Interfaces;
+using BLL.Services;
 using BOL;
 using DTO;
 using Microsoft.AspNetCore.Authorization;
@@ -16,24 +17,32 @@ namespace PRN221_JewelryShop.Pages.Staff.SaleOrderScreen
         private readonly IProductService _productService;
         private readonly ICustomerService _customerService;
         private readonly IPromotionCodeService _promotionCodeService;
+        private readonly IImageService _imageService;
 
         public AddSaleOrderModel(ISaleOrderService saleOrderService, IProductService productService,
-            ICustomerService customerService, IPromotionCodeService promotionCodeService)
+            ICustomerService customerService, IPromotionCodeService promotionCodeService, IImageService imageService)
         {
             _saleOrderService = saleOrderService;
             _productService = productService;
             _customerService = customerService;
             _promotionCodeService = promotionCodeService;
+            _imageService = imageService;
         }
 
         [BindProperty(SupportsGet = true)]
-        public string SearchProductValue { get; set; }
+        public string? SearchProductValue { get; set; }
         public List<Product> ProductResultList { get; set; }
+        public List<Customer> CustomerResultList { get; set; }
         [FromQuery(Name = "id")]
-        public string CustomerId { get; set; }
+        public string? CustomerId { get; set; }
+        [BindProperty]
         public Customer Customer { get; set; }
+        [BindProperty]
+        public CustomerResquestDTO? CustomerResquestDTO { get; set; }
+        [BindProperty]
+        public IFormFile? CustomerAvatar { get; set; }
         [BindProperty(SupportsGet = true)]
-        public string CustomerIdForm { get; set; }
+        public string? CustomerIdForm { get; set; }
 
         [BindProperty]
         public SaleOrderRequestDTO SaleOrderDTO { get; set; }
@@ -41,7 +50,7 @@ namespace PRN221_JewelryShop.Pages.Staff.SaleOrderScreen
         public LoginResponse LoginResponse { get; set; }
         public List<PromotionProgramCode> PromotionCodeList { get; set; }
         [BindProperty(SupportsGet = true)]
-        public string SearchCustomer { get; set; }
+        public string? SearchCustomer { get; set; }
         public IActionResult OnGet()
         {
             var loginResponseString = HttpContext.Session.GetString("LoginResponse");
@@ -81,7 +90,7 @@ namespace PRN221_JewelryShop.Pages.Staff.SaleOrderScreen
 
             if (!SearchProductValue.IsNullOrEmpty())
             {
-                ProductResultList = _productService.SearchProduct(SearchProductValue);
+                ProductResultList = _productService.SearchProductByStaff(SearchProductValue, LoginResponse.EmployeeId.ToString());
             }
             return Page();
         }
@@ -107,10 +116,10 @@ namespace PRN221_JewelryShop.Pages.Staff.SaleOrderScreen
                 return Page();
             }
 
-            var customer = _customerService.SearchCustomerByEmailOrPhone(SearchCustomer);
-            if (customer != null)
+            var customerList = _customerService.SearchCustomers(SearchCustomer);
+            if (customerList != null)
             {
-                Customer = customer;
+                CustomerResultList = customerList;
                 return Page();
             }
             else
@@ -154,6 +163,78 @@ namespace PRN221_JewelryShop.Pages.Staff.SaleOrderScreen
             }
             TempData["CreateSaleOrderMsg"] = "Add Sale Order Unsuccessfully";
             return StatusCode(400);
+        }
+
+        public IActionResult OnPostSetCustomer()
+        {
+            PromotionCodeList = _promotionCodeService.GetAllPromotionCodeNotExpiredList();
+            var loginResponseString = HttpContext.Session.GetString("LoginResponse");
+            if (loginResponseString == null)
+            {
+                return RedirectToPage("/Login");
+            }
+
+            LoginResponse = JsonSerializer.Deserialize<LoginResponse>(loginResponseString);
+            if (LoginResponse.RoleName != "Staff")
+            {
+                return RedirectToPage("/Login");
+            }
+
+            Customer = _customerService.GetCustomer(CustomerIdForm);
+
+            return Page();
+        }
+
+        public IActionResult OnPostCreateCustomer()
+        {
+            PromotionCodeList = _promotionCodeService.GetAllPromotionCodeNotExpiredList();
+            var loginResponseString = HttpContext.Session.GetString("LoginResponse");
+            if (loginResponseString == null)
+            {
+                return RedirectToPage("/Login");
+            };
+
+            LoginResponse = JsonSerializer.Deserialize<LoginResponse>(loginResponseString);
+            if (LoginResponse.RoleName != "Staff")
+            {
+                return RedirectToPage("/Login");
+            }
+
+            if (!ModelState.IsValid)
+            {
+                TempData["CreateModelError"] = "Model State Invalid";
+                return Page();
+            }
+
+            if (_customerService.CheckEmailAlreadyExists(CustomerResquestDTO.Email))
+            {
+                TempData["CreateError"] = "Email already exists";
+                return Page();
+            }
+
+            if (_customerService.CheckPhoneAlreadyExists(CustomerResquestDTO.PhoneNumber))
+            {
+                TempData["CreateError"] = "PhoneNumber already exists";
+                return Page();
+            }
+
+            /*convert image file to base 64*/
+            if (CustomerAvatar != null)
+            {
+                CustomerResquestDTO.AvatarImg = _imageService.ConvertToBase64(CustomerAvatar);
+            }
+            CustomerResquestDTO.EmployeeId = LoginResponse.EmployeeId.ToString();
+            var customerId = Guid.NewGuid();
+            var result = _customerService.AddCustomerForSaleOrder(CustomerResquestDTO, customerId);
+            if (result)
+            {
+                Customer = _customerService.GetCustomer(customerId.ToString());
+                return Page();
+            }
+            else
+            {
+                return Page();
+            }
         }
 
     }

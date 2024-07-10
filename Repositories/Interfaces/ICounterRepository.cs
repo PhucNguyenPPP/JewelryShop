@@ -11,5 +11,17 @@ namespace Repositories.Interfaces
     public interface ICounterRepository
     {
         List<Counter> GetAllCounter();
-    }
+
+		void AddCounter(Counter counter);
+
+		void UpdateCounter(Counter counter);
+
+		bool SaveChange();
+
+		Counter? GetByEmployeeId(Guid id);
+
+		Counter? GetByProductId(Guid id);
+
+		Counter? GetById(Guid id);
+	}
 }

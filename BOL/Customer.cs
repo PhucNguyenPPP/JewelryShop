@@ -29,5 +29,7 @@ public partial class Customer
 
     public virtual Employee? Employee { get; set; }
 
+    public virtual ICollection<ReturnOrder> ReturnOrders { get; set; } = new List<ReturnOrder>();
+
     public virtual ICollection<SaleOrder> SaleOrders { get; set; } = new List<SaleOrder>();
 }
