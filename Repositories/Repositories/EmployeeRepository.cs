@@ -63,5 +63,12 @@ namespace Repositories.Repositories
 		{
 			_employeeDao.Update(emp);
 		}
+
+		public object GetEmployeeSales(decimal? sale, Guid employeeId)
+		{
+			var employee = _employeeDao.GetById(employeeId);
+			return new Tuple<Employee, decimal?>(employee, sale);
+		}
 	}
+	
 }

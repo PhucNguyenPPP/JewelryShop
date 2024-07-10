@@ -16,5 +16,6 @@ namespace Repositories.Interfaces
 		List<Employee> SearchEmployees(string search);
 		bool SaveChange();
 		void UpdateEmployee(Employee emp);
+		object GetEmployeeSales(decimal? sale, Guid employeeId);
 	}
 }
