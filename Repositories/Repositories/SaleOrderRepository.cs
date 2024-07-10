@@ -95,7 +95,7 @@ namespace Repositories.Repositories
 			return total;	
 		}
 
-		public decimal? GetTotalSalesByEmployee(Guid employeeId,, int year, int month)
+		public decimal? GetTotalSalesByEmployee(Guid employeeId, int year, int month)
 		{
 			return _saleOrderDao.GetAll(s => s.EmployeeId == employeeId&&s.CreatedDate.Year==year&&s.CreatedDate.Month==month).Sum(s => s.TotalPrice);			
 			

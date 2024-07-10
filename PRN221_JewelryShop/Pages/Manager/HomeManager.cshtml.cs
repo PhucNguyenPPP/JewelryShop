@@ -91,7 +91,7 @@ namespace PRN221_JewelryShop.Pages.Manager
 			DashboardRangeResponseDTO dashboardRangeResponseDTO = new DashboardRangeResponseDTO()
 			{
 				TotalRevenueRange = _dashboardService.GetTotalSalesAmountInRange(StartDate, EndDate),
-				SaleOrderListRange = _dashboardService.GetAllSaleOrdersInRange(StartDate, EndDate)
+				SaleOrderListRange = _dashboardService.	GetAllSalesOrderInRange(StartDate, EndDate)
 			};
 			GetDashBoardInfoByMonth(DateTime.Now.Month, DateTime.Now.Year);
 			DashboardRangeResponseDTO = dashboardRangeResponseDTO;
