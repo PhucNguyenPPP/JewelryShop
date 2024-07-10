@@ -26,7 +26,12 @@ namespace BLL.Services
 
 		public bool CheckCounterExist(string counterName)
 		{
-			throw new NotImplementedException();
+			List<Counter> counters = _counterRepo.GetAllCounter().ToList();
+			if (counters.Any(c => c.CounterName == counterName))
+			{
+				return true;
+			}
+			return false;
 		}
 
 		public bool DeleteCounter(string counterId)
