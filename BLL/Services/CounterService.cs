@@ -2,6 +2,7 @@
 using BOL;
 using DTO;
 using Repositories.Interfaces;
+using Repositories.Repositories;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -30,7 +31,17 @@ namespace BLL.Services
 
 		public bool DeleteCounter(string counterId)
 		{
-			throw new NotImplementedException();
+			Counter? counter = _counterRepo.GetById(Guid.Parse(counterId));
+			if (counter == null)
+			{
+				return false;
+			}
+			counter.Status = false;
+
+			_counterRepo.UpdateCounter(counter);
+			bool result = _counterRepo.SaveChange();
+
+			return result;
 		}
 
 		public List<Counter> GetAllCounter()
