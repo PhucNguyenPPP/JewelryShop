@@ -21,7 +21,13 @@ namespace BLL.Services
 
 		public bool AddCounter(CounterDTO counterDTO)
 		{
-			throw new NotImplementedException();
+			Guid counterId = Guid.NewGuid();
+			Counter counter = new Counter()
+			{
+				CounterId = counterId,
+				CounterName = counterDTO.CounterName,
+				
+			};
 		}
 
 		public bool CheckCounterExist(string counterName)
