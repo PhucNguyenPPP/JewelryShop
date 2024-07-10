@@ -50,7 +50,7 @@ namespace BLL.Services
 			counter.Status = false;
 			_counterRepo.UpdateCounter(counter);
 
-			foreach (var i in counter.Employees)
+			/*foreach (var i in counter.Employees)
 			{
 				var employee = _counterRepo.GetByEmployeeId(i.EmployeeId);
 				if (employee == null)
@@ -70,7 +70,7 @@ namespace BLL.Services
 				}
 				product.Status = false;
 				_counterRepo.UpdateCounter(product);
-			}
+			}*/
 			bool result = _counterRepo.SaveChange();
 
 			return result;
