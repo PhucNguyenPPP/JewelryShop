@@ -13,6 +13,7 @@ namespace BLL.Services
 	{
 		private readonly ISaleOrderRepository _saleOrderRepository;
 		private readonly ISaleOrderDetailRepository _saleOrderDetailRepository;
+		private readonly IEmployeeRepository _employeeRepository;
 		private readonly IProductRepository _productRepository;
 		public DashboardService(ISaleOrderRepository saleOrderRepository, ISaleOrderDetailRepository saleOrderDetailRepository
 			, IProductRepository productRepository) {
@@ -43,5 +44,11 @@ namespace BLL.Services
 			return _saleOrderRepository.GetTotalSalesInMonth(year, month);
 		}
 
+		public object GetTotalSalesOfEmployeeInMonth(Guid employeeId, int year, int month)
+		{
+			decimal? sale =  _saleOrderRepository.GetTotalSalesByEmployee(employeeId, year, month);
+			return _employeeRepository.GetEmployeeSales(sale,employeeId);
+
+		}
 	}
 }
