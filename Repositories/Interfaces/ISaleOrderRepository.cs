@@ -18,5 +18,6 @@ namespace Repositories.Interfaces
 		List<Guid> GetAllSaleOrderIDInMonth(int year, int month);
 		decimal? GetTotalSalesAmountInRange(DateTime start, DateTime end);
 		List<SaleOrder> GetAllSaleOrdersInRange(DateTime start, DateTime end);
+		decimal? GetTotalSalesByEmployee(Guid employeeId,int year, int month);
 	}
 }
