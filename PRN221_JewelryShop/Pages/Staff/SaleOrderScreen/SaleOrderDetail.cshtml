@@ -10,6 +10,7 @@
     var createdDate = Model.SaleOrder?.CreatedDate ?? DateTime.Now;
     var returnPolicyDays = Model.ReturnPolicyDateAllowReturn?.PolicyValue ?? 0;
     var isReturnAllowed = (currentDate - createdDate).TotalDays <= returnPolicyDays;
+    bool canBuyBack = false;
 }
 
 <!DOCTYPE html>
@@ -53,21 +54,42 @@
                     <label>Created Date</label>
                     <span>@Model.SaleOrder?.CreatedDate</span>
                 </div>
-                <div class="field">
-                    <label>Promotion Code</label>
-                    <span>@Model.SaleOrder?.PromotionCode?.PromotionCodeName</span>
-                </div>
+                @if (@Model.SaleOrder?.PromotionCode != null)
+                {
+                    <div class="field">
+                        <label>Promotion Code</label>
+                        <span>@Model.SaleOrder?.PromotionCode?.PromotionCodeName</span>
+                    </div>
+                }
+                else
+                {
+                    <div class="field">
+                        <label>Promotion Code</label>
+                        <span>N/A</span>
+                    </div>
+                }
                 <div class="field">
                     <label>Total Price</label>
-                    <span>@Model.SaleOrder?.FinalPrice</span>
+                    <span>@Model.SaleOrder?.FinalPrice?.ToString("#,0", priceFormat) VND</span>
                 </div>
+                <div class="field">
+                    <label>Payment method</label>
+                    <span>@Model.SaleOrder?.PaymentMethod</span>
+                </div>
+                @if (@Model.SaleOrder?.PaymentMethod == "Banking")
+                {
+                    <div class="field">
+                        <label>Transaction Code</label>
+                        <span>@Model.SaleOrder?.TransactionCode</span>
+                    </div>
+                }
             </div>
         </div>
         <div class="row">
             <div class="col-md-12">
 
                 <div class="field">
-                    <label>Materials</label>
+                    <label>Products</label>
                     @if (Model.SaleOrder?.SaleOrderDetails != null)
                     {
                         <table class="table table-bordered">
@@ -76,10 +98,6 @@
                                     <th>Product Name</th>
                                     <th>Amount</th>
                                     <th>Price</th>
-                                    <th>Return Price</th>
-                                    <th>Return Date</th>
-                                    <th>Return Status</th>
-                                    <th>Buy Back Status</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -88,30 +106,7 @@
                                     <tr>
                                         <td>@s.Product?.ProductName</td>
                                         <td>@s.Amount</td>
-                                        <td>@s.FinalPrice?.ToString("#,0", priceFormat)</td>
-                                        <td>@s.ReturnPrice?.ToString("#,0", priceFormat)</td>
-                                        <td>@s.ReturnDate</td>
-                                        <td>
-                                            @if (s.ReturnPrice != null)
-                                            {
-                                                <input type="checkbox" disabled checked readonly />
-                                            }
-                                            else
-                                            {
-                                                <p>Not yet</p>
-
-                                            }
-                                        </td>
-                                        <td>
-                                            @if (s.IsBuyBack != false)
-                                            {
-                                                <input type="checkbox" disabled checked readonly />
-                                            }
-                                            else
-                                            {
-                                                <p>Not yet</p>
-                                            }
-                                        </td>
+                                        <td>@s.FinalPrice?.ToString("#,0", priceFormat) VND</td>
                                     </tr>
                                 }
                             </tbody>
@@ -126,6 +121,73 @@
                 }
                 <p style="color: green">@TempData["ReturnMsg"]</p>
                 <p style="color: green">@TempData["BuyBackMsg"]</p>
+                <div class="field">
+                    <label>Buy Back Product</label>
+                    @if (Model.SaleOrder?.BuyBackOrders != null)
+                    {
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>Product Name</th>
+                                    <th>Amount</th>
+                                    <th>Price</th>
+                                    <th>Created Date</th>
+                                    <th>Created By</th>
+                                    <th>Buy Back Policy</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var s in Model.SaleOrder?.BuyBackOrders.ToList())
+                                {
+                                    @foreach (var i in s.BuyBackOrderDetails)
+                                    {
+                                        <tr>
+                                            <td>@i.Product.ProductName</td>
+                                            <td>@i.Amount</td>
+                                            <td>@i.Bbprice?.ToString("#,0", priceFormat) VND</td>
+                                            <td>@s.CreatedDate</td>
+                                            <td>@s.Employee?.EmployeeName</td>
+                                            <td>@i.Policy?.PolicyName</td>
+                                        </tr>
+                                    }
+                                }
+                            </tbody>
+                        </table>
+                    }
+                </div>
+
+                <div class="field">
+                    <label>Return Product</label>
+                    @if (Model.SaleOrder?.BuyBackOrders != null)
+                    {
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>Product Name</th>
+                                    <th>Amount</th>
+                                    <th>Price</th>
+                                    <th>Created Date</th>
+                                    <th>Created By</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var s in Model.SaleOrder?.ReturnOrders.ToList())
+                                {
+                                    @foreach (var i in s.ReturnOrderDetails)
+                                    {
+                                        <tr>
+                                            <td>@i.Product.ProductName</td>
+                                            <td>@i.Amount</td>
+                                            <td>@i.ReturnPrice?.ToString("#,0", priceFormat) VND</td>
+                                            <td>@s.CreatedDate</td>
+                                            <td>@s.Employee?.EmployeeName</td>
+                                        </tr>
+                                    }
+                                }
+                            </tbody>
+                        </table>
+                    }
+                </div>
             </div>
         </div>
     </div>
@@ -149,22 +211,70 @@
                                     <th>Product Name</th>
                                     <th>Amount</th>
                                     <th>Price</th>
-                                    <th>Return Price</th>
-                                    <th>Return Date</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach (var s in Model.SaleOrder.SaleOrderDetails)
-                                {
-                                    @if (s.ReturnPrice == null && s.IsBuyBack == false)
+                                @{
+                                    foreach (var s in Model.SaleOrder.SaleOrderDetails)
                                     {
-                                        <tr>
-                                            <td><input type="checkbox" class="refund-checkbox" data-product-id="@s.ProductId" data-final-price="@s.FinalPrice" data-refund-percentage="@Model.ReturnPolicyRefundPercentage?.PolicyValue" /></td>
-                                            <td>@s.Product?.ProductName</td>
-                                            <td>@s.Amount</td>
-                                            <td>@s.FinalPrice?.ToString("#,0", priceFormat)</td>
-                                            <td>@s.ReturnPrice?.ToString("#,0", priceFormat)</td>
-                                            <td>@s.ReturnDate</td>
+                                        var bbOrderList = Model.SaleOrder.BuyBackOrders.Where(c => c.SaleOrderId == s.SaleOrderId).ToList();
+                                        var returnOrderList = Model.SaleOrder.ReturnOrders.Where(c => c.SaleOrderId == s.SaleOrderId).ToList();
+                                        if (bbOrderList.Count == 0 && returnOrderList.Count == 0)
+                                        {
+                                            canBuyBack = true;
+                                            <tr>
+                                                <td><input type="checkbox" class="refund-checkbox" data-product-id="@s.ProductId" data-final-price="@(s.FinalPrice / @s.Amount)" data-refund-percentage="@Model.ReturnPolicyRefundPercentage?.PolicyValue" disabled /></td>
+                                                <td>@s.Product?.ProductName</td>
+                                                <td><input type="number" class="refund-amount" min="1" max="@s.Amount" data-checkbox-id="@s.ProductId" /></td>
+                                                <td><span class="refund-price-text" data-checkbox-id="@s.ProductId">0 VND</span></td>
+                                            </tr>
+                                        }
+                                        else
+                                        {
+                                            int? returnAmount = 0;
+                                            foreach (var i in bbOrderList)
+                                            {
+                                                var bbOrderDetail = i.BuyBackOrderDetails.FirstOrDefault(c => c.Bboid == i.Bboid && c.ProductId == s.ProductId);
+                                                if (bbOrderDetail != null && bbOrderDetail.Amount != null)
+                                                {
+                                                    returnAmount += bbOrderDetail.Amount;
+                                                }
+                                                else
+                                                {
+                                                    returnAmount += 0;
+                                                }
+                                            }
+
+                                            foreach (var i in returnOrderList)
+                                            {
+                                                var returnOrderDetail = i.ReturnOrderDetails.FirstOrDefault(c => c.ReturnOrderId == i.ReturnOrderId && c.ProductId == s.ProductId);
+                                                if (returnOrderDetail != null && returnOrderDetail.Amount != null)
+                                                {
+                                                    returnAmount += returnOrderDetail.Amount;
+                                                }
+                                                else
+                                                {
+                                                    returnAmount += 0;
+                                                }
+                                            }
+
+                                            if (returnAmount < s.Amount)
+                                            {
+                                                canBuyBack = true;
+                                                <tr>
+                                                    <td><input type="checkbox" class="refund-checkbox" data-product-id="@s.ProductId" data-final-price="@(s.FinalPrice / @s.Amount)" data-refund-percentage="@Model.ReturnPolicyRefundPercentage?.PolicyValue" disabled /></td>
+                                                    <td>@s.Product?.ProductName</td>
+                                                    <td><input type="number" class="refund-amount" min="1" max="@(s.Amount - returnAmount)" data-checkbox-id="@s.ProductId" /></td>
+                                                    <td><span class="refund-price-text" data-checkbox-id="@s.ProductId">0 VND</span></td>
+                                                </tr>
+                                            }
+                                        }
+                                    }
+
+                                    if (!canBuyBack)
+                                    {
+                                        <tr class="text-danger">
+                                            <p class="text-danger"> There are no product for refunding</p>
                                         </tr>
                                     }
                                 }
@@ -178,7 +288,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                    <button type="button" id="btn-confirm-return" class="btn" style="background-color: orange">Confirm Return</button>
+                    <button type="button" id="btn-confirm-return" class="btn" style="background-color: orange" @(canBuyBack ? "" : "disabled")>Confirm Return</button>
                 </div>
             </div>
         </div>
@@ -208,27 +318,91 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach (var s in Model.SaleOrder.SaleOrderDetails)
-                                {
-                                    @if (s.ReturnPrice == null && s.IsBuyBack == false)
+                                @{
+                                    foreach (var s in Model.SaleOrder.SaleOrderDetails)
                                     {
-                                        <tr>
-                                            <td><input type="checkbox" class="buyback-checkbox" data-product-id="@s.ProductId" data-final-price="@s.FinalPrice" disabled /></td>
-                                            <td>@s.Product?.ProductName</td>
-                                            <td>@s.Amount</td>
-                                            <td>@s.FinalPrice?.ToString("#,0", priceFormat)</td>
-                                            <td>
-                                                @if (Model.BuyBackPolicyList != null)
+                                        var bbOrderList = Model.SaleOrder.BuyBackOrders.Where(c => c.SaleOrderId == s.SaleOrderId).ToList();
+                                        var returnOrderList = Model.SaleOrder.ReturnOrders.Where(c => c.SaleOrderId == s.SaleOrderId).ToList();
+                                        if (bbOrderList.Count == 0 && returnOrderList.Count == 0)
+                                        {
+                                            canBuyBack = true;
+                                            <tr>
+                                                <td><input type="checkbox" class="buyback-checkbox" data-product-id="@s.ProductId" data-final-price="@(s.FinalPrice / @s.Amount)" disabled /></td>
+                                                <td>@s.Product?.ProductName</td>
+                                                <td><input type="number" class="buyback-amount" min="1" max="@s.Amount" data-checkbox-id="@s.ProductId" /></td>
+                                                <td><span class="buyback-price-text" data-checkbox-id="@s.ProductId">0 VND</span></td>
+                                                <td>
+                                                    @if (Model.BuyBackPolicyList != null)
+                                                    {
+                                                        <select class="buyback-policy" data-checkbox-id="@s.ProductId" data-product-name="@s.Product?.ProductName">
+                                                            <option></option>
+                                                            @foreach (var o in Model.BuyBackPolicyList)
+                                                            {
+                                                                <option value="@o.PolicyId" data-buyback-policyname="@o.PolicyName" data-buyback-percentage="@o.PolicyValue">@o.PolicyName</option>
+                                                            }
+                                                        </select>
+                                                    }
+                                                </td>
+                                            </tr>
+                                        }
+                                        else
+                                        {
+                                            int? buyBackAmount = 0;
+                                            foreach (var i in bbOrderList)
+                                            {
+                                                var bbOrderDetail = i.BuyBackOrderDetails.FirstOrDefault(c => c.Bboid == i.Bboid && c.ProductId == s.ProductId);
+                                                if (bbOrderDetail != null && bbOrderDetail.Amount != null)
                                                 {
-                                                    <select class="buyback-policy" data-checkbox-id="@s.ProductId" data-product-name="@s.Product?.ProductName">
-                                                        <option></option>
-                                                        @foreach (var i in Model.BuyBackPolicyList)
-                                                        {
-                                                            <option value="@i.PolicyId" data-buyback-policyname="@i.PolicyName" data-buyback-percentage="@i.PolicyValue">@i.PolicyName</option>
-                                                        }
-                                                    </select>
+                                                    buyBackAmount += bbOrderDetail.Amount;
                                                 }
-                                            </td>
+                                                else
+                                                {
+                                                    buyBackAmount += 0;
+                                                }
+                                            }
+
+                                            foreach (var i in returnOrderList)
+                                            {
+                                                var returnOrderDetail = i.ReturnOrderDetails.FirstOrDefault(c => c.ReturnOrderId == i.ReturnOrderId && c.ProductId == s.ProductId);
+                                                if (returnOrderDetail != null && returnOrderDetail.Amount != null)
+                                                {
+                                                    buyBackAmount += returnOrderDetail.Amount;
+                                                }
+                                                else
+                                                {
+                                                    buyBackAmount += 0;
+                                                }
+                                            }
+
+                                            if (buyBackAmount < s.Amount)
+                                            {
+                                                canBuyBack = true;
+                                                <tr>
+                                                    <td><input type="checkbox" class="buyback-checkbox" data-product-id="@s.ProductId" data-final-price="@(s.FinalPrice / @s.Amount)" disabled /></td>
+                                                    <td>@s.Product?.ProductName</td>
+                                                    <td><input type="number" class="buyback-amount" min="1" max="@(s.Amount - buyBackAmount)" data-checkbox-id="@s.ProductId" /></td>
+                                                    <td><span class="buyback-price-text" data-checkbox-id="@s.ProductId">0 VND</span></td>
+                                                    <td>
+                                                        @if (Model.BuyBackPolicyList != null)
+                                                        {
+                                                            <select class="buyback-policy" data-checkbox-id="@s.ProductId" data-product-name="@s.Product?.ProductName">
+                                                                <option></option>
+                                                                @foreach (var o in Model.BuyBackPolicyList)
+                                                                {
+                                                                    <option value="@o.PolicyId" data-buyback-policyname="@o.PolicyName" data-buyback-percentage="@o.PolicyValue">@o.PolicyName</option>
+                                                                }
+                                                            </select>
+                                                        }
+                                                    </td>
+                                                </tr>
+                                            }
+                                        }
+                                    }
+
+                                    if (!canBuyBack)
+                                    {
+                                        <tr class="text-danger">
+                                            <p class="text-danger"> There are no product for buying back</p>
                                         </tr>
                                     }
                                 }
@@ -242,27 +416,61 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                    <button type="button" id="btn-confirm-buyback" class="btn" style="background-color: darkturquoise">Confirm Buy Back</button>
+                    <button type="button" id="btn-confirm-buyback" class="btn" style="background-color: darkturquoise" @(canBuyBack ? "" : "disabled")>
+                        Confirm Buy Back
+                    </button>
                 </div>
             </div>
         </div>
     </div>
     <script>
         document.addEventListener("DOMContentLoaded", function () {
-            const checkboxes = document.querySelectorAll(".refund-checkbox");
+            const refundCheckboxes = document.querySelectorAll(".refund-checkbox");
             const totalRefundSpan = document.getElementById("total-refund");
+            const refundAmountInputs = document.querySelectorAll(".refund-amount");
 
-            checkboxes.forEach(checkbox => {
-                checkbox.addEventListener("change", updateTotalRefund);
+            function updateRefundCheckboxState() {
+                refundAmountInputs.forEach(input => {
+                    const productId = input.dataset.checkboxId;
+                    const relatedCheckbox = document.querySelector(`.refund-checkbox[data-product-id="${productId}"]`);
+
+                    if (input.value.trim() !== "") {
+                        relatedCheckbox.disabled = false;
+                    } else {
+                        relatedCheckbox.disabled = true;
+                        relatedCheckbox.checked = false;
+                    }
+                    updateTotalRefund();
+                });
+            }
+
+            refundAmountInputs.forEach(input => {
+                input.addEventListener("input", updateRefundCheckboxState);
+            });
+
+            refundCheckboxes.forEach(checkbox => {
+                checkbox.addEventListener("change", function () {
+                    const productId = checkbox.dataset.productId;
+                    const relatedAmountInput = document.querySelector(`.refund-amount[data-checkbox-id="${productId}"]`);
+                    if (checkbox.checked) {
+                        relatedAmountInput.disabled = true;
+                    } else {
+                        relatedAmountInput.disabled = false;
+                    }
+                    updateTotalRefund();
+                });
             });
 
             function updateTotalRefund() {
                 let totalRefund = 0;
-                checkboxes.forEach(checkbox => {
+                refundCheckboxes.forEach(checkbox => {
                     if (checkbox.checked) {
                         const finalPrice = parseFloat(checkbox.dataset.finalPrice) || 0;
                         const refundPercentage = parseFloat(checkbox.dataset.refundPercentage) || 0;
-                        totalRefund += finalPrice * (refundPercentage / 100);
+                        const refundPriceText = checkbox.closest('tr').querySelector('.refund-price-text');
+                        const amount = parseFloat(checkbox.closest('tr').querySelector('.refund-amount').value) || 0;
+                        totalRefund += finalPrice * (refundPercentage / 100) * amount;
+                        refundPriceText.textContent = (finalPrice * (refundPercentage / 100)).toLocaleString("en-US") + " VND";
                     }
                 });
                 totalRefundSpan.textContent = totalRefund.toLocaleString("en-US") + " VND";
@@ -273,12 +481,19 @@
             if (btnConfirmReturn) {
                 btnConfirmReturn.addEventListener("click", function () {
                     const selectedProductIds = [];
-                    checkboxes.forEach(checkbox => {
+                    const selectAmount = [];
+                    refundCheckboxes.forEach(checkbox => {
                         if (checkbox.checked) {
-                            const productId = checkbox.dataset.productId;
-                            selectedProductIds.push(productId);
+                            selectedProductIds.push(checkbox.dataset.productId);
+                            selectAmount.push(checkbox.closest('tr').querySelector('.refund-amount').value);
                         }
                     });
+
+                    if (selectedProductIds.length === 0) {
+                        alert("Please select at least one product!.");
+                        return;
+                    }
+
                     var token = '@token';
                     const saleOrderId = '@Model.SaleOrder?.SaleOrderId';
                     fetch('/Staff/SaleOrderScreen/SaleOrderDetail/ReturnProduct', {
@@ -287,7 +502,7 @@
                             'Content-Type': 'application/json',
                             'RequestVerificationToken': token
                         },
-                        body: JSON.stringify({ saleOrderId: saleOrderId, productIds: selectedProductIds }),
+                        body: JSON.stringify({ saleOrderId: saleOrderId, productIds: selectedProductIds, amount: selectAmount}),
                         processData: false,
                     })
                         .then(response => {
@@ -310,13 +525,16 @@
             // Buyback functionality
             const buybackCheckboxes = document.querySelectorAll(".buyback-checkbox");
             const totalBuybackSpan = document.getElementById("total-buyback");
+            const buybackAmountInputs = document.querySelectorAll(".buyback-amount");
+            const buybackPolicySelects = document.querySelectorAll(".buyback-policy");
 
-            const policySelects = document.querySelectorAll(".buyback-policy");
-            policySelects.forEach(select => {
-                select.addEventListener("change", function () {
-                    const checkboxId = select.dataset.checkboxId;
-                    const relatedCheckbox = document.querySelector(`.buyback-checkbox[data-product-id="${checkboxId}"]`);
-                    if (select.value) {
+            function updateCheckboxState() {
+                buybackAmountInputs.forEach(input => {
+                    const productId = input.dataset.checkboxId;
+                    const relatedCheckbox = document.querySelector(`.buyback-checkbox[data-product-id="${productId}"]`);
+                    const relatedPolicySelect = document.querySelector(`.buyback-policy[data-checkbox-id="${productId}"]`);
+
+                    if (input.value.trim() !== "" && relatedPolicySelect.value.trim() !== "") {
                         relatedCheckbox.disabled = false;
                     } else {
                         relatedCheckbox.disabled = true;
@@ -324,16 +542,27 @@
                     }
                     updateTotalBuyback();
                 });
+            }
+
+            buybackAmountInputs.forEach(input => {
+                input.addEventListener("input", updateCheckboxState);
+            });
+
+            buybackPolicySelects.forEach(select => {
+                select.addEventListener("change", updateCheckboxState);
             });
 
             buybackCheckboxes.forEach(checkbox => {
                 checkbox.addEventListener("change", function () {
                     const productId = checkbox.dataset.productId;
                     const relatedSelect = document.querySelector(`.buyback-policy[data-checkbox-id="${productId}"]`);
+                    const relatedAmountInput = document.querySelector(`.buyback-amount[data-checkbox-id="${productId}"]`);
                     if (checkbox.checked) {
                         relatedSelect.disabled = true;
+                        relatedAmountInput.disabled = true;
                     } else {
                         relatedSelect.disabled = false;
+                        relatedAmountInput.disabled = false;
                     }
                     updateTotalBuyback();
                 });
@@ -344,62 +573,71 @@
                 buybackCheckboxes.forEach(checkbox => {
                     if (checkbox.checked) {
                         const finalPrice = parseFloat(checkbox.dataset.finalPrice) || 0;
+                        const amount = parseFloat(checkbox.closest('tr').querySelector('.buyback-amount').value) || 0;
                         const policySelect = document.querySelector(`.buyback-policy[data-checkbox-id="${checkbox.dataset.productId}"]`);
+                        const productName = policySelect.dataset.productName;
+                        const priceText = checkbox.closest('tr').querySelector('.buyback-price-text');
+
                         if (policySelect.selectedOptions[0].dataset.buybackPolicyname == "Only Gold") {
-                            switch (policySelect.dataset.productName) {
+                            let goldPrice = 0;
+                            switch (productName) {
                                 case 'SJC Gold Bar 100 fences':
-                                    var goldPrice = @(Model.GoldPriceDTOList?.FirstOrDefault(c => c.Type == "SJC Gold Bar")?.BuyPrice);
-                                    totalBuyback += goldPrice;
+                                    goldPrice = @(Model.GoldPriceDTOList?.FirstOrDefault(c => c.Type == "SJC Gold Bar")?.BuyPrice);
                                     break;
                                 case 'SJC Gold Bar 50 fences':
-                                    var goldPrice = @(Model.GoldPriceDTOList?.FirstOrDefault(c => c.Type == "SJC Gold Bar")?.BuyPrice * 0.5);
-                                    totalBuyback += goldPrice;
+                                    goldPrice = @(Model.GoldPriceDTOList?.FirstOrDefault(c => c.Type == "SJC Gold Bar")?.BuyPrice * 0.5);
                                     break;
                                 case 'SJC Gold Bar 10 fences':
-                                    var goldPrice = @(Model.GoldPriceDTOList?.FirstOrDefault(c => c.Type == "SJC Gold Bar")?.BuyPrice * 0.1);
-                                    totalBuyback += goldPrice;
+                                    goldPrice = @(Model.GoldPriceDTOList?.FirstOrDefault(c => c.Type == "SJC Gold Bar")?.BuyPrice * 0.1);
                                     break;
                                 case '24K Gold 50 fences':
-                                    var goldPrice = @(Model.GoldPriceDTOList?.FirstOrDefault(c => c.Type == "24K Gold")?.BuyPrice * 0.5);
-                                    totalBuyback += goldPrice;
+                                    goldPrice = @(Model.GoldPriceDTOList?.FirstOrDefault(c => c.Type == "24K Gold")?.BuyPrice * 0.5);
                                     break;
                                 case '18K Gold 50 fences':
-                                    var goldPrice = @(Model.GoldPriceDTOList?.FirstOrDefault(c => c.Type == "18K Gold")?.BuyPrice * 0.5);
-                                    totalBuyback += goldPrice;
+                                    goldPrice = @(Model.GoldPriceDTOList?.FirstOrDefault(c => c.Type == "18K Gold")?.BuyPrice * 0.5);
                                     break;
                                 case '14K Gold 50 fences':
-                                    var goldPrice = @(Model.GoldPriceDTOList?.FirstOrDefault(c => c.Type == "14K Gold")?.BuyPrice * 0.5);
-                                    totalBuyback += goldPrice;
+                                    goldPrice = @(Model.GoldPriceDTOList?.FirstOrDefault(c => c.Type == "14K Gold")?.BuyPrice * 0.5);
                                     break;
                                 case '10K Gold 50 fences':
-                                    var goldPrice = @(Model.GoldPriceDTOList?.FirstOrDefault(c => c.Type == "10K Gold")?.BuyPrice * 0.5);
-                                    totalBuyback += goldPrice;
+                                    goldPrice = @(Model.GoldPriceDTOList?.FirstOrDefault(c => c.Type == "10K Gold")?.BuyPrice * 0.5);
                                     break;
                                 default:
                                     break;
                             }
+                            totalBuyback += goldPrice * amount;
+                            priceText.textContent = goldPrice.toLocaleString("en-US") + " VND";
                         } else {
                             const buybackPercentage = parseFloat(policySelect.selectedOptions[0].dataset.buybackPercentage) || 0;
-                            totalBuyback += finalPrice * (buybackPercentage / 100);
+                            totalBuyback += finalPrice * (buybackPercentage / 100) * amount;
+                            priceText.textContent = (finalPrice * (buybackPercentage / 100)).toLocaleString("en-US") + " VND";
                         }
                     }
                 });
                 totalBuybackSpan.textContent = totalBuyback.toLocaleString("en-US") + " VND";
             }
 
+
             const btnConfirmBuyBack = document.getElementById("btn-confirm-buyback");
             if (btnConfirmBuyBack) {
                 btnConfirmBuyBack.addEventListener("click", function () {
                     const selectedProductIds = [];
                     const selectedPolicies = [];
+                    const selectAmount = [];
 
                     buybackCheckboxes.forEach(checkbox => {
                         if (checkbox.checked) {
                             selectedProductIds.push(checkbox.dataset.productId);
+                            selectAmount.push(checkbox.closest('tr').querySelector('.buyback-amount').value);
                             const relatedSelect = document.querySelector(`.buyback-policy[data-checkbox-id="${checkbox.dataset.productId}"]`);
                             selectedPolicies.push(relatedSelect.value);
                         }
                     });
+
+                    if (selectedProductIds.length === 0) {
+                        alert("Please select at least one product!.");
+                        return;
+                    }
 
                     var token = '@token';
                     const saleOrderId = '@Model.SaleOrder?.SaleOrderId';
@@ -414,6 +652,7 @@
                         body: JSON.stringify({
                             saleOrderId: saleOrderId,
                             productIds: selectedProductIds,
+                            amount: selectAmount,
                             policyIds: selectedPolicies
                         }),
                         processData: false,

@@ -7,6 +7,7 @@
     var temp = TempData["CreateSaleOrderMsg"];
     var token = a.GetAndStoreTokens(HttpContext).RequestToken;
     Layout = "_LayoutStaff";
+    var dateNow = DateTime.Now;
 }
 
 
@@ -17,15 +18,16 @@
     <meta name="viewport" content="width=device-width" />
     <title>@ViewData["Title"]</title>
     <link rel="stylesheet" href="~/css/AddSaleOrder.css" />
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
     <div class="header">
         <h1>Add Sale Order</h1>
     </div>
-    <div class="content row">
+    <div class="content row ml-5">
         <div class="product-container col-md-8">
             <form method="post" asp-page-handler="SearchProduct" id="searchProductForm">
-                <input type="hidden" asp-for="CustomerIdForm" value="@Model.Customer?.CustomerId" />
+                <input type="hidden" asp-for="CustomerIdForm" id="customerIdForSearchProduct" value="@Model.Customer?.CustomerId" />
                 <input type="text" id="txtSearchProduct" placeholder="Search by Product Name" asp-for="SearchProductValue" onchange="searchProduct()" />
                 <button class="search-btn" type="submit">Search</button>
             </form>
@@ -35,19 +37,25 @@
                     if (Model.ProductResultList.Count == 0)
                     {
                         <div>
-                            <p>No result found</p>
+                            <p class="text-center text-danger">No result found</p>
                         </div>
                     }
                     else
                     {
                         @foreach (var result in Model.ProductResultList)
                         {
-                            <div class="product-item"
+                            <div class="product-item row"
                                  data-product-name="@result.ProductName"
                                  data-product-price="@result.Price"
                                  data-product-id="@result.ProductId"
                                  data-amount-in-stock="@result.AmountInStock">
-                                <p>@result.ProductName</p>
+                                <div class="col-md-3">
+                                    <img class="ml-1" src="data:image/png;base64,@(result.AvatarImg)" />
+                                </div>
+                                <div class="col-md-9">
+                                    <p class="mb-0 fw-bold">@result.ProductName</p>
+                                    <p class="mb-0 .price">@result.Price?.ToString("#,0", priceFormat) VND</p>
+                                </div>
                             </div>
                         }
                     }
@@ -64,7 +72,7 @@
                         </div>
                     </div>
                     <div class="fw-bold">Total Original Price: <span id="totalOriginal">0</span></div>
-                    <div class="fw-bold">Total After Discount: <span id="totalAll">0</span></div>
+                    <div class="fw-bold text-success">Total After Discount: <span id="totalAll">0</span></div>
                     <input type="hidden" asp-for="CustomerIdForm" value="@Model.Customer?.CustomerId" />
                     <input name="__RequestVerificationToken" type="hidden" value="@token" />
                     <button type="submit">Create Sale Order</button>
@@ -74,23 +82,58 @@
         </div>
         <div class="customer-container col-md-4">
             <div class="sale-order-info">
-                <form method="get" asp-page-handler="SearchCustomer">
-                    <input type="text" asp-for="SearchCustomer" required />
+                <form method="get" asp-page-handler="SearchCustomer" id="searchCustomerForm">
+                    <input type="text" id="txtSearchCustomer" placeholder="Search by Name/Phone/Email" asp-for="SearchCustomer" required />
                     <button class="search-btn" type="submit">Search</button>
                 </form>
-                <h5 class="text-danger">@TempData["ErrorSearchCustomer"]</h5>
+                <input type="hidden" id="inputCustomerId" data-customer-id="@Model.Customer?.CustomerId" />
+                <div id="results-customer-container">
+                    @if (Model.CustomerResultList != null)
+                    {
+                        if (Model.CustomerResultList.Count == 0)
+                        {
+                            <div>
+                                <p class="text-danger">No result found. Do you want to add new customer?</p>
+                                <button class="btn btn-primary" onclick="openCreateModal()">Add</button>
+                            </div>
+                        }
+                        else
+                        {
+                            @foreach (var customer in Model.CustomerResultList)
+                            {
+                                <form method="post" asp-page-handler="SetCustomer" id="customerItemForm-@customer.CustomerId" onclick="setCustomer('@customer.CustomerId')">
+                                    <input type="hidden" value="@customer.CustomerId" asp-for="CustomerIdForm" />
+                                    <div class="customer-item row"
+                                         data-customer-id="@customer.CustomerId"
+                                         data-customer-name="@customer.CustomerName"
+                                         data-phone-number="@customer.PhoneNumber"
+                                         data-email="@customer.Email">
+                                        <div class="col-md-3">
+                                            <img class="ml-1" src="data:image/png;base64,@(customer.AvatarImg)" />
+                                        </div>
+                                        <div class="col-md-9">
+                                            <p class="mb-0 fw-bold">@customer.CustomerName</p>
+                                            <p class="mb-0">@customer.PhoneNumber</p>
+                                            <p class="mb-0">@customer.Email</p>
+                                        </div>
+                                    </div>
+                                </form>
+                            }
+                        }
+                    }
+                </div>
             </div>
             <div class="sale-order-info">
                 <span>Customer Name:</span>
-                <span>@Model.Customer?.CustomerName</span>
+                <span id="selectedCustomerName">@Model.Customer?.CustomerName</span>
             </div>
             <div class="sale-order-info">
                 <span>Phone:</span>
-                <span>@Model.Customer?.PhoneNumber</span>
+                <span id="selectedCustomerPhone">@Model.Customer?.PhoneNumber</span>
             </div>
             <div class="sale-order-info">
                 <span>Email:</span>
-                <span>@Model.Customer?.Email</span>
+                <span id="selectedCustomerEmail">@Model.Customer?.Email</span>
             </div>
             <div class="sale-order-info">
                 <span>Promotion Code:</span>
@@ -108,13 +151,79 @@
                     }
                 </select>
             </div>
+            <div class="sale-order-info">
+                <span>Payment Method:</span>
+                <select id="paymentMethodSelect" onchange="toggleTransactionCodeInput()">
+                    <option value="Cast">Cast</option>
+                    <option value="Banking">Banking</option>
+                </select>
+            </div>
+            <div class="sale-order-info" id="transactionCodeSection">
+                <span>Transaction Code:</span>
+                <input type="text" id="transactionCodeInput" />
+            </div>
+        </div>
+    </div>
 
+    <div class="modal fade" id="createModal" tabindex="-1" role="dialog" aria-labelledby="createModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2 class="modal-title" id="createModalLabel">Add New Customer</h2>
+                    <button type="button" onclick="closeCreateModal()" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form method="post" id="createForm" asp-page-handler="CreateCustomer" enctype="multipart/form-data" class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="avatar">Avatar</label>
+                                <input type="file" class="form-control" id="avatar" asp-for="@Model.CustomerAvatar" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="customerName">Customer Name</label>
+                                <input type="text" class="form-control" id="customerName" asp-for="CustomerResquestDTO.CustomerName" required>
+                                <p class="text-danger"><span asp-validation-for="CustomerResquestDTO.CustomerName"></span></p>
+                            </div>
+                            <div class="form-group">
+                                <label for="phoneNumber">Phone Number</label>
+                                <input type="text" class="form-control" id="phoneNumber" asp-for="CustomerResquestDTO.PhoneNumber" required>
+                                <p class="text-danger"><span asp-validation-for="CustomerResquestDTO.PhoneNumber"></span></p>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="email">Email</label>
+                                <input type="email" class="form-control" id="email" asp-for="CustomerResquestDTO.Email" required>
+                                <p class="text-danger"><span asp-validation-for="CustomerResquestDTO.Email"></span></p>
+                            </div>
+                            <div class="form-group">
+                                <label for="dob">Date of Birth</label>
+                                <input type="date" class="form-control" id="dob" asp-for="CustomerResquestDTO.Dob" max="@dateNow" required>
+                                <p class="text-danger"><span asp-validation-for="CustomerResquestDTO.Dob"></span></p>
+                            </div>
+                            <div class="form-group">
+                                <label for="address">Address</label>
+                                <input type="text" class="form-control" id="address" asp-for="CustomerResquestDTO.Address" required>
+                                <p class="text-danger"><span asp-validation-for="CustomerResquestDTO.Address"></span></p>
+                            </div>
+                        </div>
+                    </form>
+                    <h4 class="text-danger">@TempData["CreateError"]</h4>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" onclick="closeCreateModal()" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" onclick="create()">Create</button>
+                </div>
+            </div>
         </div>
     </div>
 
 
-
-
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', (event) => {
             // Function to format number with dots for thousands separator
@@ -147,8 +256,9 @@
             function updateTotalPriceDisplay() {
                 var totalPrice = calculateTotalPrice();
                 var discountedTotal = calculateTotalPriceWithDiscount(totalPrice);
-                document.getElementById('totalOriginal').textContent = formatNumber(totalPrice);
-                document.getElementById('totalAll').textContent = formatNumber(discountedTotal);
+                var discount = parseFloat(promotionSelect.options[promotionSelect.selectedIndex].getAttribute('data-discount')) || 0;
+                document.getElementById('totalOriginal').textContent = formatNumber(totalPrice) + " VND";
+                document.getElementById('totalAll').textContent = formatNumber(discountedTotal) + " VND" + " -" + discount + "%" ;
             }
 
             // Load selected products from localStorage
@@ -161,11 +271,11 @@
                 var productHeader = document.createElement('div');
                 productHeader.classList.add('product-header');
                 productHeader.innerHTML = `
-                            <span>Product Name</span>
-                            <span>Quantity</span>
-                            <span class="title-price">Price</span>
-                            <span class="title-total-price">Total Price</span>
-                        `;
+                                            <span>Product Name</span>
+                                            <span>Quantity</span>
+                                            <span class="title-price">Price</span>
+                                            <span class="title-total-price">Total Price</span>
+                                        `;
                 selectedProductsContainer.appendChild(productHeader);
                 selectedProducts.forEach(product => {
                     // Create a new row for the selected product
@@ -291,12 +401,22 @@
                     return;
                 }
 
-               
+
                 var customer = @Html.Raw(Json.Serialize(Model.Customer?.CustomerId));
-                console.log(customer)
                 if (customer === null || customer === undefined) {
                     alert('Please search and select a customer before creating sale orders.');
                     return;
+                }
+
+                var paymentMethodSelect = document.getElementById('paymentMethodSelect');
+                var selectedPaymentMethod = paymentMethodSelect.value;
+
+                if (selectedPaymentMethod === 'Banking') {
+                    var transactionCodeInput = document.getElementById('transactionCodeInput').value;
+                    if (transactionCodeInput.trim() === '') {
+                        alert('Please enter a transaction code for banking payment.');
+                        return;
+                    }
                 }
 
 
@@ -310,7 +430,9 @@
                 var saleOrderRequestDTO = {
                     CustomerId: '@Model.Customer?.CustomerId',
                     SaleOrderDetails: saleOrderDetails,
-                    PromotionCode: promotionValue
+                    PromotionCode: promotionValue,
+                    PaymentMethod: selectedPaymentMethod,
+                    TransactionCode: selectedPaymentMethod === 'Banking' ? transactionCodeInput : null
                 };
 
                 var token = '@token';
@@ -345,6 +467,13 @@
                 if (!searchInput.contains(event.target) && !resultsContainer.contains(event.target) && !productFormContainer.contains(event.target)) {
                     resultsContainer.style.display = 'none';
                 }
+
+                var resultsContainerCustomer = document.getElementById('results-customer-container');
+                var searchInputCustomer = document.getElementById('txtSearchCustomer');
+
+                if (!searchInputCustomer.contains(event.target) && !resultsContainerCustomer.contains(event.target)) {
+                    resultsContainerCustomer.style.display = 'none';
+                }
             });
 
             document.getElementById('txtSearchProduct').addEventListener('click', function (event) {
@@ -353,7 +482,80 @@
                     resultsContainer.style.display = 'block';
                 }
             });
+
+            document.getElementById('txtSearchCustomer').addEventListener('click', function (event) {
+                var resultsContainer = document.getElementById('results-customer-container');
+                if (this.value.trim() !== "") {
+                    resultsContainer.style.display = 'block';
+                }
+            });
         });
+        function setCustomer(customerId) {
+            // Find the form corresponding to the clicked customer item
+            var formId = `customerItemForm-${customerId}`;
+            var form = document.getElementById(formId);
+
+            // Submit the form using JavaScript
+            if (form) {
+                form.submit();
+            }
+        }
+
+        function openCreateModal() {
+            document.getElementById('createForm').reset();
+            $('#createModal').modal('show');
+        }
+
+        function closeCreateModal() {
+            document.getElementById('createForm').reset();
+            $('#createModal').modal('hide');
+        }
+        function create() {
+            var form = document.getElementById("createForm");
+            if (form.checkValidity()) {
+                form.submit();
+                $('#createModal').modal('hide');
+                resetForm();
+            } else {
+                form.reportValidity();
+            }
+        }
+        $(document).ready(function () {
+            $('.modal').modal({ show: false });
+
+            $('.close').on('click', function () {
+                $(this).closest('.modal').modal('hide');
+            });
+            $('.modal-footer button[data-dismiss="modal"]').on('click', function () {
+                $(this).closest('.modal').modal('hide');
+            });
+        });
+
+
+        const createModelError = '@(TempData["CreateModelError"] ?? "")';
+        const createError = '@(TempData["CreateError"] ?? "")';
+
+        if (createModelError !== '' || createError !== '') {
+            $('#createModal').modal('show');
+        }
+        var transactionCodeSection = document.getElementById('transactionCodeSection');
+        transactionCodeSection.style.display = 'none';
+
+        function toggleTransactionCodeInput() {
+            var paymentMethodSelect = document.getElementById('paymentMethodSelect');
+            var transactionCodeSection = document.getElementById('transactionCodeSection');
+
+            // Get the selected value
+            var selectedPaymentMethod = paymentMethodSelect.value;
+
+            // Check the selected value and show/hide the transaction code input accordingly
+            if (selectedPaymentMethod === 'Banking') {
+                transactionCodeSection.style.display = 'block';
+            } else {
+                transactionCodeSection.style.display = 'none';
+            }
+        }
+
     </script>
 </body>
 </html>

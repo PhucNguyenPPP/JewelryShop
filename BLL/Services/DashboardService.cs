@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -43,5 +44,9 @@ namespace BLL.Services
 			return _saleOrderRepository.GetTotalSalesInMonth(year, month);
 		}
 
+		public List<SaleOrder> GetAllSaleOrdersInRange(DateTime start, DateTime end)
+		{
+			return _saleOrderRepository.GetAllSaleOrdersInRange(start, end);
+		}
 	}
 }

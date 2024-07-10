@@ -24,7 +24,7 @@
         <div class="action-container">
             <div class="search-container">
                 <form method="get" class="form-inline mb-3" asp-page-handler="SearchSaleOrder">
-                    <input type="text" class="form-control mr-2 w-50" asp-for="@Model.SearchValue" placeholder="Search by Account Name" />
+                    <input type="text" class="form-control mr-2 w-50" asp-for="@Model.SearchValue" placeholder="Search by Customer Name" />
                     <input type="hidden" name="SearchValue" value="@Model.SearchValue" />
                     <button type="submit" class="btn btn-outline-primary">Search</button>
                 </form>

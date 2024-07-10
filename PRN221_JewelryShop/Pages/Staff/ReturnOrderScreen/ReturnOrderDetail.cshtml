@@ -1,5 +1,5 @@
 ﻿@page "{handler?}"
-@model PRN221_JewelryShop.Pages.Staff.BuyBackOrderScreen.BuyBackOrderDetailModel
+@model PRN221_JewelryShop.Pages.Staff.ReturnOrderScreen.ReturnOrderDetailModel
 @{
     Layout = "_LayoutStaff";
     var priceFormat = new System.Globalization.CultureInfo("en-US", false).NumberFormat;
@@ -20,33 +20,33 @@
 </head>
 <body>
     <div class="header">
-        <h1>Buy Back Order Details</h1>
+        <h1>Return Order Details</h1>
     </div>
     <div class="content" style="margin: auto;">
         <div class="row">
             <div class="col-md-6">
                 <div class="field">
                     <label>Customer Name</label>
-                    <span>@Model.BuyBackOrder?.Customer?.CustomerName</span>
+                    <span>@Model.ReturnOrder?.Customer?.CustomerName</span>
                 </div>
                 <div class="field">
                     <label>Phone</label>
-                    <span>@Model.BuyBackOrder?.Customer?.PhoneNumber</span>
+                    <span>@Model.ReturnOrder?.Customer?.PhoneNumber</span>
                 </div>
                 <div class="field">
                     <label>Email</label>
-                    <span>@Model.BuyBackOrder?.Customer?.Email</span>
+                    <span>@Model.ReturnOrder?.Customer?.Email</span>
                 </div>
 
             </div>
             <div class="col-md-6">
                 <div class="field">
                     <label>Created Date</label>
-                    <span>@Model.BuyBackOrder?.CreatedDate</span>
+                    <span>@Model.ReturnOrder?.CreatedDate</span>
                 </div>
                 <div class="field">
                     <label>Total Price</label>
-                    <span>@Model.BuyBackOrder?.TotalPrice?.ToString("#,0", priceFormat) VND</span>
+                    <span>@Model.ReturnOrder?.TotalPrice?.ToString("#,0", priceFormat) VND</span>
                 </div>
             </div>
         </div>
@@ -55,7 +55,7 @@
 
                 <div class="field">
                     <label>Products</label>
-                    @if (Model.BuyBackOrder?.BuyBackOrderDetails != null)
+                    @if (Model.ReturnOrder?.ReturnOrderDetails != null)
                     {
                         <table class="table table-bordered">
                             <thead>
@@ -63,17 +63,15 @@
                                     <th>Product Name</th>
                                     <th>Amount</th>
                                     <th>Price</th>
-                                    <th>Buy Back Policy</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach (var s in Model.BuyBackOrder?.BuyBackOrderDetails)
+                                @foreach (var s in Model.ReturnOrder?.ReturnOrderDetails)
                                 {
                                     <tr>
                                         <td>@s.Product?.ProductName</td>
                                         <td>@s.Amount</td>
-                                        <td>@s.Bbprice?.ToString("#,0", priceFormat) VND</td>
-                                        <td>@s.Policy?.PolicyName</td>
+                                        <td>@s.ReturnPrice?.ToString("#,0", priceFormat) VND</td>
                                     </tr>
                                 }
                             </tbody>

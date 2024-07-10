@@ -2,5 +2,138 @@
 @model PRN221_JewelryShop.Pages.Manager.HomeManagerModel
 @{
     Layout = "_LayoutManager";
+	var priceFormat = new System.Globalization.CultureInfo("en-US", false).NumberFormat;
+	priceFormat.NumberGroupSeparator = ".";
 }
-<h1>Manager</h1>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+    <link rel="stylesheet" href="~/css/HomeManager.css" />
+</head>
+<body>
+	<div class="header">
+		<h1>Home</h1>
+	</div>
+	<div class="content">
+		<div class="row ">
+			<div class="mb-4">
+				<form method="post" asp-page-handler="SearchDashboardInfoByMonth">
+					<input type="month" asp-for="DashboardMonthDateTime"/>
+					<button type="submit" class="btn btn-primary">Search</button>
+				</form>
+			</div>
+			<div class="col-md-6">
+				<div class="row">
+					<div class="col-md-6">
+						<h5><i class="fa-solid fa-money-bills mr-2"></i>Total Revenue Of Month:</h5>
+					</div>
+					<div class="col-md-6">
+						<p>
+							@Model.DashboardMonthResponseDTO?.TotalRevenueMonth?.ToString("#,0", priceFormat) VND
+							<span class="@(Model.DashboardMonthResponseDTO?.RevenuePercentageChange >= 0 ? "text-success" : "text-danger")">
+								@if (Model.DashboardMonthResponseDTO?.RevenuePercentageChange >= 0)
+								{
+									<i class="fa-solid fa-up-long"></i>
+									<span>@Model.DashboardMonthResponseDTO.RevenuePercentageChange?.ToString("F2") % compared to previous month</span>
+								} else
+								{
+									<i class="fa-solid fa-down-long"></i>
+									<span>@Model.DashboardMonthResponseDTO?.RevenuePercentageChange?.ToString("F2") % compared to previous month</span>
+								}
+							</span>
+						</p>
+					</div>
+				</div>
+			</div>
+			<div class="col-md-6">
+				<div class="row">
+					<div class="col-md-6">
+						<h5><i class="fa-solid fa-notes-medical mr-2"></i>Total Sale Orders Of Month:</h5>
+					</div>
+					<div class="col-md-6">
+						<p>@Model.DashboardMonthResponseDTO?.SaleOrderListMonth?.Count
+							<span class="@(Model.DashboardMonthResponseDTO?.SaleOrderAmountChange >= 0 ? "text-success" : "text-danger")">
+								@if (Model.DashboardMonthResponseDTO?.SaleOrderAmountChange >= 0)
+								{
+									<i class="fa-solid fa-up-long"></i>
+									<span>@Model.DashboardMonthResponseDTO.SaleOrderAmountChange?.ToString("F2") % compared to previous month</span>
+								}
+								else
+								{
+									<i class="fa-solid fa-down-long"></i>
+									<span>@Model.DashboardMonthResponseDTO?.SaleOrderAmountChange?.ToString("F2") % compared to previous month</span>
+								}
+							</span>
+						</p>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="row mb-4">
+			<div class="col-md-6">
+				<div class="row">
+					<div class="col-md-6">
+						<h5><i class="fa-solid fa-cart-shopping mr-2"></i>Top Product Of Month:</h5>
+					</div>
+					<div class="col-md-6">
+						<p>@Model.DashboardMonthResponseDTO?.TopProductMonth.FirstOrDefault()?.ProductName</p>
+					</div>
+				</div>
+			</div>
+			<div class="col-md-6">
+				<div class="row">
+					<div class="col-md-6">
+						<h5><i class="fa-regular fa-user mr-2"></i>Employee Of Month:</h5>
+					</div>
+					<div class="col-md-6">
+						<p>Nguyen Van A</p>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="mb-4">
+				<form method="post" asp-page-handler="SearchDashboardInfoByRange">
+					<label for="inputStartDate">Start Date</label>
+					<input id="inputStartDate" type="date" asp-for="StartDate" min="1980-01-01" />
+					<label for="inputEndDate">End Date</label>
+					<input id="inputEndDate" type="date" asp-for="EndDate" min="1980-01-01" />
+					<button type="submit" class="btn btn-primary">Search</button>
+				</form>
+			</div>
+			<div class="col-md-6">
+				<div class="row">
+					<div class="col-md-6">
+						<h5><i class="fa-solid fa-money-bills mr-2"></i>Total Revenue:</h5>
+					</div>
+					<div class="col-md-6">
+						<p>@Model.DashboardRangeResponseDTO?.TotalRevenueRange?.ToString("#,0", priceFormat) VND</p>
+					</div>
+				</div>
+			</div>
+			<div class="col-md-6">
+				<div class="row">
+					<div class="col-md-6">
+						<h5><i class="fa-solid fa-notes-medical mr-2"></i>Total Sale Orders:</h5>
+					</div>
+					<div class="col-md-6">
+						<p>@Model.DashboardRangeResponseDTO?.SaleOrderListRange?.Count</p>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<script>
+		const monthControl = document.querySelector('input[type="month"]');
+		const date = new Date()
+		const month = ("0" + (date.getMonth() + 1)).slice(-2)
+		const year = date.getFullYear()
+		monthControl.value = `${year}-${month}`;
+	</script>
+</body>
+</html>

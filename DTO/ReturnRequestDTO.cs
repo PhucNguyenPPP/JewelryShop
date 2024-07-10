@@ -10,5 +10,6 @@ namespace DTO
     {
         public string SaleOrderId { get; set; }
         public List<string> ProductIds { get; set; }
+        public List<string> Amount {  get; set; }
     }
 }

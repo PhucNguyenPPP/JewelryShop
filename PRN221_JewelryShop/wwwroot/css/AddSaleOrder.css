@@ -28,6 +28,7 @@
 
 .product-container #txtSearchProduct {
     width: 50%;
+    padding: 5px 0;
 }
 
 .product-container #results-product-container {
@@ -143,7 +144,10 @@
     font-weight: bold;
     margin-right: 10px;
 }
-
+.customer-container #txtSearchCustomer{
+    width: 70%;
+    padding: 5px 0;
+}
 #promotionSelect {
     width: 60%;
     padding: 10px 0;
@@ -151,4 +155,50 @@
 
 .notification-msg {
     color: green;
+}
+
+.product-item {
+    border-bottom: solid 1px black;
+    padding: 5px 0;
+}
+.product-item img {
+    border: solid black 1px;
+    width: 90%;
+}
+
+.product-item .price {
+    color: #C48C46;
+}
+
+.customer-container #results-customer-container {
+    display: block;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.8);
+    width: 100%;
+    height: fit-content;
+    max-height: 150px;
+    overflow-x: auto;
+    overflow-y: auto;
+}
+.customer-item {
+    border-bottom: solid 1px black;
+    padding: 5px 0;
+}
+.customer-item img {
+    border: solid black 1px;
+    width: 50%;
+}
+
+#paymentMethodSelect {
+    width: 58.5%;
+    padding: 10px 0;
+    margin-top: 10px;
+}
+
+#transactionCodeSection {
+    width: 100%;
+    padding: 8px 0;
+}
+
+#transactionCodeSection input {
+    width: 100%;
 }
