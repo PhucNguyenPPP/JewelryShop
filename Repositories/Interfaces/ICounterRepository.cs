@@ -18,6 +18,10 @@ namespace Repositories.Interfaces
 
 		bool SaveChange();
 
+		Counter? GetByEmployeeId(Guid id);
+
+		Counter? GetByProductId(Guid id);
+
 		Counter? GetById(Guid id);
 	}
 }

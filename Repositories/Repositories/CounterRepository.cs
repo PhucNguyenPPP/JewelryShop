@@ -28,9 +28,21 @@ namespace Repositories.Repositories
             return _counterDao.GetAll(c => c.Status == true).ToList();
         }
 
+		public Counter? GetByEmployeeId(Guid id)
+		{
+			List<Counter> counters = _counterDao.GetAll(c => true).Include(c => c.Employees).ToList();
+			return counters.FirstOrDefault(c => c.CounterId == id);
+		}
+
 		public Counter? GetById(Guid id)
 		{
-			List<Counter> counters = _counterDao.GetAll(c => true).ToList();
+			List<Counter> counters = _counterDao.GetAll(C => true).ToList();
+			return counters.FirstOrDefault(c=> c.CounterId == id);
+		}
+
+		public Counter? GetByProductId(Guid id)
+		{
+			List<Counter> counters = _counterDao.GetAll(c => true).Include(c=> c.Products).ToList();
 			return counters.FirstOrDefault(c => c.CounterId == id);
 		}
 

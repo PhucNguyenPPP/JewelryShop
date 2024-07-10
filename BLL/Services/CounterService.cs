@@ -26,8 +26,8 @@ namespace BLL.Services
 			{
 				CounterId = counterId,
 				CounterName = counterDTO.CounterName,
-				
 			};
+
 		}
 
 		public bool CheckCounterExist(string counterName)
@@ -42,14 +42,35 @@ namespace BLL.Services
 
 		public bool DeleteCounter(string counterId)
 		{
-			Counter? counter = _counterRepo.GetById(Guid.Parse(counterId));
+			Counter? counter = _counterRepo.GetAllCounter().Where(c => c.CounterId.Equals(Guid.Parse(counterId))).FirstOrDefault();
 			if (counter == null)
 			{
 				return false;
 			}
 			counter.Status = false;
-
 			_counterRepo.UpdateCounter(counter);
+
+			foreach (var i in counter.Employees)
+			{
+				var employee = _counterRepo.GetByEmployeeId(i.EmployeeId);
+				if (employee == null)
+				{
+					return false;
+				}
+				employee.Status = false;
+				_counterRepo.UpdateCounter(employee);
+			}
+
+			foreach (var i in counter.Products)
+			{
+				var product = _counterRepo.GetByProductId(i.ProductId);
+				if(product == null)
+				{
+					return false;
+				}
+				product.Status = false;
+				_counterRepo.UpdateCounter(product);
+			}
 			bool result = _counterRepo.SaveChange();
 
 			return result;
