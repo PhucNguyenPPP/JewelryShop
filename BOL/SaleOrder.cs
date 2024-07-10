@@ -11,7 +11,7 @@ public partial class SaleOrder
 
     public decimal? FinalPrice { get; set; }
 
-    public DateTime? CreatedDate { get; set; }
+    public DateTime CreatedDate { get; set; }
 
     public Guid? PromotionCodeId { get; set; }
 

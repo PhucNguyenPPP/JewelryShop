@@ -64,15 +64,15 @@
                                 data-email="@customer.Email"
                                 data-phone="@customer.PhoneNumber"
                                 data-address="@customer.Address"
-                                data-dob="@customer.Dob?.ToString("yyyy-MM-dd")">
+                                data-dob="@customer.Dob.ToString("yyyy-MM-dd")">
 
                                 <td><img src="data:image/png;base64,@(customer.AvatarImg)" /></td>
                                 <td>@customer.CustomerName</td>
                                 <td>@customer.PhoneNumber</td>
                                 <td>@customer.Address</td>
                                 <td>@customer.Email</td>
-                                <td>@customer.Dob?.ToString("yyyy/MM/dd")</td>
-                                <td>@customer.RegistrationDate?.ToString("yyyy/MM/dd")</td>
+                                <td>@customer.Dob.ToString("yyyy/MM/dd")</td>
+                                <td>@customer.RegistrationDate.ToString("yyyy/MM/dd")</td>
                                 <td>@customer.Employee?.EmployeeName</td>
 
                                 <td>

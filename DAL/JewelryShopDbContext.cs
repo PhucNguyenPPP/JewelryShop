@@ -54,7 +54,7 @@ public partial class JewelryShopDbContext : DbContext
     {
         modelBuilder.Entity<BuyBackOrder>(entity =>
         {
-            entity.HasKey(e => e.Bboid).HasName("PK__BuyBackO__7EBCD83680FB4C76");
+            entity.HasKey(e => e.Bboid).HasName("PK__BuyBackO__7EBCD836D76784E1");
 
             entity.ToTable("BuyBackOrder");
 
@@ -71,7 +71,7 @@ public partial class JewelryShopDbContext : DbContext
 
         modelBuilder.Entity<BuyBackOrderDetail>(entity =>
         {
-            entity.HasKey(e => e.BbodetailId).HasName("PK__BuyBackO__9EF99DA861398C00");
+            entity.HasKey(e => e.BbodetailId).HasName("PK__BuyBackO__9EF99DA8BA8861FE");
 
             entity.ToTable("BuyBackOrderDetail");
 
@@ -98,7 +98,7 @@ public partial class JewelryShopDbContext : DbContext
 
         modelBuilder.Entity<BuyBackPolicy>(entity =>
         {
-            entity.HasKey(e => e.PolicyId).HasName("PK__BuyBackP__2E1339A4B5E64670");
+            entity.HasKey(e => e.PolicyId).HasName("PK__BuyBackP__2E1339A48322CB7A");
 
             entity.ToTable("BuyBackPolicy");
 
@@ -109,7 +109,7 @@ public partial class JewelryShopDbContext : DbContext
 
         modelBuilder.Entity<Counter>(entity =>
         {
-            entity.HasKey(e => e.CounterId).HasName("PK__Counter__F12879C401252B73");
+            entity.HasKey(e => e.CounterId).HasName("PK__Counter__F12879C43D6BF071");
 
             entity.ToTable("Counter");
 
@@ -119,7 +119,7 @@ public partial class JewelryShopDbContext : DbContext
 
         modelBuilder.Entity<Customer>(entity =>
         {
-            entity.HasKey(e => e.CustomerId).HasName("PK__Customer__A4AE64D80B2D11CB");
+            entity.HasKey(e => e.CustomerId).HasName("PK__Customer__A4AE64D8D0D3903E");
 
             entity.ToTable("Customer");
 
@@ -139,7 +139,7 @@ public partial class JewelryShopDbContext : DbContext
 
         modelBuilder.Entity<Employee>(entity =>
         {
-            entity.HasKey(e => e.EmployeeId).HasName("PK__Employee__7AD04F1110E989EA");
+            entity.HasKey(e => e.EmployeeId).HasName("PK__Employee__7AD04F11C54EC792");
 
             entity.ToTable("Employee");
 
@@ -163,7 +163,7 @@ public partial class JewelryShopDbContext : DbContext
 
         modelBuilder.Entity<Material>(entity =>
         {
-            entity.HasKey(e => e.MaterialId).HasName("PK__Material__C50610F758676DB3");
+            entity.HasKey(e => e.MaterialId).HasName("PK__Material__C50610F7A88C70A5");
 
             entity.ToTable("Material");
 
@@ -173,7 +173,7 @@ public partial class JewelryShopDbContext : DbContext
 
         modelBuilder.Entity<MaterialProduct>(entity =>
         {
-            entity.HasKey(e => e.MaterialProductId).HasName("PK__Material__219352D4CC54ED84");
+            entity.HasKey(e => e.MaterialProductId).HasName("PK__Material__219352D4B68A775D");
 
             entity.ToTable("MaterialProduct");
 
@@ -191,7 +191,7 @@ public partial class JewelryShopDbContext : DbContext
 
         modelBuilder.Entity<Product>(entity =>
         {
-            entity.HasKey(e => e.ProductId).HasName("PK__Product__B40CC6CDE4955B59");
+            entity.HasKey(e => e.ProductId).HasName("PK__Product__B40CC6CDD670E989");
 
             entity.ToTable("Product");
 
@@ -207,7 +207,7 @@ public partial class JewelryShopDbContext : DbContext
 
         modelBuilder.Entity<PromotionProgram>(entity =>
         {
-            entity.HasKey(e => e.PromotionProgramId).HasName("PK__Promotio__7869220AC74CDF3F");
+            entity.HasKey(e => e.PromotionProgramId).HasName("PK__Promotio__7869220A73E6C3B2");
 
             entity.ToTable("PromotionProgram");
 
@@ -219,7 +219,7 @@ public partial class JewelryShopDbContext : DbContext
 
         modelBuilder.Entity<PromotionProgramCode>(entity =>
         {
-            entity.HasKey(e => e.PromotionCodeId).HasName("PK__Promotio__B537DD0509CFCFED");
+            entity.HasKey(e => e.PromotionCodeId).HasName("PK__Promotio__B537DD0556D2DF8C");
 
             entity.ToTable("PromotionProgramCode");
 
@@ -234,7 +234,7 @@ public partial class JewelryShopDbContext : DbContext
 
         modelBuilder.Entity<ReturnPolicy>(entity =>
         {
-            entity.HasKey(e => e.PolicyId).HasName("PK__ReturnPo__2E1339A433300E9B");
+            entity.HasKey(e => e.PolicyId).HasName("PK__ReturnPo__2E1339A452A7F3D7");
 
             entity.ToTable("ReturnPolicy");
 
@@ -245,7 +245,7 @@ public partial class JewelryShopDbContext : DbContext
 
         modelBuilder.Entity<Role>(entity =>
         {
-            entity.HasKey(e => e.RoleId).HasName("PK__Role__8AFACE1AB88C48F4");
+            entity.HasKey(e => e.RoleId).HasName("PK__Role__8AFACE1AFB78D106");
 
             entity.ToTable("Role");
 
@@ -255,7 +255,7 @@ public partial class JewelryShopDbContext : DbContext
 
         modelBuilder.Entity<SaleOrder>(entity =>
         {
-            entity.HasKey(e => e.SaleOrderId).HasName("PK__SaleOrde__DB86E342447C9180");
+            entity.HasKey(e => e.SaleOrderId).HasName("PK__SaleOrde__DB86E342F710DE72");
 
             entity.ToTable("SaleOrder");
 
@@ -279,7 +279,7 @@ public partial class JewelryShopDbContext : DbContext
 
         modelBuilder.Entity<SaleOrderDetail>(entity =>
         {
-            entity.HasKey(e => e.SaleOrderDetailId).HasName("PK__SaleOrde__F6EA425A434C2DBF");
+            entity.HasKey(e => e.SaleOrderDetailId).HasName("PK__SaleOrde__F6EA425A31E6E8F8");
 
             entity.ToTable("SaleOrderDetail");
 
