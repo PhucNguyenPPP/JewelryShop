@@ -139,6 +139,27 @@ namespace BLL.Services
             return customerList.FirstOrDefault(c => (c.Email.ToLower() == (searchValue.ToLower())
                 || c.PhoneNumber.ToLower() == (searchValue.ToLower())));
         }
+
+        public bool AddCustomerForSaleOrder(CustomerResquestDTO dto, Guid customerId)
+        {
+            DateTime.TryParse(dto.Dob, out DateTime parseDob);
+            Customer newCustomer = new Customer()
+            {
+                CustomerId = customerId,
+                CustomerName = dto.CustomerName,
+                PhoneNumber = dto.PhoneNumber,
+                Address = dto.Address,
+                Email = dto.Email,
+                Dob = parseDob,
+                RegistrationDate = DateTime.Now,
+                AvatarImg = dto.AvatarImg,
+                Status = true,
+                EmployeeId = Guid.Parse(dto.EmployeeId)
+            };
+            _customerRepo.AddCustomer(newCustomer);
+            var result = _customerRepo.SaveChange();
+            return result;
+        }
     }
 }
 

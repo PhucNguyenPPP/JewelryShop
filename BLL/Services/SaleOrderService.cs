@@ -61,9 +61,8 @@ namespace BLL.Services
                     SaleOrderId = saleOrderId,
                     ProductId = Guid.Parse(i.ProductId),
                     Amount = i.Amount,
-                    TotalPrice = product.Price,
-                    FinalPrice = totalPriceProductDetail - (product.Price * (discountPercentage/100)),
-                    IsBuyBack = false,
+                    TotalPrice = totalPriceProductDetail,
+                    FinalPrice = totalPriceProductDetail - (totalPriceProductDetail * (discountPercentage/100)),
                 };
                 saleOrderDetails.Add(saleOrderDetail);
             }
@@ -75,6 +74,8 @@ namespace BLL.Services
                 TotalPrice = totalPriceAll,
                 FinalPrice = totalPriceAll - (totalPriceAll * (discountPercentage / 100)),
                 CreatedDate = DateTime.Now,
+                PaymentMethod = saleOrderDTO.PaymentMethod,
+                TransactionCode = saleOrderDTO.TransactionCode,
                 CustomerId = Guid.Parse(saleOrderDTO.CustomerId),
                 EmployeeId = employeeId,
                 PromotionCodeId = Guid.TryParse(saleOrderDTO.PromotionCode, out Guid parsePromotionCodeId) ? parsePromotionCodeId : null
@@ -126,8 +127,6 @@ namespace BLL.Services
             foreach (var id in model.ProductIds)
             {
                 var saleOrderDetail = _saleOrderDetailRepo.GetSaleOrderDetailByProductId(Guid.Parse(id), Guid.Parse(model.SaleOrderId));
-                saleOrderDetail.ReturnDate = DateTime.Now;
-                saleOrderDetail.ReturnPrice = saleOrderDetail.FinalPrice * refundPercentageValue;
                 _saleOrderDetailRepo.UpdateSaleOrderDetail(saleOrderDetail);
             }
             return _saleOrderRepo.SaveChange();

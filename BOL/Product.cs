@@ -25,5 +25,7 @@ public partial class Product
 
     public virtual ICollection<MaterialProduct> MaterialProducts { get; set; } = new List<MaterialProduct>();
 
+    public virtual ICollection<ReturnOrderDetail> ReturnOrderDetails { get; set; } = new List<ReturnOrderDetail>();
+
     public virtual ICollection<SaleOrderDetail> SaleOrderDetails { get; set; } = new List<SaleOrderDetail>();
 }

@@ -24,5 +24,6 @@ namespace BLL.Interfaces
         Product GetProductById (string productId);
 
         ResponseDTO CheckValidationMaterialDTOList(List<MaterialDTO> list);
+        List<Product> SearchProductByStaff(string searchValue, string employeeId);
     }
 }
