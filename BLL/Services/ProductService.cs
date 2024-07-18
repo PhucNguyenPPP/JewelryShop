@@ -380,7 +380,7 @@ namespace BLL.Services
             var goldPriceList = _goldPriceService.GetGoldPrices();
             var counterId = _employeeService.GetEmployee(employeeId).CounterId;
             List<Product> productList = _productRepository.GetProductList().
-                Where(c => c.ProductName.ToLower().Contains(searchValue.ToLower()) && c.CounterId == counterId).ToList();
+                Where(c => c.ProductName.ToLower().Contains(searchValue.ToLower()) && c.CounterId == counterId && c.AmountInStock > 0).ToList();
 
             var goldBar100fences = productList.FirstOrDefault(c => c.ProductName == "SJC Gold Bar 100 fences");
             var priceGoldBar100fences = goldPriceList.FirstOrDefault(p => p.Type == "SJC Gold Bar");

@@ -70,7 +70,7 @@
                             }
                         </div>
                         <div>
-                            <label id="lbSize-@i">Size</label>
+                            <label id="lbSize-@i">Size (Gold: Fences/ Diamond: Pellet)</label>
                             <input type="text" id="sizeInput-@i" class="sizeInput" asp-for="MaterialDTOList[i].MaterialSize"/>
                         </div>
                     </div>
@@ -95,9 +95,11 @@
                         if (this.options[this.selectedIndex].text.toLowerCase().includes("diamond")) {
                             sizeInput.type = "number";
                             sizeInput.min = 1;
+                            sizeInput.max = 1;
                         } else {
                             sizeInput.type = "text";
                             sizeInput.removeAttribute('min');
+                            sizeInput.removeAttribute('max');
                         }
                     });
                 })(z);
