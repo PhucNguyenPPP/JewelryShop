@@ -118,7 +118,7 @@
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label for="avatar">Avatar</label>
-                                <input type="file" class="form-control" id="avatar" asp-for="@Model.EmployeeAvatar" required>
+                                <input type="file" accept="image/png, image/gif, image/jpeg" class="form-control" id="avatar" asp-for="@Model.EmployeeAvatar" required>
                             </div>
                             <div class="form-group">
                                 <label for="username">Username</label>
@@ -196,7 +196,7 @@
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label for="UpdateAvatar">Avatar</label>
-                                <input type="file" class="form-control" id="UpdateAvatar" asp-for="@Model.EmployeeAvatar">
+                                <input type="file" accept="image/png, image/gif, image/jpeg" class="form-control" id="UpdateAvatar" asp-for="@Model.EmployeeAvatar">
                             </div>
                             <div class="form-group">
                                 <label for="UpdateEmployeeName">Employee Name</label>
