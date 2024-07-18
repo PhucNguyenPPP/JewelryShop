@@ -25,69 +25,77 @@ namespace BLL.Services
 
         public List<GoldPriceDTO> GetGoldPrices()
         {
-            var goldPrices = new List<GoldPriceDTO>();
-            string xml = FetchXmlFromApi();
-            var doc = XDocument.Parse(xml);
-            var count = 1;
-            foreach (var item in doc.Descendants("item"))
+            try
             {
-                var buyPrice = float.Parse(item.Attribute("buy").Value.Replace(".", "")) * 1000;
-                var sellPrice = float.Parse(item.Attribute("sell").Value.Replace(".", "")) * 1000;
+                var goldPrices = new List<GoldPriceDTO>();
+                string xml = FetchXmlFromApi();
+                var doc = XDocument.Parse(xml);
+                var count = 1;
+                foreach (var item in doc.Descendants("item"))
+                {
+                    var buyPrice = float.Parse(item.Attribute("buy").Value.Replace(".", "")) * 1000;
+                    var sellPrice = float.Parse(item.Attribute("sell").Value.Replace(".", "")) * 1000;
 
-                if (count == 1)
-                {
-                    var goldPrice = new GoldPriceDTO
+                    if (count == 1)
                     {
-                        Type = "SJC Gold Bar",
-                        BuyPrice = buyPrice,
-                        SellPrice = sellPrice
-                    };
-                    goldPrices.Add(goldPrice);
-                }
-                if (count == 5)
-                {
-                    var goldPrice = new GoldPriceDTO
+                        var goldPrice = new GoldPriceDTO
+                        {
+                            Type = "SJC Gold Bar",
+                            BuyPrice = buyPrice,
+                            SellPrice = sellPrice
+                        };
+                        goldPrices.Add(goldPrice);
+                    }
+                    if (count == 5)
                     {
-                        Type = "24K Gold",
-                        BuyPrice = buyPrice,
-                        SellPrice = sellPrice
-                    };
-                    goldPrices.Add(goldPrice);
-                }
-                if (count == 6)
-                {
-                    var goldPrice = new GoldPriceDTO
+                        var goldPrice = new GoldPriceDTO
+                        {
+                            Type = "24K Gold",
+                            BuyPrice = buyPrice,
+                            SellPrice = sellPrice
+                        };
+                        goldPrices.Add(goldPrice);
+                    }
+                    if (count == 6)
                     {
-                        Type = "18K Gold",
-                        BuyPrice = buyPrice,
-                        SellPrice = sellPrice
-                    };
-                    goldPrices.Add(goldPrice);
-                }
-                if (count == 7)
-                {
-                    var goldPrice = new GoldPriceDTO
+                        var goldPrice = new GoldPriceDTO
+                        {
+                            Type = "18K Gold",
+                            BuyPrice = buyPrice,
+                            SellPrice = sellPrice
+                        };
+                        goldPrices.Add(goldPrice);
+                    }
+                    if (count == 7)
                     {
-                        Type = "14K Gold",
-                        BuyPrice = buyPrice,
-                        SellPrice = sellPrice
-                    };
-                    goldPrices.Add(goldPrice);
-                }
-                if (count == 8)
-                {
-                    var goldPrice = new GoldPriceDTO
+                        var goldPrice = new GoldPriceDTO
+                        {
+                            Type = "14K Gold",
+                            BuyPrice = buyPrice,
+                            SellPrice = sellPrice
+                        };
+                        goldPrices.Add(goldPrice);
+                    }
+                    if (count == 8)
                     {
-                        Type = "10K Gold",
-                        BuyPrice = buyPrice,
-                        SellPrice = sellPrice
-                    };
-                    goldPrices.Add(goldPrice);
+                        var goldPrice = new GoldPriceDTO
+                        {
+                            Type = "10K Gold",
+                            BuyPrice = buyPrice,
+                            SellPrice = sellPrice
+                        };
+                        goldPrices.Add(goldPrice);
+                    }
+                    count++;
                 }
-                count++;
+
+                return goldPrices;
             }
-
-            return goldPrices;
+            catch (Exception ex)
+            {
+                return new List<GoldPriceDTO>();
+            }
         }
+            
     }
 }
