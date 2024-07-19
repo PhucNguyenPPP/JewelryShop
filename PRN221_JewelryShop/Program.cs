@@ -48,6 +48,8 @@ builder.Services.AddScoped<IBuyBackPolicyService, BuyBackPolicyService>();
 builder.Services.AddScoped<IBuyBackOrderService, BuyBackOrderService>();
 builder.Services.AddScoped<IDashboardService, DashboardService>();
 builder.Services.AddScoped<IReturnOrderService, ReturnOrderService>();
+builder.Services.AddScoped<IPriceRateService, PriceRateService>();
+builder.Services.AddScoped<IMaterialTypeService, MaterialTypeService>();
 
 //Add scope for repositories*
 builder.Services.AddScoped<ICustomerRepository, CustomerRepository>();
@@ -68,6 +70,8 @@ builder.Services.AddScoped<IBuyBackOrderRepository, BuyBackOrderRepository>();
 builder.Services.AddScoped<IBuyBackOrderDetailRepository, BuyBackOrderDetailRepository>();
 builder.Services.AddScoped<IReturnOrderRepository, ReturnOrderRepository>();
 builder.Services.AddScoped<IReturnOrderDetailRepository, ReturnOrderDetailRepository>();
+builder.Services.AddScoped<IPriceRateRepository, PriceRateRepository>();
+builder.Services.AddScoped<IMaterialTypeRepository, MaterialTypeRepository>();
 
 //Add scope for DAOs
 builder.Services.AddScoped<IGenericDAO<Customer>, GenericDAO<Customer>>();
@@ -88,6 +92,8 @@ builder.Services.AddScoped<IGenericDAO<BuyBackOrder>, GenericDAO<BuyBackOrder>>(
 builder.Services.AddScoped<IGenericDAO<BuyBackOrderDetail>, GenericDAO<BuyBackOrderDetail>>();
 builder.Services.AddScoped<IGenericDAO<ReturnOrder>, GenericDAO<ReturnOrder>>();
 builder.Services.AddScoped<IGenericDAO<ReturnOrderDetail>, GenericDAO<ReturnOrderDetail>>();
+builder.Services.AddScoped<IGenericDAO<PriceRate>, GenericDAO<PriceRate>>();
+builder.Services.AddScoped<IGenericDAO<MaterialType>, GenericDAO<MaterialType>>();
 
 var app = builder.Build();
 

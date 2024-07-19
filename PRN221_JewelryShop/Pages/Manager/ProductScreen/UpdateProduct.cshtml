@@ -35,8 +35,12 @@
                 </div>
                 <div class="field">
                     <label>Price</label>
-                    <input type="text" asp-for="ProductRequestDTO.Price" value="@Model.Product.Price" required />
-                    <span class="text-danger" asp-validation-for="ProductRequestDTO.Price"></span>
+                    <input type="text" value="@Model.Product.Price" disabled required />
+                </div>
+                <div class="field">
+                    <label>Wage</label>
+                    <input type="text" asp-for="ProductRequestDTO.Wage" required />
+                    <span class="text-danger" asp-validation-for="ProductRequestDTO.Wage"></span>
                 </div>
                 <div class="field">
                     <label>Amount In Stock</label>

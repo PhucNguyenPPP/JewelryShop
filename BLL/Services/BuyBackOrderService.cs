@@ -1,6 +1,7 @@
 ﻿using BLL.Interfaces;
 using BOL;
 using DTO;
+using Microsoft.IdentityModel.Tokens;
 using Repositories.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -18,11 +19,15 @@ namespace BLL.Services
         private readonly ISaleOrderDetailRepository _saleOrderDetailRepo;
         private readonly IBuyBackOrderRepository _buyBackOrderRepo;
         private readonly IBuyBackOrderDetailRepository _buyBackOrderDetailRepo;
+        private readonly IReturnOrderRepository _returnOrderRepository;
+        private readonly IProductRepository _productRepository;
         public BuyBackOrderService(ISaleOrderRepository saleOrderRepo, IGoldPriceService goldPriceService,
             IBuyBackPolicyService buyBackPolicyService,
             ISaleOrderDetailRepository saleOrderDetailRepo,
             IBuyBackOrderRepository buyBackOrderRepo,
-            IBuyBackOrderDetailRepository buyBackOrderDetailRepo)
+            IBuyBackOrderDetailRepository buyBackOrderDetailRepo,
+            IReturnOrderRepository returnOrderRepository,
+            IProductRepository productRepository)
         {
             _saleOrderRepo = saleOrderRepo;
             _goldPriceService = goldPriceService;
@@ -30,6 +35,9 @@ namespace BLL.Services
             _saleOrderDetailRepo = saleOrderDetailRepo;
             _buyBackOrderRepo = buyBackOrderRepo;
             _buyBackOrderDetailRepo = buyBackOrderDetailRepo;
+            _returnOrderRepository = returnOrderRepository;
+            _returnOrderRepository = returnOrderRepository;
+            _productRepository = productRepository;
         }
 
         public bool BuyBackSaleOrder(BuyBackRequestDTO model, string employeeId)
@@ -104,8 +112,13 @@ namespace BLL.Services
                         ProductId = Guid.Parse(model.ProductIds[i]),
                         Bbprice = priceGold * Int32.Parse(model.Amount[i]),
                         Amount = Int32.Parse(model.Amount[i]),
+                        Reason = model.Reason[i]
                     };
                     buyBackOrderDetails.Add(buyBackOrderDetail);
+
+                    var product = _productRepository.GetProductList().FirstOrDefault(c => c.ProductId == Guid.Parse(model.ProductIds[i]));
+                    product.AmountInStock += Int32.Parse(model.Amount[i]);
+                    _productRepository.UpdateProduct(product);
                 }
                 // nếu không lấy phần trăm từ buy back policy
                 else
@@ -120,9 +133,14 @@ namespace BLL.Services
                         ProductId = Guid.Parse(model.ProductIds[i]),
                         Bbprice = ((saleOrderDetail.FinalPrice / saleOrderDetail.Amount) * (policyValue/100)) * Int32.Parse(model.Amount[i]),
                         Amount = Int32.Parse(model.Amount[i]),
-                        
+                        Reason = model.Reason[i]
+
                     };
                     buyBackOrderDetails.Add(buyBackOrderDetail);
+
+                    var product = _productRepository.GetProductList().FirstOrDefault(c => c.ProductId == Guid.Parse(model.ProductIds[i]));
+                    product.AmountInStock += Int32.Parse(model.Amount[i]);
+                    _productRepository.UpdateProduct(product);
                 }
             }
 
@@ -140,6 +158,63 @@ namespace BLL.Services
 
             _buyBackOrderRepo.AddBuyBackOrder(buyBackOrder);
             return _buyBackOrderRepo.SaveChange();
+        }
+
+        public bool CheckAmountBuyBackValid(BuyBackRequestDTO model)
+        {
+            var check = true;
+            for (var i = 0; i < model.ProductIds.Count; i++)
+            {
+                var bbOrderList = _buyBackOrderRepo.GetAllBuyBackOrders().Where(c => c.SaleOrderId == Guid.Parse(model.SaleOrderId)).ToList();
+                var returnOrderList = _returnOrderRepository.GetAllReturnOrders().Where(c => c.SaleOrderId == Guid.Parse(model.SaleOrderId)).ToList();
+                int? buyBackAmount = 0;
+
+                foreach (var b in bbOrderList)
+                {
+                    var bbOrderDetail = b.BuyBackOrderDetails.FirstOrDefault(c => c.Bboid == b.Bboid && c.ProductId == Guid.Parse(model.ProductIds[i]));
+                    if (bbOrderDetail != null && bbOrderDetail.Amount != null)
+                    {
+                        buyBackAmount += bbOrderDetail.Amount;
+                    }
+                    else
+                    {
+                        buyBackAmount += 0;
+                    }
+                }
+
+                foreach (var r in returnOrderList)
+                {
+                    var returnOrderDetail = r.ReturnOrderDetails.FirstOrDefault(c => c.ReturnOrderId == r.ReturnOrderId && c.ProductId == Guid.Parse(model.ProductIds[i]));
+                    if (returnOrderDetail != null && returnOrderDetail.Amount != null)
+                    {
+                        buyBackAmount += returnOrderDetail.Amount;
+                    }
+                    else
+                    {
+                        buyBackAmount += 0;
+                    }
+                }
+
+                var orderDetail = _saleOrderDetailRepo.GetSaleOrderDetailByProductId(Guid.Parse(model.ProductIds[i]), Guid.Parse(model.SaleOrderId));
+                if(Int32.Parse(model.Amount[i]) < 0)
+                {
+                    return check = false;
+                }
+                if (Int32.Parse(model.Amount[i]) > (orderDetail.Amount - buyBackAmount))
+                {
+                    return check = false;
+                }
+            }
+            return check;
+        }
+
+        public bool CheckBuyBackReasonValid(BuyBackRequestDTO model)
+        {
+            if(model.Reason.Any( c => c.IsNullOrEmpty()))
+            {
+                return false;
+            }
+            return true;
         }
 
         public List<BuyBackOrder> GetAllBuyBackOrders()

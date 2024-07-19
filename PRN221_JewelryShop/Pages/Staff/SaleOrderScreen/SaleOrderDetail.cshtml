@@ -31,6 +31,8 @@
     </div>
     <div class="content" style="margin: auto;">
         <div class="row">
+            <h5 class="text-danger">@TempData["BuyBackAmountError"]</h5>
+            <h5 class="text-danger">@TempData["BuyBackReasonError"]</h5>
             <div class="col-md-6">
                 <div class="field">
                     <label>Customer Name</label>
@@ -134,6 +136,7 @@
                                     <th>Created Date</th>
                                     <th>Created By</th>
                                     <th>Buy Back Policy</th>
+                                    <th>Reason</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -148,6 +151,7 @@
                                             <td>@s.CreatedDate</td>
                                             <td>@s.Employee?.EmployeeName</td>
                                             <td>@i.Policy?.PolicyName</td>
+                                            <td>@i.Reason</td>
                                         </tr>
                                     }
                                 }
@@ -168,6 +172,7 @@
                                     <th>Price</th>
                                     <th>Created Date</th>
                                     <th>Created By</th>
+                                    <th>Reason</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -181,6 +186,7 @@
                                             <td>@i.ReturnPrice?.ToString("#,0", priceFormat) VND</td>
                                             <td>@s.CreatedDate</td>
                                             <td>@s.Employee?.EmployeeName</td>
+                                            <td>@i.Reason</td>
                                         </tr>
                                     }
                                 }
@@ -195,101 +201,106 @@
     <div class="modal fade" id="returnModal" tabindex="-1" role="dialog" aria-labelledby="returnModalLabel" aria-hidden="true">
         <div class="modal-dialog" style="max-width: 80%" role="document">
             <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="returnModalLabel">Return Confirmation</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    @if (Model.SaleOrder?.SaleOrderDetails != null)
-                    {
-                        <table class="table table-bordered">
-                            <thead>
-                                <tr>
-                                    <th></th>
-                                    <th>Product Name</th>
-                                    <th>Amount</th>
-                                    <th>Price</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @{
-                                    foreach (var s in Model.SaleOrder.SaleOrderDetails)
-                                    {
-                                        var bbOrderList = Model.SaleOrder.BuyBackOrders.Where(c => c.SaleOrderId == s.SaleOrderId).ToList();
-                                        var returnOrderList = Model.SaleOrder.ReturnOrders.Where(c => c.SaleOrderId == s.SaleOrderId).ToList();
-                                        if (bbOrderList.Count == 0 && returnOrderList.Count == 0)
+                <form method="post" id="returnForm">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="returnModalLabel">Return Confirmation</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        @if (Model.SaleOrder?.SaleOrderDetails != null)
+                        {
+                            <table class="table table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th></th>
+                                        <th>Product Name</th>
+                                        <th>Amount</th>
+                                        <th>Reason</th>
+                                        <th>Price</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @{
+                                        foreach (var s in Model.SaleOrder.SaleOrderDetails)
                                         {
-                                            canBuyBack = true;
-                                            <tr>
-                                                <td><input type="checkbox" class="refund-checkbox" data-product-id="@s.ProductId" data-final-price="@(s.FinalPrice / @s.Amount)" data-refund-percentage="@Model.ReturnPolicyRefundPercentage?.PolicyValue" disabled /></td>
-                                                <td>@s.Product?.ProductName</td>
-                                                <td><input type="number" class="refund-amount" min="1" max="@s.Amount" data-checkbox-id="@s.ProductId" /></td>
-                                                <td><span class="refund-price-text" data-checkbox-id="@s.ProductId">0 VND</span></td>
-                                            </tr>
-                                        }
-                                        else
-                                        {
-                                            int? returnAmount = 0;
-                                            foreach (var i in bbOrderList)
-                                            {
-                                                var bbOrderDetail = i.BuyBackOrderDetails.FirstOrDefault(c => c.Bboid == i.Bboid && c.ProductId == s.ProductId);
-                                                if (bbOrderDetail != null && bbOrderDetail.Amount != null)
-                                                {
-                                                    returnAmount += bbOrderDetail.Amount;
-                                                }
-                                                else
-                                                {
-                                                    returnAmount += 0;
-                                                }
-                                            }
-
-                                            foreach (var i in returnOrderList)
-                                            {
-                                                var returnOrderDetail = i.ReturnOrderDetails.FirstOrDefault(c => c.ReturnOrderId == i.ReturnOrderId && c.ProductId == s.ProductId);
-                                                if (returnOrderDetail != null && returnOrderDetail.Amount != null)
-                                                {
-                                                    returnAmount += returnOrderDetail.Amount;
-                                                }
-                                                else
-                                                {
-                                                    returnAmount += 0;
-                                                }
-                                            }
-
-                                            if (returnAmount < s.Amount)
+                                            var bbOrderList = Model.SaleOrder.BuyBackOrders.Where(c => c.SaleOrderId == s.SaleOrderId).ToList();
+                                            var returnOrderList = Model.SaleOrder.ReturnOrders.Where(c => c.SaleOrderId == s.SaleOrderId).ToList();
+                                            if (bbOrderList.Count == 0 && returnOrderList.Count == 0)
                                             {
                                                 canBuyBack = true;
                                                 <tr>
                                                     <td><input type="checkbox" class="refund-checkbox" data-product-id="@s.ProductId" data-final-price="@(s.FinalPrice / @s.Amount)" data-refund-percentage="@Model.ReturnPolicyRefundPercentage?.PolicyValue" disabled /></td>
                                                     <td>@s.Product?.ProductName</td>
-                                                    <td><input type="number" class="refund-amount" min="1" max="@(s.Amount - returnAmount)" data-checkbox-id="@s.ProductId" /></td>
+                                                    <td><input type="number" class="refund-amount" min="1" max="@s.Amount" data-checkbox-id="@s.ProductId" /></td>
+                                                    <td><input type="text" class="refund-reason" min="1" data-checkbox-id="@s.ProductId" required /></td>
                                                     <td><span class="refund-price-text" data-checkbox-id="@s.ProductId">0 VND</span></td>
                                                 </tr>
                                             }
+                                            else
+                                            {
+                                                int? returnAmount = 0;
+                                                foreach (var i in bbOrderList)
+                                                {
+                                                    var bbOrderDetail = i.BuyBackOrderDetails.FirstOrDefault(c => c.Bboid == i.Bboid && c.ProductId == s.ProductId);
+                                                    if (bbOrderDetail != null && bbOrderDetail.Amount != null)
+                                                    {
+                                                        returnAmount += bbOrderDetail.Amount;
+                                                    }
+                                                    else
+                                                    {
+                                                        returnAmount += 0;
+                                                    }
+                                                }
+
+                                                foreach (var i in returnOrderList)
+                                                {
+                                                    var returnOrderDetail = i.ReturnOrderDetails.FirstOrDefault(c => c.ReturnOrderId == i.ReturnOrderId && c.ProductId == s.ProductId);
+                                                    if (returnOrderDetail != null && returnOrderDetail.Amount != null)
+                                                    {
+                                                        returnAmount += returnOrderDetail.Amount;
+                                                    }
+                                                    else
+                                                    {
+                                                        returnAmount += 0;
+                                                    }
+                                                }
+
+                                                if (returnAmount < s.Amount)
+                                                {
+                                                    canBuyBack = true;
+                                                    <tr>
+                                                        <td><input type="checkbox" class="refund-checkbox" data-product-id="@s.ProductId" data-final-price="@(s.FinalPrice / @s.Amount)" data-refund-percentage="@Model.ReturnPolicyRefundPercentage?.PolicyValue" disabled /></td>
+                                                        <td>@s.Product?.ProductName</td>
+                                                        <td><input type="number" class="refund-amount" min="1" max="@(s.Amount - returnAmount)" data-checkbox-id="@s.ProductId" /></td>
+                                                        <td><input type="text" class="refund-reason" min="1" data-checkbox-id="@s.ProductId" required /></td>
+                                                        <td><span class="refund-price-text" data-checkbox-id="@s.ProductId">0 VND</span></td>
+                                                    </tr>
+                                                }
+                                            }
+                                        }
+
+                                        if (!canBuyBack)
+                                        {
+                                            <tr class="text-danger">
+                                                <p class="text-danger"> There are no product for refunding</p>
+                                            </tr>
                                         }
                                     }
-
-                                    if (!canBuyBack)
-                                    {
-                                        <tr class="text-danger">
-                                            <p class="text-danger"> There are no product for refunding</p>
-                                        </tr>
-                                    }
-                                }
-                            </tbody>
-                        </table>
-                        <div class="total-price fw-bold">
-                            <label>Total Refund: </label>
-                            <span id="total-refund">0</span>
-                        </div>
-                    }
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                    <button type="button" id="btn-confirm-return" class="btn" style="background-color: orange" @(canBuyBack ? "" : "disabled")>Confirm Return</button>
-                </div>
+                                </tbody>
+                            </table>
+                            <div class="total-price fw-bold">
+                                <label>Total Refund: </label>
+                                <span id="total-refund">0</span>
+                            </div>
+                        }
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="submit" id="btn-confirm-return" class="btn" style="background-color: orange" @(canBuyBack ? "" : "disabled")>Confirm Return</button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
@@ -313,6 +324,7 @@
                                     <th></th>
                                     <th>Product Name</th>
                                     <th>Amount</th>
+                                    <th>Reason</th>
                                     <th>Price</th>
                                     <th>Buy Back Policy</th>
                                 </tr>
@@ -329,7 +341,8 @@
                                             <tr>
                                                 <td><input type="checkbox" class="buyback-checkbox" data-product-id="@s.ProductId" data-final-price="@(s.FinalPrice / @s.Amount)" disabled /></td>
                                                 <td>@s.Product?.ProductName</td>
-                                                <td><input type="number" class="buyback-amount" min="1" max="@s.Amount" data-checkbox-id="@s.ProductId" /></td>
+                                                <td><input type="number" class="buyback-amount" min="1" max="@s.Amount" data-checkbox-id="@s.ProductId" data-min-amount="1" data-max-amount="@s.Amount" /></td>
+                                                <td><input type="text" class="buyback-reason" min="1" data-checkbox-id="@s.ProductId" required /></td>
                                                 <td><span class="buyback-price-text" data-checkbox-id="@s.ProductId">0 VND</span></td>
                                                 <td>
                                                     @if (Model.BuyBackPolicyList != null)
@@ -380,7 +393,8 @@
                                                 <tr>
                                                     <td><input type="checkbox" class="buyback-checkbox" data-product-id="@s.ProductId" data-final-price="@(s.FinalPrice / @s.Amount)" disabled /></td>
                                                     <td>@s.Product?.ProductName</td>
-                                                    <td><input type="number" class="buyback-amount" min="1" max="@(s.Amount - buyBackAmount)" data-checkbox-id="@s.ProductId" /></td>
+                                                    <td><input type="number" class="buyback-amount" min="1" max="@(s.Amount - buyBackAmount)" data-checkbox-id="@s.ProductId" data-min-amount="1" data-max-amount="@s.Amount" /></td>
+                                                    <td><input type="text" class="buyback-reason" min="1" data-checkbox-id="@s.ProductId" required /></td>
                                                     <td><span class="buyback-price-text" data-checkbox-id="@s.ProductId">0 VND</span></td>
                                                     <td>
                                                         @if (Model.BuyBackPolicyList != null)
@@ -453,9 +467,9 @@
                     const productId = checkbox.dataset.productId;
                     const relatedAmountInput = document.querySelector(`.refund-amount[data-checkbox-id="${productId}"]`);
                     if (checkbox.checked) {
-                        relatedAmountInput.disabled = true;
+                        // relatedAmountInput.disabled = true;
                     } else {
-                        relatedAmountInput.disabled = false;
+                        // relatedAmountInput.disabled = false;
                     }
                     updateTotalRefund();
                 });
@@ -477,50 +491,50 @@
             }
 
             // Handle Confirm Return button click
-            const btnConfirmReturn = document.getElementById("btn-confirm-return");
-            if (btnConfirmReturn) {
-                btnConfirmReturn.addEventListener("click", function () {
-                    const selectedProductIds = [];
-                    const selectAmount = [];
-                    refundCheckboxes.forEach(checkbox => {
-                        if (checkbox.checked) {
-                            selectedProductIds.push(checkbox.dataset.productId);
-                            selectAmount.push(checkbox.closest('tr').querySelector('.refund-amount').value);
-                        }
-                    });
-
-                    if (selectedProductIds.length === 0) {
-                        alert("Please select at least one product!.");
-                        return;
+            document.getElementById('returnForm').addEventListener('submit', function (event) {
+                event.preventDefault();
+                const selectedProductIds = [];
+                const selectAmount = [];
+                const reasonReturn = [];
+                refundCheckboxes.forEach(checkbox => {
+                    if (checkbox.checked) {
+                        selectedProductIds.push(checkbox.dataset.productId);
+                        selectAmount.push(checkbox.closest('tr').querySelector('.refund-amount').value);
+                        reasonReturn.push(checkbox.closest('tr').querySelector('.refund-reason').value);
                     }
-
-                    var token = '@token';
-                    const saleOrderId = '@Model.SaleOrder?.SaleOrderId';
-                    fetch('/Staff/SaleOrderScreen/SaleOrderDetail/ReturnProduct', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'RequestVerificationToken': token
-                        },
-                        body: JSON.stringify({ saleOrderId: saleOrderId, productIds: selectedProductIds, amount: selectAmount}),
-                        processData: false,
-                    })
-                        .then(response => {
-                            if (!response.ok) {
-                                throw new Error('Network response was not ok');
-                            }
-                            window.location.reload();// assuming server responds with JSON
-                        })
-                        .then(data => {
-                            console.log('Returned products:', data);
-                            window.location.reload(); // Reload page or update UI as needed
-                        })
-                        .catch(error => {
-                            console.error('Error during return:', error);
-                            // Handle error, show error message, etc.
-                        });
                 });
-            }
+
+                if (selectedProductIds.length === 0) {
+                    alert("Please select at least one product!.");
+                    return;
+                }
+
+                var token = '@token';
+                const saleOrderId = '@Model.SaleOrder?.SaleOrderId';
+                fetch('/Staff/SaleOrderScreen/SaleOrderDetail/ReturnProduct', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'RequestVerificationToken': token
+                    },
+                    body: JSON.stringify({ saleOrderId: saleOrderId, productIds: selectedProductIds, amount: selectAmount, reason: reasonReturn  }),
+                    processData: false,
+                })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Network response was not ok');
+                        }
+                        window.location.reload();// assuming server responds with JSON
+                    })
+                    .then(data => {
+                        console.log('Returned products:', data);
+                        window.location.reload(); // Reload page or update UI as needed
+                    })
+                    .catch(error => {
+                        console.error('Error during return:', error);
+                        // Handle error, show error message, etc.
+                    });
+            });
 
             // Buyback functionality
             const buybackCheckboxes = document.querySelectorAll(".buyback-checkbox");
@@ -559,10 +573,10 @@
                     const relatedAmountInput = document.querySelector(`.buyback-amount[data-checkbox-id="${productId}"]`);
                     if (checkbox.checked) {
                         relatedSelect.disabled = true;
-                        relatedAmountInput.disabled = true;
+                        // relatedAmountInput.disabled = true;
                     } else {
                         relatedSelect.disabled = false;
-                        relatedAmountInput.disabled = false;
+                        // relatedAmountInput.disabled = false;
                     }
                     updateTotalBuyback();
                 });
@@ -621,9 +635,30 @@
             const btnConfirmBuyBack = document.getElementById("btn-confirm-buyback");
             if (btnConfirmBuyBack) {
                 btnConfirmBuyBack.addEventListener("click", function () {
+
                     const selectedProductIds = [];
                     const selectedPolicies = [];
                     const selectAmount = [];
+                    const buybackReason = [];
+                    // var checkAmount = true;
+                    // buybackCheckboxes.forEach(checkbox => {
+                    //     if (checkbox.checked) {
+                    //         const amountElement = document.querySelector(`.buyback-amount[data-checkbox-id="${checkbox.dataset.productId}"]`);
+                    //         const maxAmount = amountElement.getAttribute('data-max-amount');
+                    //         const minAmount = amountElement.getAttribute('data-min-amount');
+                    //         console.log(minAmount, maxAmount)
+                    //         console.log(checkbox.closest('tr').querySelector('.buyback-amount').value)
+                    //         if (maxAmount < checkbox.closest('tr').querySelector('.buyback-amount').value) {
+                    //             checkAmount = false;
+                    //             return;
+                    //         }
+                    //         if (minAmount > checkbox.closest('tr').querySelector('.buyback-amount').value) {
+                    //             checkAmount = false;
+                    //             return;
+                    //         }
+                    //         console.log(checkAmount)
+                    //     }
+                    // });
 
                     buybackCheckboxes.forEach(checkbox => {
                         if (checkbox.checked) {
@@ -631,6 +666,7 @@
                             selectAmount.push(checkbox.closest('tr').querySelector('.buyback-amount').value);
                             const relatedSelect = document.querySelector(`.buyback-policy[data-checkbox-id="${checkbox.dataset.productId}"]`);
                             selectedPolicies.push(relatedSelect.value);
+                            buybackReason.push(checkbox.closest('tr').querySelector('.buyback-reason').value);
                         }
                     });
 
@@ -638,39 +674,41 @@
                         alert("Please select at least one product!.");
                         return;
                     }
-
-                    var token = '@token';
-                    const saleOrderId = '@Model.SaleOrder?.SaleOrderId';
-
-                    // Example endpoint for buyback action (adjust endpoint as per your application)
-                    fetch('/Staff/SaleOrderScreen/SaleOrderDetail/BuyBackProduct', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'RequestVerificationToken': token
-                        },
-                        body: JSON.stringify({
-                            saleOrderId: saleOrderId,
-                            productIds: selectedProductIds,
-                            amount: selectAmount,
-                            policyIds: selectedPolicies
-                        }),
-                        processData: false,
-                    })
-                        .then(response => {
-                            if (!response.ok) {
-                                throw new Error('Network response was not ok');
-                            }
-                            window.location.reload();
+                    // if (!checkAmount) {
+                    //     alert("Amount is invalid!.");
+                    //     return;
+                    // } else {
+                        var token = '@token';
+                        const saleOrderId = '@Model.SaleOrder?.SaleOrderId';
+                        fetch('/Staff/SaleOrderScreen/SaleOrderDetail/BuyBackProduct', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'RequestVerificationToken': token
+                            },
+                            body: JSON.stringify({
+                                saleOrderId: saleOrderId,
+                                productIds: selectedProductIds,
+                                amount: selectAmount,
+                                policyIds: selectedPolicies,
+                                reason: buybackReason,
+                            }),
+                            processData: false,
                         })
-                        .then(data => {
-                            console.log('Confirmed buyback:', data);
-                            window.location.reload(); // Reload page or update UI as needed
-                        })
-                        .catch(error => {
-                            console.error('Error during buyback:', error);
-                            // Handle error, show error message, etc.
-                        });
+                            .then(response => {
+                                if (!response.ok) {
+                                window.location.reload();
+                                }
+                            })
+                            .then(data => {
+                                console.log('Confirmed buyback:', data);
+                                window.location.reload();
+                            })
+                            .catch(error => {
+                                console.error('Error during buyback:', error);
+                            });
+                    // }
+
                 });
             }
         });
