@@ -15,6 +15,8 @@ public partial class ReturnOrderDetail
 
     public int? Amount { get; set; }
 
+    public string? Reason { get; set; }
+
     public virtual Product? Product { get; set; }
 
     public virtual ReturnOrder? ReturnOrder { get; set; }

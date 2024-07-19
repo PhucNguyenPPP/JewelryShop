@@ -30,13 +30,13 @@
                     <span class="text-danger">@TempData["NameExist"]</span>
                 </div>
                 <div class="field">
-                    <label>Price</label>
-                    <input type="text" asp-for="ProductRequestDTO.Price" required/>
-                    <span class="text-danger" asp-validation-for="ProductRequestDTO.Price"></span>
+                    <label>Wage</label>
+                    <input type="text" asp-for="ProductRequestDTO.Wage" required />
+                    <span class="text-danger" asp-validation-for="ProductRequestDTO.Wage"></span>
                 </div>
                 <div class="field">
                     <label>Amount In Stock</label>
-                    <input type="number" min="1" asp-for="ProductRequestDTO.AmountInStock" required/>
+                    <input type="number" min="1" asp-for="ProductRequestDTO.AmountInStock" required />
                     <span class="text-danger" asp-validation-for="ProductRequestDTO.AmountInStock"></span>
                 </div>
                 <div class="field">
@@ -53,28 +53,28 @@
                 </div>
             </div>
             <div class="col-md-6">
-                @for (int i = 0; i <= 3; i++)
-                {
-                    <div class="field field-material">
-                        <div>
-                            <label>Material</label>
-                            @if (Model.MaterialList != null)
-                            {
-                                <select class="materialSelect" asp-for="MaterialDTOList[i].MaterialId">
-                                    <option></option>
-                                    @foreach (var material in Model.MaterialList)
-                                    {
-                                        <option value="@material.MaterialId">@material.MaterialName</option>
-                                    }
-                                </select>
-                            }
+                    @for (int i = 0; i <= 3; i++)
+                    {
+                        <div class="field field-material">
+                            <div>
+                                <label>Material</label>
+                                @if (Model.MaterialList != null)
+                                {
+                                    <select class="materialSelect" asp-for="MaterialDTOList[i].MaterialId">
+                                        <option></option>
+                                        @foreach (var material in Model.MaterialList)
+                                        {
+                                            <option data-material-price="@material.Price" value="@material.MaterialId">@material.MaterialName</option>
+                                        }
+                                    </select>
+                                }
+                            </div>
+                            <div>
+                                <label id="lbSize-@i">Size (Gold: Fences/ Diamond: Pellet)</label>
+                                <input type="text" id="sizeInput-@i" class="sizeInput" asp-for="MaterialDTOList[i].MaterialSize" />
+                            </div>
                         </div>
-                        <div>
-                            <label id="lbSize-@i">Size (Gold: Fences/ Diamond: Pellet)</label>
-                            <input type="text" id="sizeInput-@i" class="sizeInput" asp-for="MaterialDTOList[i].MaterialSize"/>
-                        </div>
-                    </div>
-                }
+                    }
                 <p class="text-danger">@TempData["CreateError"]</p>
                 <h5 class="notification-msg">@TempData["CreateMsg"]</h5>
                 <button class="add-btn" type="submit">Add Product</button>
@@ -85,25 +85,25 @@
     <script>
 
         document.addEventListener("DOMContentLoaded", function () {
-            var materialSelects = document.getElementsByClassName("materialSelect");
-            var sizeInputs = document.getElementsByClassName("sizeInput");
+            // var materialSelects = document.getElementsByClassName("materialSelect");
+            // var sizeInputs = document.getElementsByClassName("sizeInput");
 
-            for (let z = 0; z < materialSelects.length; z++) {
-                (function (index) {
-                    materialSelects[index].addEventListener("change", function () {
-                        var sizeInput = document.getElementById("sizeInput-" + index);
-                        if (this.options[this.selectedIndex].text.toLowerCase().includes("diamond")) {
-                            sizeInput.type = "number";
-                            sizeInput.min = 1;
-                            sizeInput.max = 1;
-                        } else {
-                            sizeInput.type = "text";
-                            sizeInput.removeAttribute('min');
-                            sizeInput.removeAttribute('max');
-                        }
-                    });
-                })(z);
-            }
+            // for (let z = 0; z < materialSelects.length; z++) {
+            //     (function (index) {
+            //         materialSelects[index].addEventListener("change", function () {
+            //             var sizeInput = document.getElementById("sizeInput-" + index);
+            //             if (this.options[this.selectedIndex].text.toLowerCase().includes("diamond")) {
+            //                 sizeInput.type = "number";
+            //                 sizeInput.min = 1;
+            //                 sizeInput.max = 1;
+            //             } else {
+            //                 sizeInput.type = "text";
+            //                 sizeInput.removeAttribute('min');
+            //                 sizeInput.removeAttribute('max');
+            //             }
+            //         });
+            //     })(z);
+            // }
         });
 
     </script>

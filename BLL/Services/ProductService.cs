@@ -19,14 +19,19 @@ namespace BLL.Services
         private readonly IMaterialService _materialService;
         private readonly IGoldPriceService _goldPriceService;
         private readonly IEmployeeService _employeeService;
+        private readonly IPriceRateRepository _priceRateRepository;
+        private readonly IMaterialRepository _materialRepository;
         public ProductService(IProductRepository productRepository, IMaterialProductRepository materialProductRepository,
-            IMaterialService materialService, IGoldPriceService goldPriceService, IEmployeeService employeeService)
+            IMaterialService materialService, IGoldPriceService goldPriceService, IEmployeeService employeeService,
+            IPriceRateRepository priceRateRepository, IMaterialRepository materialRepository)
         {
             _productRepository = productRepository;
             _materialProductRepository = materialProductRepository;
             _materialService = materialService;
             _goldPriceService = goldPriceService;
             _employeeService = employeeService;
+            _priceRateRepository = priceRateRepository;
+            _materialRepository = materialRepository;
         }
 
         public List<Product> GetProductList()
@@ -200,6 +205,10 @@ namespace BLL.Services
                         MaterialSize = decimal.Parse(productDTO.MaterialDTOs[i].MaterialSize)
                     };
                     materialProducts.Add(materialProduct);
+
+                    var material = _materialService.GetMaterial(productDTO.MaterialDTOs[i].MaterialId);
+                    material.AmountInStock -= decimal.Parse(productDTO.MaterialDTOs[i].MaterialSize);
+                    _materialRepository.UpdateMaterial(material);
                 }
             }
             _materialProductRepository.AddRange(materialProducts);
@@ -225,6 +234,12 @@ namespace BLL.Services
             _productRepository.UpdateProduct(product);
 
             var existingMaterial = product.MaterialProducts.ToList();
+            foreach(var i in existingMaterial)
+            {
+                var material = _materialService.GetMaterial(i.MaterialId.ToString());
+                material.AmountInStock += i.MaterialSize;
+                _materialRepository.UpdateMaterial(material);
+            }
             _materialProductRepository.DeleteRange(existingMaterial);
 
             List<MaterialProduct> updatedMaterialProducts = new List<MaterialProduct>();
@@ -240,6 +255,9 @@ namespace BLL.Services
                         MaterialSize = decimal.Parse(productDTO.MaterialDTOs[i].MaterialSize)
                     };
                     updatedMaterialProducts.Add(materialProduct);
+                    var material = _materialService.GetMaterial(productDTO.MaterialDTOs[i].MaterialId);
+                    material.AmountInStock -= decimal.Parse(productDTO.MaterialDTOs[i].MaterialSize);
+                    _materialRepository.UpdateMaterial(material);
                 }
             }
             _materialProductRepository.AddRange(updatedMaterialProducts);
@@ -348,19 +366,19 @@ namespace BLL.Services
                 Regex regexSizeDiamond = new Regex(@"^\d+$");
                 if(list[i].MaterialId != null)
                 {
-                    var materialName = _materialService.GetMaterial(list[i].MaterialId).MaterialName;
+                    var material = _materialService.GetMaterial(list[i].MaterialId);
                     if (list[i].MaterialId != null
-                    && !regexSizeDiamond.IsMatch(list[i]?.MaterialSize)
-                    && materialName.ToLower().Contains("diamond"))
+                    && list[i]?.MaterialSize != "1"
+                    && material.MaterialType.TypeName == "Diamond")
                     {
-                        return new ResponseDTO("The price " + ++i + " is invalid", false);
+                        return new ResponseDTO("The size for diamond at material " + ++i + " must be 1", false);
                     }
 
                     if (list[i].MaterialId != null
                         && !regexSizeGold.IsMatch(list[i]?.MaterialSize)
-                        && !materialName.ToLower().Contains("diamond"))
+                        && material.MaterialType.TypeName == "Gold")
                     {
-                        return new ResponseDTO("The price " + ++i + " is invalid", false);
+                        return new ResponseDTO("The size for gold at material " + ++i + " must be number", false);
                     }
                 }
                 
@@ -438,6 +456,39 @@ namespace BLL.Services
                 gold10K50fences.Price = Convert.ToDecimal((50 * pricegold10K50fences.SellPrice) / 100);
             }
             return productList;
+        }
+
+        public decimal GetPriceProduct(List<MaterialDTO> list, decimal wage)
+        {
+            var priceRate = _priceRateRepository.GetPriceRate();
+            decimal totalPriceMaterial = 0;
+            foreach (var item in list) 
+            {
+                if(item.MaterialId != null)
+                {
+                    var material = _materialService.GetMaterial(item.MaterialId);
+                    totalPriceMaterial += (decimal.Parse(material.Price.ToString()) * decimal.Parse(item.MaterialSize.ToString()));
+                }
+            }
+            return (totalPriceMaterial + wage) * decimal.Parse(priceRate.ToString());
+            
+        }
+
+        public ResponseDTO CheckMaterialAmountInStock(ProductRequestDTO productDTO)
+        {
+            foreach(var i in productDTO.MaterialDTOs)
+            {
+                if (i.MaterialId != null)
+                {
+                    var material = _materialService.GetMaterial(i.MaterialId);
+                    if(material.AmountInStock < decimal.Parse(i.MaterialSize))
+                    {
+                        return new ResponseDTO(material.MaterialName + " only " + material.AmountInStock + " left in stock", false);
+                    }
+                }
+
+            }
+            return new ResponseDTO("Check Ok", true);
         }
     }
 }

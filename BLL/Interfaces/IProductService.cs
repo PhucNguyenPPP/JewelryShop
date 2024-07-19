@@ -25,5 +25,7 @@ namespace BLL.Interfaces
 
         ResponseDTO CheckValidationMaterialDTOList(List<MaterialDTO> list);
         List<Product> SearchProductByStaff(string searchValue, string employeeId);
+        decimal GetPriceProduct(List<MaterialDTO> materialDTOList, decimal wage);
+        ResponseDTO CheckMaterialAmountInStock(ProductRequestDTO productDTO);
     }
 }

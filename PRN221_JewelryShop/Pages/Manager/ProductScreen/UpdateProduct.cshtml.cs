@@ -132,15 +132,28 @@ namespace PRN221_JewelryShop.Pages.Manager.ProductScreen
 
             ProductRequestDTO.MaterialDTOs = MaterialDTOList;
 
+            var price = _productService.GetPriceProduct(MaterialDTOList, (decimal)ProductRequestDTO.Wage);
+            ProductRequestDTO.Price = price;
+
+            var checkValidAmountInStock = _productService.CheckMaterialAmountInStock(ProductRequestDTO);
+            if (!checkValidAmountInStock.IsSuccess)
+            {
+                TempData["UpdateError"] = checkValidAmountInStock.Message;
+                return Page();
+            }
             var result = _productService.UpdateProduct(ProductRequestDTO);
             if (result)
             {
                 TempData["UpdateMsg"] = "Update Successfully";
+                GetProduct(ProductRequestDTO.ProductId);
+                GetAvailableMaterialList(ProductRequestDTO.ProductId);
                 return Page();
             }
             else
             {
                 TempData["UpdateMsg"] = "Update Unsuccessfully";
+                GetProduct(ProductRequestDTO.ProductId);
+                GetAvailableMaterialList(ProductRequestDTO.ProductId);
                 return Page();
             }
         }

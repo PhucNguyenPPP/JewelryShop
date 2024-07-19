@@ -14,5 +14,7 @@ namespace BLL.Interfaces
         List<BuyBackOrder> SearchBuyBackOrders(string searchValue);
         bool BuyBackSaleOrder (BuyBackRequestDTO model, string employeeId);
         BuyBackOrder GetBuyBackOrderById (string id);
+        bool CheckAmountBuyBackValid(BuyBackRequestDTO model);
+        bool CheckBuyBackReasonValid(BuyBackRequestDTO model);
     }
 }
