@@ -12,5 +12,6 @@ namespace DTO
         public List<string>? ProductIds { get; set; }
         public List<string>? Amount { get; set; }
         public List<string?> PolicyIds { get; set; }
+        public List<string?> Reason { get; set; }
     }
 }

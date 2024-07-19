@@ -78,7 +78,7 @@
                     <button type="submit">Create Sale Order</button>
                 </form>
             </div>
-
+            <h5 class="text-danger">@TempData["ErrorSaleOrderMsg"]</h5>
         </div>
         <div class="customer-container col-md-4">
             <div class="sale-order-info">
@@ -403,7 +403,7 @@
 
 
                 var customer = @Html.Raw(Json.Serialize(Model.Customer?.CustomerId));
-                if (customer === null || customer === undefined) {
+                if (customer === null || customer === undefined || customer === "00000000-0000-0000-0000-000000000000") {
                     alert('Please search and select a customer before creating sale orders.');
                     return;
                 }
@@ -448,14 +448,19 @@
                 })
                     .then(response => {
                         if (!response.ok) {
-                            throw new Error('Network response was not ok');
-                        }
-                        localStorage.removeItem('selectedProducts');
-                        document.getElementById('selectedProductsContainer').innerHTML = ''; // Clear selected products
-                        document.getElementById('totalAll').textContent = '0'; // Reset total price
-                        document.getElementById('productForm').reset(); // Reset form fields
+                            localStorage.removeItem('selectedProducts');
+                            document.getElementById('selectedProductsContainer').innerHTML = ''; // Clear selected products
+                            document.getElementById('totalAll').textContent = '0'; // Reset total price
+                            document.getElementById('productForm').reset(); // Reset form fields
+                            window.location.reload();
+                        } else {
+                            localStorage.removeItem('selectedProducts');
+                            document.getElementById('selectedProductsContainer').innerHTML = ''; // Clear selected products
+                            document.getElementById('totalAll').textContent = '0'; // Reset total price
+                            document.getElementById('productForm').reset(); // Reset form fields
 
-                        window.location.href = 'http://localhost:5281/Staff/SaleOrderScreen/SaleOrderManagement';
+                            window.location.href = 'http://localhost:5281/Staff/SaleOrderScreen/SaleOrderManagement';
+                        }
                     })
             });
 

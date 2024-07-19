@@ -11,5 +11,9 @@ namespace Repositories.Interfaces
     {
         List<Material> GetAllMaterial();
         Material GetMaterial(Guid materialId);
+        void AddMaterial(Material material);
+        void UpdateMaterial(Material material);
+        void DeleteMaterial(Material material);
+        bool SaveChange();
     }
 }

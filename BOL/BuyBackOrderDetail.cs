@@ -17,6 +17,8 @@ public partial class BuyBackOrderDetail
 
     public int? Amount { get; set; }
 
+    public string? Reason { get; set; }
+
     public virtual BuyBackOrder? Bbo { get; set; }
 
     public virtual BuyBackPolicy? Policy { get; set; }

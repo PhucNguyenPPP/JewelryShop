@@ -1,5 +1,6 @@
 ﻿using BOL;
 using DAL.DAO;
+using Microsoft.EntityFrameworkCore;
 using Repositories.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -16,14 +17,40 @@ namespace Repositories.Repositories
         {
             _materialDao = materialDao;
         }
+
+        public void AddMaterial(Material material)
+        {
+            _materialDao.Add(material);
+        }
+
+        public void DeleteMaterial(Material material)
+        {
+            _materialDao.Update(material);
+        }
+
         public List<Material> GetAllMaterial()
         {
-           return _materialDao.GetAll(c => true).ToList();
+           return _materialDao.GetAll(c => c.Status == true)
+                .Include(c => c.MaterialType)
+                .ToList();
         }
 
         public Material GetMaterial(Guid materialId)
         {
-            return _materialDao.GetById(materialId);
+            var materialList = _materialDao.GetAll(c => true)
+                .Include(c => c.MaterialType)
+                .ToList();
+            return materialList?.FirstOrDefault(c => c.MaterialId == materialId);
+        }
+
+        public bool SaveChange()
+        {
+            return _materialDao.SaveChange();
+        }
+
+        public void UpdateMaterial(Material material)
+        {
+            _materialDao.Update(material);
         }
     }
 }

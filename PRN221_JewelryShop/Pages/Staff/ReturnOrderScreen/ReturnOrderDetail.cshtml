@@ -63,6 +63,7 @@
                                     <th>Product Name</th>
                                     <th>Amount</th>
                                     <th>Price</th>
+                                    <th>Reason</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -72,6 +73,7 @@
                                         <td>@s.Product?.ProductName</td>
                                         <td>@s.Amount</td>
                                         <td>@s.ReturnPrice?.ToString("#,0", priceFormat) VND</td>
+                                        <td>@s.Reason</td>
                                     </tr>
                                 }
                             </tbody>

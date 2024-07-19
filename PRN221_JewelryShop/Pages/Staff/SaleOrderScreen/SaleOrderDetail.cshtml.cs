@@ -94,6 +94,12 @@ namespace PRN221_JewelryShop.Pages.Staff.SaleOrderScreen
             {
                 return RedirectToPage("/Login");
             }
+            var checkAmountValid = _returnOrderService.CheckAmountReturnValid(model);
+            if (!checkAmountValid)
+            {
+                TempData["ReturnAmountError"] = "Return Amount is invalid";
+                return StatusCode(400);
+            }
             var result = _returnOrderService.ReturnSaleOrder(model, LoginResponse.EmployeeId.ToString());
             if (result)
             {
@@ -124,6 +130,18 @@ namespace PRN221_JewelryShop.Pages.Staff.SaleOrderScreen
             if (LoginResponse.RoleName != "Staff")
             {
                 return RedirectToPage("/Login");
+            }
+            var checkReason = _buyBackOrderService.CheckBuyBackReasonValid(model);
+            if(!checkReason)
+            {
+                TempData["BuyBackReasonError"] = "Please input reason";
+                return StatusCode(400);
+            }
+            var checkAmountValid = _buyBackOrderService.CheckAmountBuyBackValid(model);
+            if(!checkAmountValid)
+            {
+                TempData["BuyBackAmountError"] = "Buy Back Amount is invalid";
+                return StatusCode(400);
             }
             var result = _buyBackOrderService.BuyBackSaleOrder(model, LoginResponse.EmployeeId.ToString());
             if (result)

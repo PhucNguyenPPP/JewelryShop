@@ -79,21 +79,21 @@ namespace PRN221_JewelryShop.Pages.Manager.ProductScreen
                 return RedirectToPage("/Login");
             }
 
-            if(!ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
 
                 return Page();
             }
 
             var checkProductNameExists = _productService.CheckNameExisted(ProductRequestDTO.ProductName);
-            if(checkProductNameExists)
+            if (checkProductNameExists)
             {
                 TempData["NameExist"] = "Product Name already exists";
                 return Page();
             }
 
             var checkValidMaterialList = _productService.CheckValidationMaterialDTOList(MaterialDTOList);
-            if(!checkValidMaterialList.IsSuccess)
+            if (!checkValidMaterialList.IsSuccess)
             {
                 TempData["CreateError"] = checkValidMaterialList.Message;
                 return Page();
@@ -101,17 +101,27 @@ namespace PRN221_JewelryShop.Pages.Manager.ProductScreen
 
             ProductRequestDTO.AvatarImg = _imageService.ConvertToBase64(ProductAvatar);
             ProductRequestDTO.MaterialDTOs = MaterialDTOList;
+            var price = _productService.GetPriceProduct(MaterialDTOList, (decimal)ProductRequestDTO.Wage);
+            ProductRequestDTO.Price = price;
 
+            var checkValidAmountInStock = _productService.CheckMaterialAmountInStock(ProductRequestDTO);
+            if(!checkValidAmountInStock.IsSuccess)
+            {
+                TempData["CreateError"] = checkValidAmountInStock.Message;
+                return Page();
+            }
             var result = _productService.AddProduct(ProductRequestDTO);
-            if(result)
+            if (result)
             {
                 TempData["CreateMsg"] = "Create Successfully";
                 return RedirectToPage("/Manager/ProductScreen/ProductManagement");
-            } else
+            }
+            else
             {
                 TempData["CreateMsg"] = "Create Unsuccessfully";
                 return Page();
             }
         }
+        
     }
 }

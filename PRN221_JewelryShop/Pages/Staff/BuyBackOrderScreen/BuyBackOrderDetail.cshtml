@@ -63,6 +63,7 @@
                                     <th>Product Name</th>
                                     <th>Amount</th>
                                     <th>Price</th>
+                                    <th>Reason</th>
                                     <th>Buy Back Policy</th>
                                 </tr>
                             </thead>
@@ -73,6 +74,7 @@
                                         <td>@s.Product?.ProductName</td>
                                         <td>@s.Amount</td>
                                         <td>@s.Bbprice?.ToString("#,0", priceFormat) VND</td>
+                                        <td>@s.Reason</td>
                                         <td>@s.Policy?.PolicyName</td>
                                     </tr>
                                 }

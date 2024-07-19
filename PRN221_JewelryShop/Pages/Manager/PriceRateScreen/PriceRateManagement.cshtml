@@ -1,0 +1,46 @@
+﻿@page
+@model PRN221_JewelryShop.Pages.Manager.PriceRateScreen.PriceRateManagementModel
+@{
+    Layout = "_LayoutManager";
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewData["Title"]</title>
+    <link rel="stylesheet" href="~/css/ProuductDetail.css" />
+</head>
+<body>
+    <div class="header">
+        <h1>Price Adjustment Rate Management</h1>
+    </div>
+    <div class="content row">
+        <form method="post" asp-page-handler="UpdatePriceRate">
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>Price Rate</th>
+                        <th>Value</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model.PriceRate != null)
+                    {
+                            <tr>
+                                <td>Price Adjustment Rate</td>
+                                <td>
+                                <input style="width: 20%" type="text" asp-for="PriceRateRequestDTO.Value" value="@Model.PriceRate.PriceRate1" min="1" required />
+                                <span class="text-danger" asp-validation-for="PriceRateRequestDTO.Value"></span>
+                                </td>
+                            </tr>
+                    }
+                </tbody>
+            </table>
+            <button type="submit" class="btn btn-primary">Update</button>
+        </form>
+        <h5 style="color: green">@TempData["UpdateMsg"]</h5>
+    </div>
+</body>
+</html>
+

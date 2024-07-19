@@ -14,5 +14,6 @@ namespace BLL.Interfaces
         List<ReturnOrder> GetAllReturnOrders();
         List<ReturnOrder> SearchReturnOrders(string searchValue);
         ReturnOrder GetReturnOrderById(string id);
+        bool CheckAmountReturnValid(ReturnRequestDTO model);
     }
 }
