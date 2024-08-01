@@ -31,6 +31,7 @@
     </div>
     <div class="content" style="margin: auto;">
         <div class="row">
+            <h5 class="text-danger">@TempData["ReturnAmountError"]</h5>
             <h5 class="text-danger">@TempData["BuyBackAmountError"]</h5>
             <h5 class="text-danger">@TempData["BuyBackReasonError"]</h5>
             <div class="col-md-6">
@@ -522,9 +523,8 @@
                 })
                     .then(response => {
                         if (!response.ok) {
-                            throw new Error('Network response was not ok');
+                            window.location.reload();
                         }
-                        window.location.reload();// assuming server responds with JSON
                     })
                     .then(data => {
                         console.log('Returned products:', data);

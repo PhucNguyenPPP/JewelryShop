@@ -25,18 +25,18 @@
                 </div>
                 <div class="field">
                     <label>Product Name</label>
-                    <input type="text" asp-for="ProductRequestDTO.ProductName" required />
+                    <input type="text" asp-for="ProductRequestDTO.ProductName" required /><br />
                     <span class="text-danger" asp-validation-for="ProductRequestDTO.ProductName"></span>
                     <span class="text-danger">@TempData["NameExist"]</span>
                 </div>
                 <div class="field">
                     <label>Wage</label>
-                    <input type="text" asp-for="ProductRequestDTO.Wage" required />
+                    <input type="number" min="1" asp-for="ProductRequestDTO.Wage" required /><br />
                     <span class="text-danger" asp-validation-for="ProductRequestDTO.Wage"></span>
                 </div>
                 <div class="field">
                     <label>Amount In Stock</label>
-                    <input type="number" min="1" asp-for="ProductRequestDTO.AmountInStock" required />
+                    <input type="number" min="1" asp-for="ProductRequestDTO.AmountInStock" required /><br />
                     <span class="text-danger" asp-validation-for="ProductRequestDTO.AmountInStock"></span>
                 </div>
                 <div class="field">
